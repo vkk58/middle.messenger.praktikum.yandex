@@ -1,9 +1,18 @@
 <div class="app">
   <h1>Вход</h1>
   <div class="startPage">
-    {{> Input id="login" type="text" placeholder="Логин" }}
-    {{> Input id="question-input" type="text" placeholder="Пароль" }}
-    {{> Button id="signIn" text="Авторизоваться"}}
-    {{> Button id="registration" text="Нет аккаунта?"}}
+    {{> Label forAttr="login" text="Логин" }}
+    {{> Input id="login" type="text" placeholder="Логин" value= loginValue}}
+    {{#unless loginValue}}
+    {{> ErrorMessage message="Поле обязательно для заполнения" }}  
+    {{/unless}}
+    
+    {{> Label forAttr="password" text="Пароль" }}
+    {{> Input id="password" type="text" placeholder="Пароль" value= passwordValue }}
+    {{#unless passwordValue}}
+    {{> ErrorMessage message="Поле обязательно для заполнения" }}  
+    {{/unless}}
   </div>
+    {{> Button id="signIn" text="Авторизоваться"}}
+    {{> Footer data-page="registrationPage" textFooter="Нет аккаунта?"}}
 </div>
