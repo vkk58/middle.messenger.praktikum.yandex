@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite build && node server.cjs",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "express": "^5.1.0",
+    "handlebars": "^4.7.8",
+    "postcss": "^8.5.4",
+    "postcss-preset-env": "^10.2.1",
+    "vite": "^6.3.5"
+  },
+
+  "dependencies": {
+    "express": "^5.1.0",
+    "handlebars": "^4.7.8"
+  }
+}
