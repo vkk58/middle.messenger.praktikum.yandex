@@ -6,18 +6,24 @@
     <nav>
     {{> Label forAttr="search" text="Поиск" }}
     {{> Input id="search" type="text"  class="input"}}
+    <div class="lineBreak"></div>
     </nav>
     <main class="gridCommonPage">
       {{#if contactLists.length}}
-      <ul>
         {{#each contactLists}}
-          <li class="gridElementCommonPage">{{this}}</li>
+        <figure class="gridElementCommonPage">
+        <figcaption class="contactTextType">Контакт</figcaption>
+          <div class="messageContainer">        
+          {{> Image image=this.Value className=this.Class }}
+          {{> Text tag='p' class="contactTextMessageType" text= "Последнее сообщение"}}
+          </div>
+        </figure>
+      <div class="lineBreak"></div>
         {{/each}}
-      </ul>
     {{/if}}
     </main>
   </aside>
-  <main>
+  <main class="right-content">
     <section class="messageElements">
     {{> Label forAttr="message" text="Отправка сообщения" }}
       <div class="messageContainer">

@@ -3,13 +3,6 @@
   min-height: 100vh;
 }
 
-.round-img {
-  border-radius: 50%; 
-  width: 150px;   
-  height: 150px;  
-  object-fit: cover; 
-}
-
 .leftBox {
   position: fixed;
   top: 0;
@@ -23,36 +16,50 @@
   padding: 20px;
   box-sizing: border-box;
 }
-
-.gridCommonPage {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 80px;
-}
-.gridElementCommonPage {
-  width: 310;
-  height: 67;
-  top: 321px;
-}
 .profileLink {
   margin-left: 140px;
   font-size: 18px;
 }
-.container {
-  position: relative;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
 .messageElements {
   position: fixed;
   bottom: 0;
-  width: 75%;
+  left: 300px;
+  width: calc(100% - 300px);
+  padding: 15px;
+  background: var(--background-color);
 }
-
 .messageContainer {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding-left: 20px;
+  padding-right: 40px;
+}
+
+.right-content { 
+  margin-left: 300px; 
+  width: calc(100% - 300px);
+  padding: 20px;
+  position: relative;
+  min-height: 100vh;
+}
+.miniImg {
+  border-radius: 50%; 
+  width: 50px;   
+  height: 50px;  
+  object-fit: cover; 
+}
+
+.contactTextType {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.contactTextMessageType {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.lineBreak {
+  border-top: 2px solid #000;
 }

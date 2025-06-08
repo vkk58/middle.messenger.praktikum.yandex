@@ -31,8 +31,6 @@ export default class App {
     this.appElement = document.getElementById("app");
   }
 
-  contactLists = ["1", "2", "3"];
-
   render() {
     let template;
     if (this.state.currentPage === "startPage") {
@@ -65,9 +63,11 @@ export default class App {
       });
     } 
     else if (this.state.currentPage === "commonPage") {
-      template = Handlebars.compile(Pages.CommonPage);
+      template = Handlebars.compile(Pages.CommonPage);   
+      let imageData = {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "miniImg"};
+      let contactLists = [imageData,imageData,imageData];   
       this.appElement.innerHTML = template({
-        contactLists: this.contactLists,
+        contactLists: contactLists
       });
     }    
     else if (this.state.currentPage === "profilePage") {
@@ -157,10 +157,14 @@ export default class App {
   }
 
   errorPage(errorNumber) {
-    if(errorNumber === "500")
+    if(errorNumber == "500")
+    {
       this.state.currentPage = "errorPage500";
-    else(errorNumber === "400")
+    }
+    else if(errorNumber == "400")
+    {
       this.state.currentPage = "errorPage400";
+    }
 
     this.render();
   }
