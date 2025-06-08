@@ -1,0 +1,15 @@
+<div class="app">
+  <h1>Профиль</h1>
+    {{> Image image=imageData.Value className=imageData.Class }}
+  <main>
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
+    {{> Button id="changeProfileData" class="button"  text="Изменить данные"}}
+    {{> Button id="returnToCommonPage" class="button"  text="Вернуться к сообщениям"}}
+    {{> Button id="exitFromProfile" class="button"  text="Выйти из профиля"}}
+  </main>
+</div>

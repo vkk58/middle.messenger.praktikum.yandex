@@ -1,18 +1,15 @@
 <div class="app">
   <h1>Вход</h1>
   <div class="startPage">
-    {{> Label forAttr="login" text="Логин" }}
-    {{> Input id="login" type="text" placeholder="Логин" value= loginValue}}
-    {{#unless loginValue}}
-    {{> ErrorMessage message="Поле обязательно для заполнения" }}  
-    {{/unless}}
-    
-    {{> Label forAttr="password" text="Пароль" }}
-    {{> Input id="password" type="text" placeholder="Пароль" value= passwordValue }}
-    {{#unless passwordValue}}
-    {{> ErrorMessage message="Поле обязательно для заполнения" }}  
-    {{/unless}}
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
   </div>
-    {{> Button id="signIn" text="Авторизоваться"}}
-    {{> Footer data-page="registrationPage" textFooter="Нет аккаунта?"}}
+    {{> Button id="signIn" class="button" text="Вход"}}
+    {{> Footer}}
 </div>
+    {{> Button id="error500" class="button" text="Временная кнопка вызова ошибки 500"}}
+    {{> Button id="error404" class="button" text="Временная кнопка вызова ошибки 400"}}

@@ -1,8 +1,13 @@
 <div class="app">
   <h1>Регистрация</h1>
-  <div class="registrationPage">
-    {{> Label forAttr="email" text="Почта" }}
-    {{> Input id="email" type="text" }}
-  </div>
+  <main>
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
+    {{> Button id="createProfile" class="button"  text="Создать профиль"}}
+  </main>
     {{> Footer text="Войти"}}
 </div>
