@@ -1,15 +1,18 @@
-<div class="app">
+{{> LinkList}}
+<main class="app">
   <h1>Профиль</h1>
-    {{> Image image=imageData.Value className=imageData.Class }}
-  <main>
+    {{> Image image=imageData.Value className=imageData.Class  alt=this.Сaption}}
+  <main>    
+    <form>
     {{#each elementsList}}
     {{#if this.Label}}
     {{> Label forAttr= this.ElementId text=this.LabelText }}
     {{/if}}
     {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
     {{/each}}
-    {{> Button id="changeProfileData" class="button"  text="Изменить данные"}}
-    {{> Button id="returnToCommonPage" class="button"  text="Вернуться к сообщениям"}}
-    {{> Button id="exitFromProfile" class="button"  text="Выйти из профиля"}}
+    {{> Button id="changeProfileData" class="button"  text="Изменить данные" disabled = true}}
+    {{> Button id="returnToCommonPage" class="button"  text="Вернуться к сообщениям" isTypeSubmit=true}}
+    {{> Button id="exitFromProfile" class="button"  text="Выйти из профиля" isTypeSubmit=true}}
+    </form>
   </main>
-</div>
+</main>

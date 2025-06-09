@@ -11,6 +11,7 @@ import Label from "./components/Label.js";
 import Footer from "./components/Footer.js";
 import Image from "./components/Image.js";
 import Text from "./components/Text.js";
+import LinkList from "./components/LinkList.js";
 
 Handlebars.registerPartial("Input", Input);
 Handlebars.registerPartial("Button", Button);
@@ -21,6 +22,7 @@ Handlebars.registerPartial("Label", Label);
 Handlebars.registerPartial("Footer", Footer);
 Handlebars.registerPartial("Image", Image);
 Handlebars.registerPartial("Text", Text);
+Handlebars.registerPartial("LinkList", LinkList);
 
 
 export default class App {
@@ -33,99 +35,105 @@ export default class App {
 
   render() {
     let template;
-    if (this.state.currentPage === "startPage") {
-      const elementsList = [
-        {ElementId: "login", Label: true, LabelText: "Логин", PlaceHolder: "Логин"},
-        {ElementId: "password", Label: true, LabelText: "Пароль", PlaceHolder: "Пароль"}
-      ];
-      template = Handlebars.compile(Pages.StartPage);
-      this.appElement.innerHTML = template({
-        elementsList: elementsList,
-        linkPage: "registrationPage",
-        textFooter: "Нет аккаунта?",
-      });
-    } 
-    else if (this.state.currentPage === "registrationPage") {
-      const elementsList = [
-        {ElementId: "first_name", Label: true, LabelText: "Имя"},
-        {ElementId: "second_name", Label: true, LabelText: "Фамилия"},
-        {ElementId: "login", Label: true, LabelText: "Логин"},
-        {ElementId: "email", Label: true, LabelText: "Почта"},
-        {ElementId: "password", Label: true, LabelText: "Пароль"},
-        {ElementId: "phone", Label: true, LabelText: "Номер телефона"}
-      ];
-      template = Handlebars.compile(Pages.RegistrationPage);
-
-      this.appElement.innerHTML = template({
-        elementsList: elementsList,
-        linkPage: "startPage",
-        textFooter: "Войти",
-      });
-    } 
-    else if (this.state.currentPage === "commonPage") {
-      template = Handlebars.compile(Pages.CommonPage);   
-      let imageData = {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "miniImg"};
-      let contactLists = [imageData,imageData,imageData];   
-      this.appElement.innerHTML = template({
-        contactLists: contactLists
-      });
-    }    
-    else if (this.state.currentPage === "profilePage") {
-      const elementsList = [
-        {ElementId: "first_name", Label: true, LabelText: "Имя"},
-        {ElementId: "second_name", Label: true, LabelText: "Фамилия"},
-        {ElementId: "display_name", Label: true, LabelText: "Ник"},
-        {ElementId: "login", Label: true, LabelText: "Логин"},
-        {ElementId: "email", Label: true, LabelText: "Почта"},
-        {ElementId: "phone", Label: true, LabelText: "Телефон"},
-        {ElementId: "oldPassword", Label: true, LabelText: "Старый пароль"},
-        {ElementId: "newPassword", Label: true, LabelText: "Новый пароль"}        
-      ];
-      template = Handlebars.compile(Pages.ProfilePage);
-
-      this.appElement.innerHTML = template({
-        imageData: {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "round-img"},
-        elementsList: elementsList,
-        linkPage: "startPage",
-        textFooter: "Войти",
-      });
-    } 
-    else if (this.state.currentPage === "errorPage500" || this.state.currentPage === "errorPage400")
+    let elementsList;
+    switch(this.state.currentPage)
     {
-      template = Handlebars.compile(Pages.ErrorPage);
-      const errorObj = {ErrorNumber: this.state.currentPage == "errorPage500" ? "500" : "404",
-                  ErrorDescriptionNumber: this.state.currentPage == "errorPage500" ? "Мы уже фиксим" : "Не туда попали"};
-      this.appElement.innerHTML = template({
-        errorObj: errorObj,
-        linkPage: "commonPage",
-        textFooter: "Назад к чатам",
-      });
+      case "startPage":
+        elementsList = [
+          {ElementId: "login", Label: true, LabelText: "Логин", PlaceHolder: "Логин"},
+          {ElementId: "password", Label: true, LabelText: "Пароль", PlaceHolder: "Пароль"}
+        ];
+        template = Handlebars.compile(Pages.StartPage);
+        this.appElement.innerHTML = template({
+          elementsList: elementsList,
+          linkPage: "registrationPage",
+          textFooter: "Нет аккаунта?",
+        });
+        break;   
+      case "registrationPage":
+        elementsList = [
+          {ElementId: "first_name", Label: true, LabelText: "Имя"},
+          {ElementId: "second_name", Label: true, LabelText: "Фамилия"},
+          {ElementId: "login", Label: true, LabelText: "Логин"},
+          {ElementId: "email", Label: true, LabelText: "Почта"},
+          {ElementId: "password", Label: true, LabelText: "Пароль"},
+          {ElementId: "phone", Label: true, LabelText: "Номер телефона"}
+        ];
+        template = Handlebars.compile(Pages.RegistrationPage);
+
+        this.appElement.innerHTML = template({
+          elementsList: elementsList,
+          linkPage: "startPage",
+          textFooter: "Войти",
+        });
+        break;
+      case "commonPage":
+        template = Handlebars.compile(Pages.CommonPage);   
+        let imageData = {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "miniImg", Сaption: "Пользователь"};
+        let contactLists = [imageData,imageData,imageData];   
+        this.appElement.innerHTML = template({
+          contactLists: contactLists
+        });
+        break;
+      case "profilePage":
+        elementsList = [
+          {ElementId: "first_name", Label: true, LabelText: "Имя"},
+          {ElementId: "second_name", Label: true, LabelText: "Фамилия"},
+          {ElementId: "display_name", Label: true, LabelText: "Ник"},
+          {ElementId: "login", Label: true, LabelText: "Логин"},
+          {ElementId: "email", Label: true, LabelText: "Почта"},
+          {ElementId: "phone", Label: true, LabelText: "Телефон"},
+          {ElementId: "oldPassword", Label: true, LabelText: "Старый пароль"},
+          {ElementId: "newPassword", Label: true, LabelText: "Новый пароль"}        
+        ];
+        template = Handlebars.compile(Pages.ProfilePage);
+
+        this.appElement.innerHTML = template({
+          imageData: {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "round-img", Сaption: "Пользователь"},
+          elementsList: elementsList,
+          linkPage: "startPage",
+          textFooter: "Войти",
+        });
+        break;
+      case "errorPage500":
+      case "errorPage400":        
+        template = Handlebars.compile(Pages.ErrorPage);
+        const errorObj = {ErrorNumber: this.state.currentPage == "errorPage500" ? "500" : "404",
+                          ErrorDescriptionNumber: this.state.currentPage == "errorPage500" ? "Мы уже фиксим" : "Не туда попали"};
+        this.appElement.innerHTML = template({
+          errorObj: errorObj,
+          linkPage: "commonPage",
+          textFooter: "Назад к чатам",
+        });
+        break;
     } 
     this.attachEventListeners();
   }
 
   attachEventListeners() {
-    if (this.state.currentPage === "startPage") {
-      const signIn = document.getElementById("signIn");
-      signIn.addEventListener("click", () => this.commonPage());
+    switch(this.state.currentPage)
+    {
+      case "startPage":
+        const signIn = document.getElementById("signIn");
+        signIn.addEventListener("click", () => this.commonPage());
 
-      
-      const error500 = document.getElementById("error500");
-      error500.addEventListener("click", () => this.errorPage("500"));
-      const error404 = document.getElementById("error404");
-      error404.addEventListener("click", () => this.errorPage("400"));
-    } 
-    else if (this.state.currentPage === "registrationPage") {
-      const returnToStartPage = document.getElementById("returnToStartPage");
-      const signIn = document.getElementById("createProfile");
-      signIn.addEventListener("click", () => this.commonPage());
+        
+        const error500 = document.getElementById("error500");
+        error500.addEventListener("click", () => this.errorPage("500"));
+        const error404 = document.getElementById("error404");
+        error404.addEventListener("click", () => this.errorPage("400"));
+        break;
+      case "registrationPage":
+        const createProfile = document.getElementById("createProfile");
+        createProfile.addEventListener("click", () => this.commonPage());
+        break;        
+      case "profilePage":
+        const returnToCommonPage = document.getElementById("returnToCommonPage");
+        returnToCommonPage.addEventListener("click", () => this.commonPage());
+        const exitFromProfile = document.getElementById("exitFromProfile");
+        exitFromProfile.addEventListener("click", () => this.startPage());
+
     }
-    else if (this.state.currentPage === "profilePage") {      
-      const returnToCommonPage = document.getElementById("returnToCommonPage");
-      returnToCommonPage.addEventListener("click", () => this.commonPage());
-      const exitFromProfile = document.getElementById("exitFromProfile");
-      exitFromProfile.addEventListener("click", () => this.startPage());
-    } 
 
     const footerLinks = document.querySelectorAll(".footer-link");
     footerLinks.forEach((link) => {
@@ -157,15 +165,15 @@ export default class App {
   }
 
   errorPage(errorNumber) {
-    if(errorNumber == "500")
+    switch(errorNumber)
     {
-      this.state.currentPage = "errorPage500";
+      case "500": 
+        this.state.currentPage = "errorPage500";
+        break;
+      case "400":        
+        this.state.currentPage = "errorPage400";
+        break;
     }
-    else if(errorNumber == "400")
-    {
-      this.state.currentPage = "errorPage400";
-    }
-
     this.render();
   }
 }
