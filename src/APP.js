@@ -132,12 +132,14 @@ export default class App {
         returnToCommonPage.addEventListener("click", () => this.commonPage());
         const exitFromProfile = document.getElementById("exitFromProfile");
         exitFromProfile.addEventListener("click", () => this.startPage());
+
         document.getElementById('avatar').addEventListener('change', function(e) {
-        debugger;
         const file = e.target.files[0];
-        if (file) {
+        if (file) 
+        {
           const reader = new FileReader();
-          reader.onload = function(event) {
+          reader.onload = function(event) 
+          {
             document.getElementsByClassName('round-img')[0].src = event.target.result;
           };
           reader.readAsDataURL(file);
