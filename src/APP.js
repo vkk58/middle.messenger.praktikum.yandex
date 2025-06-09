@@ -69,7 +69,7 @@ export default class App {
         break;
       case "commonPage":
         template = Handlebars.compile(Pages.CommonPage);   
-        let imageData = {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "miniImg", Сaption: "Пользователь"};
+        let imageData = {Value: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", Class: "miniImg", Сaption: "Пользователь", ImageName: "123"};
         let contactLists = [imageData,imageData,imageData];   
         this.appElement.innerHTML = template({
           contactLists: contactLists
@@ -132,6 +132,17 @@ export default class App {
         returnToCommonPage.addEventListener("click", () => this.commonPage());
         const exitFromProfile = document.getElementById("exitFromProfile");
         exitFromProfile.addEventListener("click", () => this.startPage());
+        document.getElementById('avatar').addEventListener('change', function(e) {
+        debugger;
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            document.getElementsByClassName('round-img')[0].src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+  });
 
     }
 
