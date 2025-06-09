@@ -1,1 +1,1 @@
-export default `<img src="{{image}}" class="{{className}}"></img>`;
+export default `<img src="{{image}}" class="{{className}}" alt="{{alt}}"></img>`;
