@@ -1,0 +1,21 @@
+{{> LinkList}}
+<main class="app">
+  <h1>Профиль</h1>
+  <form>
+  {{> Image image=imageData.Value className=imageData.Class  alt=this.Сaption}}
+  {{> Input id="avatar" type="file"  name="avatar" class="input"}}
+  </form>
+  <main>    
+    <form>
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
+    {{> Button id="changeProfileData" class="button"  text="Изменить данные" type="submit"}}
+    {{> Button id="returnToCommonPage" class="button"  text="Вернуться к сообщениям" type="button"}}
+    {{> Button id="exitFromProfile" class="button"  text="Выйти из профиля" type="button"}}
+    </form>
+  </main>
+</main>

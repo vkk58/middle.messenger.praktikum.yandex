@@ -1,0 +1,36 @@
+{{> LinkList}}
+<main class="page-layout">
+  <aside class="leftBox">
+    <div  class="profile-link-container">
+      {{> Link href="#" class="footer-link profileLink" data-page ="profilePage" text ="Профиль >"}}
+    </div>
+    <form>
+    {{> Label forAttr="search" text="Поиск" }}
+    {{> Input id="search" type="text"  class="input"}}
+    <div class="lineBreak"></div>
+    </form>
+    <main class="gridCommonPage">
+      {{#if contactLists.length}}
+        {{#each contactLists}}
+        <figure class="gridElementCommonPage">
+        <figcaption class="contactTextType">Контакт</figcaption>
+          <div class="messageContainer">        
+          {{> Image image=this.Value className=this.Class alt=this.Сaption}}
+          {{> Text tag='p' class="contactTextMessageType" text= "Последнее сообщение"}}
+          </div>
+        </figure>
+      <div class="lineBreak"></div>
+        {{/each}}
+    {{/if}}
+    </main>
+  </aside>
+  <main class="right-content">
+    <section class="messageElements">
+    {{> Label forAttr="message" text="Отправка сообщения" }}
+      <form class="messageContainer">
+        {{> Input id="message" type="text" class="input"}}
+        {{> Button id="sendMessage" class="miniButton" text="Отправить" disabled = true type="submit"}}
+      </form>
+    </section>
+  </main>
+</main>

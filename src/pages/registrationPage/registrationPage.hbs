@@ -1,0 +1,16 @@
+{{> LinkList}}
+<main class="app">
+  <h1>Регистрация</h1>
+  <main>
+    <form>
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
+    {{> Button id="createProfile" class="button"  text="Создать профиль" type="submit"}}
+    </form>
+  </main>
+    {{> Footer text="Войти"}}
+</main>

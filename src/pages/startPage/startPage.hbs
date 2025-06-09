@@ -1,0 +1,16 @@
+{{> LinkList}}
+<main class="app">
+  <h1>Вход</h1>
+  <form class="startPage">
+    {{#each elementsList}}
+    {{#if this.Label}}
+    {{> Label forAttr= this.ElementId text=this.LabelText }}
+    {{/if}}
+    {{> Input id=this.ElementId type="text" placeholder=this.PlaceHolder class="input"}}
+    {{/each}}
+    {{> Button id="signIn" class="button" text="Вход" type="submit"}}
+  </form>
+    {{> Footer}}
+</main>
+    {{> Button id="error500" class="button" text="Временная кнопка вызова ошибки 500"}}
+    {{> Button id="error404" class="button" text="Временная кнопка вызова ошибки 400"}}
