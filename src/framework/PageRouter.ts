@@ -1,7 +1,7 @@
 import RegistrationPage from '../pages/registrationPage/registrationPage';
 import ProfilePage from '../pages/profilePage/profilePage';
 import StartPage from '../pages/startPage/startPage';
-
+import CommonPage from '../pages/commonPage/commonPage';
 export default class PageRouter {
   public go(pageName: string) {
     let changingPage: any;   
@@ -16,6 +16,9 @@ export default class PageRouter {
           break;
         case "startPage":
           changingPage = new StartPage();
+          break;
+        case "commonPage":
+          changingPage = new CommonPage();
           break;
         default:
             return;

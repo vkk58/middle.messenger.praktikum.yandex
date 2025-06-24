@@ -1,9 +1,3 @@
-/*
-export default `<button id="{{id}}" class="{{class}}" type={{type}}
-{{#if disabled}}
-  disabled
-{{/if}}>{{text}}</button>`;
-*/
 import Block from '../framework/Block';
 import { ParamsForHBS } from '../helpers/commonInterference';
 import PageRouter from '../framework/PageRouter';
@@ -13,15 +7,14 @@ export class Button extends Block {
     let router = new PageRouter();
     super({
       text:     buttonInfo.text,
-      onClick: (event: Event) => {
-          console.log('CLICK');          
-          event.preventDefault();
-          event.stopPropagation();
+      events: {
+        click: () => {
           if(buttonInfo.buttonRoute)
           {
-            router.go(this.props.datapage);
+            router.go(buttonInfo.buttonRoute);
           }
         },
+      },
       attr: {
         id:       buttonInfo.id,
         class:    buttonInfo.class,

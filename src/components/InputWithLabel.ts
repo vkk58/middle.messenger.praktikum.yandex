@@ -1,4 +1,3 @@
-//export default `<input id="{{id}}" type="{{type}}" name="{{id}}" placeholder="{{placeholder}}" value="{{value}}" class="{{class}}">`;
 import Block from '../framework/Block';
 import { Label } from "./Label";
 import { Input } from "./Input";

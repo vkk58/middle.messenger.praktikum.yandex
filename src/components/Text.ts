@@ -1,4 +1,3 @@
-//export default `<{{tag}} class="{{class}}">{{text}}</{{tag}}>`;
 import Block from '../framework/Block';
 import { ParamsForHBS } from '../helpers/commonInterference';
 
@@ -14,6 +13,6 @@ export class Text extends Block {
     };
 
   override render(): string {
-    return `<{{tag}} class="{{class}}">{{text}}</{{tag}}>`;
+    return `<p class="{{class}}">{{text}}</p>`;
   }
 }

@@ -1,4 +1,3 @@
-//export default `<p class="error">{{message}}</p>`;
 import Block from '../framework/Block';
 
 export class ErrorMessage extends Block {

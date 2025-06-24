@@ -13,12 +13,7 @@ export class Footer extends Block {
       LinkCreate: new Link({
         href:     '#',
         datapage: footerInfo.linkPage,
-        text:     footerInfo.text,
-        onClick: (event: Event) => {
-          console.log('CLICK');          
-          event.preventDefault();
-          event.stopPropagation();
-        },
+        text:     footerInfo.text
       })
     });
   }

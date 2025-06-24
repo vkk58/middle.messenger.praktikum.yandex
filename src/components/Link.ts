@@ -1,4 +1,3 @@
-//export default `<a href="{{href}}" class="{{class}}" data-page="{{data-page}}">{{text}}</a>`;
 import Block from '../framework/Block';
 import PageRouter from '../framework/PageRouter';
 
@@ -8,8 +7,7 @@ export class Link extends Block {
     super({
       ...props,
       events: {
-        click: (e: Event) => {
-          props.onClick(e);
+        click: () => {
           router.go(this.props.datapage);
         },
       },

@@ -1,4 +1,3 @@
-//export default `<label for="{{forAttr}}" class="label">{{text}}</label>`;
 import Block from '../framework/Block';
 import { ParamsForHBS } from '../helpers/commonInterference';
 

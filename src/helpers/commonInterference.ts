@@ -3,6 +3,7 @@ export interface ParamsForHBS{
     text?:           string
     id?:             string,
     class?:          string,
+    classSecond?:    string,
     type?:           string,
     disabled?:       boolean,
     image?:          string,
