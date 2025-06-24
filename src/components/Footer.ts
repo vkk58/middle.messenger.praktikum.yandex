@@ -1,8 +1,3 @@
-/*
-export default `<footer class="footer">
-  {{> Link href="#" class="footer-link" data-page=linkPage text=textFooter}}
-</footer>`;
-*/
 import Block from '../framework/Block';
 import { Link } from '../components/Link';
 import { ParamsForHBS } from '../helpers/commonInterference';
@@ -13,7 +8,8 @@ export class Footer extends Block {
       LinkCreate: new Link({
         href:     '#',
         datapage: footerInfo.linkPage,
-        text:     footerInfo.text
+        text:     footerInfo.text,
+        class: 'footer-link',
       })
     });
   }

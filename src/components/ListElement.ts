@@ -6,16 +6,20 @@ import { ParamsForHBS } from '../helpers/commonInterference';
 export class ListElement extends Block {
   constructor(listElementsInfo: ParamsForHBS) {
     super({      
-        Image:  new Image({image: listElementsInfo.image, class: listElementsInfo.class, alt: listElementsInfo.alt}),
-        Text:   new Text({class: listElementsInfo.classSecond, text: listElementsInfo.text}),
+        captionText : listElementsInfo.captionText || "", 
+        Image:        new Image({image: listElementsInfo.image, class: listElementsInfo.class, alt: listElementsInfo.alt}),
+        Text:         new Text({class: listElementsInfo.classSecond, text: listElementsInfo.text}),
       })
     };
 
   override render(): string {
-    return `<div class="messageContainer">     
+    return `<figure class="gridElementCommonPage">
+            <figcaption class="contactTextType">{{captionText}}</figcaption>
+            <form class="messageContainer">     
             {{{ Image }}}
             {{{ Text  }}}
-            </div>
-            <div class="lineBreak"></div>`;
+            </form>
+            <div class="lineBreak"></div>
+            </figure>`;
   }
 }

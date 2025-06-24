@@ -12,23 +12,26 @@ export default class CommonPage extends Block{
     constructor() {      
         let listEl: ListElement[] = [
           new ListElement({image:       "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", 
-                          class:        "round-img", 
+                          class:        "miniImg", 
                           alt:          "Пользователь1",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p"}),
+                          id:           "p",
+                          captionText:  "Друг1"}),
           new ListElement({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", 
-                          class:  "round-img", 
+                          class:  "miniImg", 
                           alt:    "Пользователь2",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p"}),
+                          id:           "p",
+                          captionText:  "Друг2"}),
           new ListElement({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", 
-                          class:  "round-img", 
+                          class:  "miniImg", 
                           alt:    "Пользователь3",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p"})
+                          id:           "p",
+                          captionText:  "Друг3"})
         ];
         super(
             {
@@ -38,16 +41,14 @@ export default class CommonPage extends Block{
                                         href:     '#',
                                         datapage: "profilePage",
                                         text:     "Профиль >",
+                                        class: "footer-link profileLink",
                                         onClick: (event: Event) => {
                                           console.log('CLICK');          
                                           event.preventDefault();
                                           event.stopPropagation();
-                                        },                                        
-                                        attr: {
-                                          class: "footer-link profileLink"
                                         }
                                       }),
-              InputWithLabelSearch:     new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input'}),
+                InputWithLabelSearch:   new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input'}),
                 LabelForMessage:        new Label({text: "Отправка сообщения", for: 'message'}),
                 InputMessage:           new Input({id: "message", type: "text", class: "input", name: "message"}),
                 InputWithLabelPassword: new InputWithLabel({text: "Пароль", name: 'password', type: 'text', class: 'input'}),
@@ -63,20 +64,14 @@ export default class CommonPage extends Block{
         return `<main class="page-layout">
                   <aside class="leftBox">
                     <div  class="profile-link-container">
-                      {{{LinkProfile}}}
+                    {{{ LinkProfile }}}
                     </div>
                     <form>
                     {{{ InputWithLabelSearch }}}
                     <div class="lineBreak"></div>
                     </form>
-                    <main class="gridCommonPage">
-                        <figure class="gridElementCommonPage">
-                        <figcaption class="contactTextType">Контакт</figcaption>
-                          <div class="messageContainer">        
-                          {{{ listEl }}}
-                          </div>
-                        </figure>
-                      <div class="lineBreak"></div>
+                    <main class="gridCommonPage">    
+                    {{{ listEl }}}
                     </main>
                   </aside>
                   <main class="right-content">
@@ -86,9 +81,9 @@ export default class CommonPage extends Block{
                         {{{ InputMessage }}}
                         {{{ ButtonSendMessage }}}
                       </form>
+                  {{{ LinkList }}}
                     </section>
                   </main>
-                  {{{ LinkList }}}
                 </main>`;
     }
 }

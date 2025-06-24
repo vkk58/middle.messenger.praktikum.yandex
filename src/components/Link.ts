@@ -10,10 +10,7 @@ export class Link extends Block {
         click: () => {
           router.go(this.props.datapage);
         },
-      },
-      attr: {
-        class: 'footer-link',
-      },
+      }
     });    
   }
 /*

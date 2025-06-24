@@ -16,7 +16,7 @@ export default class RegistrationPage extends Block{
                 InputWithLabelEmail: new InputWithLabel({text: "Почта", name: 'email', type: 'text', class: 'input'}),
                 InputWithLabelPhone: new InputWithLabel({text: "Номер телефона", name: 'phone', type: 'text', class: 'input'}),
                 ButtonCreateProfile: new Button({text: "Создать профиль", id: 'createProfile', class: 'button', type: 'submit'}),
-                FooterSignIn: new Footer({linkPage: "commonPage", text: 'Войти'})               
+                FooterSignIn: new Footer({linkPage: "startPage", text: 'Войти'})               
             }
         );
     };

@@ -1,7 +1,7 @@
 import Block from '../framework/Block';
 import { ParamsForHBS } from '../helpers/commonInterference';
 
-export class Text extends Block {
+export class ErrorText extends Block {
   constructor(textInfo: ParamsForHBS) {
     super({        
         text: textInfo.text,
@@ -12,6 +12,6 @@ export class Text extends Block {
     };
 
   override render(): string {
-    return `<p>{{text}}</p>`;
+    return `<h1>{{text}}</h1>`;
   }
 }

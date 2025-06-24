@@ -13,5 +13,6 @@ export interface ParamsForHBS{
     value?:          string,
     for?:            string,
     tag?:            string,
-    buttonRoute?:    string
+    buttonRoute?:    string,
+    captionText?:    string
 }
