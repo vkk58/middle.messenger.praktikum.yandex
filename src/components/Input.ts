@@ -1,16 +1,16 @@
 import Block from '../framework/Block';
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class Input extends Block {
-  constructor(inputInfo: ParamsForHBS) {
+  constructor(props: any) {
     super({
+      ...props,
       attr: {
-        id:             inputInfo.id,
-        type:           inputInfo.type,
-        name:           inputInfo.name,
-        placeholder:    inputInfo.placeholder || '',
-        value:          inputInfo.value || '',
-        class:          inputInfo.class
+        id:             props.id,
+        type:           props.type,
+        name:           props.name,
+        placeholder:    props.placeholder || '',
+        value:          props.value || '',
+        class:          props.class
       },
       })
     };

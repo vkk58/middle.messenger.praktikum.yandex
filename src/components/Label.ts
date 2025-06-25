@@ -1,12 +1,11 @@
 import Block from '../framework/Block';
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class Label extends Block {
-  constructor(labelInfo: ParamsForHBS) {
+  constructor(props: any) {
     super({
-        text: labelInfo.text,
+        text: props.text,
       attr: {
-        for: labelInfo.for
+        for: props.for
       },
       })
     };

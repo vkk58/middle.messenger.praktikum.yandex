@@ -1,12 +1,11 @@
 import Block from '../framework/Block';
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class ErrorText extends Block {
-  constructor(textInfo: ParamsForHBS) {
+  constructor(props: any) {
     super({        
-        text: textInfo.text,
+        text: props.text,
       attr: {
-        class:           textInfo.class
+        class:           props.class
       },
       })
     };

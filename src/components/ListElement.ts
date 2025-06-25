@@ -1,14 +1,13 @@
 import Block from '../framework/Block';
 import { Image } from "./Image";
 import { Text } from "./Text";
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class ListElement extends Block {
-  constructor(listElementsInfo: ParamsForHBS) {
+  constructor(props: any) {
     super({      
-        captionText : listElementsInfo.captionText || "", 
-        Image:        new Image({image: listElementsInfo.image, class: listElementsInfo.class, alt: listElementsInfo.alt}),
-        Text:         new Text({class: listElementsInfo.classSecond, text: listElementsInfo.text}),
+        captionText : props.captionText || "", 
+        Image:        new Image({image: props.image, class: props.class, alt: props.alt}),
+        Text:         new Text({class: props.classSecond, text: props.text}),
       })
     };
 

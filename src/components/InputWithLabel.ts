@@ -1,22 +1,23 @@
 import Block from '../framework/Block';
 import { Label } from "./Label";
 import { Input } from "./Input";
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class InputWithLabel extends Block {
-  constructor(inputwithLabelInfo: ParamsForHBS) {
-    super({      
+  constructor(props:any) {
+    super({   
+
         Label: new Label({
-            text: inputwithLabelInfo.text, 
-            for:  inputwithLabelInfo.name
+            text: props.text, 
+            for:  props.name
                             }),
         Input: new Input({
-            id: inputwithLabelInfo.name, 
-            type: inputwithLabelInfo.type, 
-            name: inputwithLabelInfo.name, 
-            placeholder: inputwithLabelInfo.placeholder, 
-            class: inputwithLabelInfo.class,
-            value: inputwithLabelInfo.value
+            ...props,
+            id: props.name, 
+            type: props.type, 
+            name: props.name, 
+            placeholder: props.placeholder, 
+            class: props.class,
+            value: props.value
         }),
       })
     };

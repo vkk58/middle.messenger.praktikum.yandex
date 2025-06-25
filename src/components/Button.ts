@@ -1,24 +1,28 @@
 import Block from '../framework/Block';
-import { ParamsForHBS } from '../helpers/commonInterference';
+import CommonValidator from '../framework/CommonValidate';
 import PageRouter from '../framework/PageRouter';
 
 export class Button extends Block {
-  constructor(buttonInfo: ParamsForHBS) {
-    let router = new PageRouter();
+  constructor(props: any) {
+    let router        = new PageRouter();
+    let dataValidator = new CommonValidator();
     super({
-      text:     buttonInfo.text,
+      ...props,
+      text:     props.text,
       events: {
         click: () => {
-          if(buttonInfo.buttonRoute)
+          if(props.buttonRoute)
           {
-            router.go(buttonInfo.buttonRoute);
+            if(props.type == "submit" && dataValidator.validateInputs(props.currentPage)) {
+              router.go(props.buttonRoute);
+            }
           }
         },
       },
       attr: {
-        id:       buttonInfo.id,
-        class:    buttonInfo.class,
-        type:     buttonInfo.type
+        id:       props.id,
+        class:    props.class,
+        type:     props.type,
       },
       })
     };

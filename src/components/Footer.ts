@@ -1,14 +1,13 @@
 import Block from '../framework/Block';
 import { Link } from '../components/Link';
-import { ParamsForHBS } from '../helpers/commonInterference';
 
 export class Footer extends Block {
-  constructor(footerInfo:ParamsForHBS) {
+  constructor(props:any) {
     super({
       LinkCreate: new Link({
         href:     '#',
-        datapage: footerInfo.linkPage,
-        text:     footerInfo.text,
+        datapage: props.linkPage,
+        text:     props.text,
         class: 'footer-link',
       })
     });
