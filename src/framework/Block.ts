@@ -1,23 +1,32 @@
 import EventBus, { EventCallback } from './EventBus';
 import Handlebars from 'handlebars';
 
-interface BlockProps {
-  [key: string]: any;
+interface BlockProps<P = any> {
+  props?: P & {
+    events?: Record<string, () => void>;
+  };
+  events?: Record<string, () => void>;
+  attr?: Record<string, string>;
+  children?: Record<string, Block>;
+  lists?: Block[];
+  text?: string;
+  message?: string;
+  captionText?: string;
 }
 
-export default class Block {
+export default class Block<P = any> {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
     FLOW_CDU: 'flow:component-did-update',
-    FLOW_RENDER: 'flow:render',
+    FLOW_RENDER: 'flow:render'
   };
-
+  
   protected _element: HTMLElement | null = null;
 
   protected _id: number = Math.floor(100000 + Math.random() * 900000);
 
-  protected props: BlockProps;
+  protected props: BlockProps<P>;
 
   protected children: Record<string, Block>;
 
@@ -25,7 +34,7 @@ export default class Block {
 
   protected eventBus: () => EventBus;
 
-  constructor(propsWithChildren: BlockProps = {}) {
+  constructor(propsWithChildren: BlockProps<P>) {
     
     const eventBus = new EventBus();
     const { props, children, lists } = this._getChildrenPropsAndProps(propsWithChildren);
@@ -37,15 +46,17 @@ export default class Block {
     eventBus.emit(Block.EVENTS.INIT);
   }
 
-  private _addEvents(): void {
-    const { events = {} } = this.props;
-    Object.keys(events).forEach(eventName => {
-      if (this._element) {
-    
-        this._element.addEventListener(eventName, events[eventName]);
-      }
+private _addEvents(): void {
+    const events: Record<string, () => void> = this.props.events 
+        ? { ...this.props.events } 
+        : {};
+
+    Object.entries(events).forEach(([eventName, handler]) => {
+        if (this._element && typeof handler === 'function') {
+            this._element.addEventListener(eventName, handler);
+        }
     });
-  }
+}
 
   private _registerEvents(eventBus: EventBus): void {
     eventBus.on(Block.EVENTS.INIT, this.init.bind(this) as EventCallback);
@@ -65,7 +76,6 @@ export default class Block {
   }
 
   protected componentDidMount(): void {
-    debugger;
   }
 
   public dispatchComponentDidMount(): void {
@@ -85,30 +95,36 @@ export default class Block {
     return true;
   }
 
-  private _getChildrenPropsAndProps(propsAndChildren: BlockProps): {
+  private _getChildrenPropsAndProps(propsAndChildren: BlockProps<P>): {
     children: Record<string, Block>,
-    props: BlockProps,
+    props: BlockProps<P>,
     lists: Record<string, any[]>
-  } {
+} {
     const children: Record<string, Block> = {};
-    const props: BlockProps = {};
+    const props: Partial<BlockProps<P>> = {};
     const lists: Record<string, any[]> = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
-      if (value instanceof Block) {
-        children[key] = value;
-      } else if (Array.isArray(value)) {
-        lists[key] = value;
-      } else {
-        props[key] = value;
-      }
+        if (value instanceof Block) {
+            children[key] = value;
+        } else if (Array.isArray(value)) {
+            lists[key] = value;
+        } else {
+            const validKey = key as keyof BlockProps<P>;
+            props[validKey] = value;
+        }
     });
 
-    return { children, props, lists };
-  }
+    return {
+        children,
+        props: props as BlockProps<P>,
+        lists
+    };
+}
 
   protected addAttributes(): void {
-    const { attr = {} } = this.props;
+    if (!this.props.attr) return;
+    const { attr = {} } = this.props.attr as Record<string, string>;
 
     Object.entries(attr).forEach(([key, value]) => {
       if (this._element) {
@@ -146,7 +162,7 @@ export default class Block {
   }
 
   private _render(): void {
-    const propsAndStubs = { ...this.props };
+    const propsAndStubs: Record<string, any> = { ...this.props };
     const tmpId =  Math.floor(100000 + Math.random() * 900000);
     Object.entries(this.children).forEach(([key, child]) => {
       propsAndStubs[key] = `<div data-id="${child._id}"></div>`;
@@ -223,19 +239,5 @@ export default class Block {
 
   private _createDocumentElement(tagName: string): HTMLTemplateElement {
     return document.createElement(tagName) as HTMLTemplateElement;
-  }
-
-  public show(): void {
-    const content = this.getContent();
-    if (content) {
-      content.style.display = 'block';
-    }
-  }
-
-  public hide(): void {
-    const content = this.getContent();
-    if (content) {
-      content.style.display = 'none';
-    }
   }
 }

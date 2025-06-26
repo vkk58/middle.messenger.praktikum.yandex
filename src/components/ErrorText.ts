@@ -1,7 +1,12 @@
 import Block from '../framework/Block';
 
+interface ErrorTextProps {
+  text:   string,
+  class:  string
+}
+
 export class ErrorText extends Block {
-  constructor(props: any) {
+  constructor(props: ErrorTextProps) {
     super({        
         text: props.text,
       attr: {

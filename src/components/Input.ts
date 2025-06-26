@@ -1,7 +1,17 @@
 import Block from '../framework/Block';
 
+interface InputProps {
+  id:           string,
+  type:         string,
+  name:         string,
+  placeholder:  string,
+  value:        string,
+  class:        string,  
+  events?:      Record<string, () => void>;
+}
+
 export class Input extends Block {
-  constructor(props: any) {
+  constructor(props: InputProps) {
     super({
       ...props,
       attr: {

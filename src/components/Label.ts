@@ -1,7 +1,12 @@
 import Block from '../framework/Block';
 
+interface LabelProps {
+  text: string,
+  for:  string
+}
+
 export class Label extends Block {
-  constructor(props: any) {
+  constructor(props: LabelProps) {
     super({
         text: props.text,
       attr: {

@@ -41,19 +41,11 @@ export default class CommonPage extends Block{
                                         href:     '#',
                                         datapage: "profilePage",
                                         text:     "Профиль >",
-                                        class: "footer-link profileLink",
-                                        onClick: (event: Event) => {
-                                          console.log('CLICK');          
-                                          event.preventDefault();
-                                          event.stopPropagation();
-                                        }
+                                        class: "footer-link profileLink"
                                       }),
                 InputWithLabelSearch:   new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input'}),
                 LabelForMessage:        new Label({text: "Отправка сообщения", for: 'message'}),
                 InputMessage:           new Input({id: "message", type: "text", class: "input", name: "message"}),
-                InputWithLabelPassword: new InputWithLabel({text: "Пароль", name: 'password', type: 'text', class: 'input'}),
-                InputWithLabelEmail:    new InputWithLabel({text: "Почта", name: 'email', type: 'text', class: 'input'}),
-                InputWithLabelPhone:    new InputWithLabel({text: "Номер телефона", name: 'phone', type: 'text', class: 'input'}),
                 ButtonSendMessage:      new Button({text: "Отправить", id: 'createProfile', class: 'miniButton', type: 'submit'}),
                 listEl
             }

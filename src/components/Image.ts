@@ -1,7 +1,13 @@
 import Block from '../framework/Block';
 
+interface ImageProps {
+  image:  string,
+  class:  string,
+  alt:    string,
+}
+
 export class Image extends Block {
-  constructor(props:any) {
+  constructor(props:ImageProps) {
     super({
       attr: {
         src:    props.image,

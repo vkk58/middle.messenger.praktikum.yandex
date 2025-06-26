@@ -1,11 +1,25 @@
 import Block from '../framework/Block';
 import { Label } from "./Label";
 import { Input } from "./Input";
+import PageValidator from '../framework/validate/PageValidator';
+
+interface InputWithLabelProps {
+  text:         string,
+  type:         string,
+  class:        string,
+  name:         string,
+  value?:        string,
+  placeholder:  string,
+  currentPage:  string,
+}
 
 export class InputWithLabel extends Block {
-  constructor(props:any) {
+  
+  constructor(props:InputWithLabelProps) {
+    let validateRoute = new PageValidator();
     super({   
-
+      children: {
+        
         Label: new Label({
             text: props.text, 
             for:  props.name
@@ -17,11 +31,13 @@ export class InputWithLabel extends Block {
             name: props.name, 
             placeholder: props.placeholder, 
             class: props.class,
-            value: props.value
-        }),
+            value: props.value || '',
+            events:{blur:() => {validateRoute.validate(props.currentPage, props.name);}}
+        })
+      }
       })
     };
-
+    
   override render(): string {
     return `<form>
             {{{ Label }}}

@@ -1,12 +1,14 @@
+import CommonValidator from "../../framework/validate/CommonValidate";
 
-export default class ValidateStartPage {
-    private inputElement: HTMLInputElement; 
+export default class ValidateStartPage extends CommonValidator{
+
+    override initButton(): void {
+        this.button    = document.getElementById('signIn') as HTMLButtonElement;
+    }
 
     public validateInput(name: string):boolean {
-        let   check             = true;
-        let   errorTxt:string;
-        const button            = document.getElementById('signIn') as HTMLButtonElement;
-
+        let   check    = true;
+        let   errorTxt = '';
         
         this.inputElement       = document.getElementById(name) as HTMLInputElement;        
         let counter             = this.inputElement.value.length;
@@ -18,35 +20,28 @@ export default class ValidateStartPage {
 
         if(check){
             this.deleteErrorText(name);
-            button.disabled = false; 
         } else{
-            this.createErrorText(name, "Поле обязательно для заполнения");
-            if(button){ 
-                button.disabled = true;
-            }
+            this.createErrorText(name, errorTxt);
         }
 
         return check;
-  }
-
-  private createErrorText(id: string, errorTxt: string): void {
-    if(document.getElementById('error_' + id))
-    {
-        return;
     }
-    const errorElement          = document.createElement('div');
-    errorElement.className      = 'error-message';
-    errorElement.textContent    = errorTxt;
-    errorElement.id             = 'error_' + id;
-    this.inputElement?.after(errorElement);
-    this.inputElement?.classList.add('input-error');  
-  }
 
-  private deleteErrorText(id: string): void{
-    const errorElement          = document.getElementById('error_' + id);
-    if(errorElement)
-    {
-        errorElement.remove();
-    }
+    public validateInputs(){
+        let inputElements   = this.getInputList();
+        let ret             = true;
+        let counter         = inputElements.length;
+
+        while(counter != 0)
+        {
+            counter--;
+            ret = this.validateInput(inputElements.item(counter)?.name as string) && ret;
+        }
+
+        if(!ret){
+            this.button.disabled = true;
+        }
+
+        return ret;
   }
 }

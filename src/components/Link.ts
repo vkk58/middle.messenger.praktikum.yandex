@@ -1,17 +1,27 @@
 import Block from '../framework/Block';
 import PageRouter from '../framework/PageRouter';
-
+interface LinkProps {
+  datapage: string,
+  text:     string,
+  class:    string,
+  href:     string
+}
 export class Link extends Block {
-  constructor(props: any) {
+  constructor(props: LinkProps) {
     let router = new PageRouter();
     super({
       ...props,
       events: {
         click: () => {
-          router.go(this.props.datapage);
-        },
-      }
-    });    
+          router.go(props.datapage);
+        }
+      },
+      attr: {
+        href:     props.href,
+        class:    props.class,
+        datapage: props.datapage,
+      }        
+      });    
   }
 /*
   changePage() {
@@ -19,6 +29,6 @@ export class Link extends Block {
   }
 */
   override render() {
-    return '<a href="{{href}}" class="{{class}}" data-page="{{datapage}}">{{text}}</a>';
+    return '<a>{{text}}</a>';
   }
 }
