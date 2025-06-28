@@ -1,19 +1,19 @@
 export default class CommonValidator {
-    protected name?:        string;
-    protected error:        string;
-    protected errorTxt:     string;
-    protected check:        boolean;
-    protected button:       HTMLButtonElement;
-    protected inputElement: HTMLInputElement; 
+  protected name?:        string;
+  protected error:        string;
+  protected errorTxt:     string;
+  protected check:        boolean;
+  protected button:       HTMLButtonElement;
+  protected inputElement: HTMLInputElement; 
 
-    constructor(name?: string){
-      this.name = name;
-    }
+  constructor(name?: string){
+    this.name = name;
+  }
 
-    public getInputList():HTMLCollectionOf<HTMLInputElement> {
-        const inputElements = document.getElementsByTagName('input');
+  public getInputList():HTMLCollectionOf<HTMLInputElement> {
+      const inputElements = document.getElementsByTagName('input');
 
-        return inputElements;
+      return inputElements;
   }
 
   protected createErrorText(): void {

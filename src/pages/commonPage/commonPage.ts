@@ -43,7 +43,9 @@ export default class CommonPage extends Block{
                           InputWithLabelSearch:   new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input', currentPage:"commonPage"}),
                           LabelForMessage:        new Label({text: "Отправка сообщения", for: 'message'}),
                           InputMessage:           new Input({id: "message", type: "text", class: "input", name: "message", placeholder: "Сообщение...", value:""}),
-                          ButtonSendMessage:      new Button({text: "Отправить", id: 'createProfile', class: 'mini-button', type: 'submit'}),
+                          ButtonSendMessage:      new Button({text: "Отправить", id: 'createProfile', class: 'mini-button', type: 'submit',
+                                                            events: {click: () => {console.log("Отправка сообщения")},                                                                 }
+                                                            }),
                                     },
                 lists: listEl
             }

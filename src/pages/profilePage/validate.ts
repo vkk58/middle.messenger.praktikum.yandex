@@ -11,6 +11,10 @@ export default class ValidateProfilePage extends ValidateRegistrationPage{
         if(!this.name)
             return true;
 
+        if(!this.button){
+            this.button    = document.getElementById('changeProfileData') as HTMLButtonElement;
+        }
+
         this.check = super.validateInput();
 
         if(this.check === true){  

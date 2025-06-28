@@ -5,6 +5,7 @@ import CommonPage from '../pages/commonPage/commonPage';
 import ErrorPage from '../pages/errorPage/errorPage';
 export default class PageRouter {
   public go(pageName: string) {
+    //использовал any для того, чтобы не дублировать код
     let changingPage: any;   
     switch(pageName)
     {

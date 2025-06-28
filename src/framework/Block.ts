@@ -31,7 +31,7 @@ export default class Block{
 
   protected children: Record<string, Block>;
 
-  protected lists: Record<string, any[]>;
+  protected lists: Record<string, Block[]>;
 
   protected eventBus: () => EventBus;
 
@@ -40,7 +40,7 @@ export default class Block{
     const { props, children, lists } = this._getChildrenPropsAndProps(propsWithChildren);
     this.props = this._makePropsProxy({ ...props });
     this.children = props.children? props.children : children;
-    this.lists = this._makePropsProxy({ ...lists });
+    this.lists = this._makePropsProxyForBlock({ ...lists });
     this.eventBus = () => eventBus;
     this._registerEvents(eventBus);
     eventBus.emit(Block.EVENTS.INIT);
@@ -98,11 +98,11 @@ private _addEvents(): void {
   private _getChildrenPropsAndProps(propsAndChildren: BlockProps): {
     children: Record<string, Block>,
     props: BlockProps,
-    lists: Record<string, any[]>
+    lists: Record<string, Block[]>
 } {
     const children: Record<string, Block> = {};
     const props: Partial<BlockProps> = {};
-    const lists: Record<string, any[]> = {};
+    const lists: Record<string, Block[]> = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
         if (value instanceof Block) {
@@ -133,7 +133,7 @@ private _addEvents(): void {
     });
   }
 
-  protected setAttributes(attr: any): void {
+  protected setAttributes(attr: Record<string, string>): void {
     Object.entries(attr).forEach(([key, value]) => {
       if (this._element) {
         this._element.setAttribute(key, value as string);
@@ -149,58 +149,45 @@ private _addEvents(): void {
     Object.assign(this.props, nextProps);
   };
 
-  public setLists = (nextList: Record<string, any[]>): void => {
-    if (!nextList) {
-      return;
-    }
-
-    Object.assign(this.lists, nextList);
-  };
-
   get element(): HTMLElement | null {
     return this._element;
   }
 
-  private _render(): void {    
-    const propsAndStubs: Record<string, any> = { ...this.props };
-    const tmpId =  Math.floor(100000 + Math.random() * 900000);
-    Object.entries(this.children).forEach(([key, child]) => {
-      propsAndStubs[key] = `<div data-id="${child._id}"></div>`;
-    });
-
-    Object.entries(this.lists).forEach(([key]) => {
-      propsAndStubs[key] = `<div data-id="__l_${tmpId}"></div>`;
-    });
+  private _render(): void {
+    const propsAndStubs: Record<string, unknown> = { 
+        ...this.props,
+        ...Object.fromEntries(
+            Object.entries(this.children).map(([key, child]) => 
+                [key, `<div data-id="${child._id}"></div>`]
+            )
+        ),
+        ...Object.fromEntries(
+            Object.entries(this.lists).map(([key]) => 
+                [key, `<div data-id="__l_${this._id}"></div>`]
+            )
+        )
+    };
 
     const fragment = this._createDocumentElement('template');
-    fragment.innerHTML = Handlebars.compile(this.render())(propsAndStubs);
+    fragment.innerHTML = Handlebars.compile(this.render())(propsAndStubs as Record<string, unknown>);
 
     Object.values(this.children).forEach(child => {
-      const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
-      if (stub) {
-        stub.replaceWith(child.getContent());
-      }
+        const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
+        stub?.replaceWith(child.getContent());
     });
 
-    Object.entries(this.lists).forEach(([, child]) => {
-      const listCont = this._createDocumentElement('template');
-      child.forEach(item => {
-        if (item instanceof Block) {
-          listCont.content.append(item.getContent());
-        } else {
-          listCont.content.append(`${item}`);
-        }
-      });
-      const stub = fragment.content.querySelector(`[data-id="__l_${tmpId}"]`);
-      if (stub) {
-        stub.replaceWith(listCont.content);
-      }
+    Object.entries(this.lists).forEach(([, items]) => {
+        const listCont = this._createDocumentElement('template');
+        items.forEach(item => {
+            listCont.content.append(
+                item instanceof Block ? item.getContent() : document.createTextNode(String(item)))
+        });
+        const stub = fragment.content.querySelector(`[data-id="__l_${this._id}"]`);
+        stub?.replaceWith(listCont.content);
     });
 
     const newElement = fragment.content.firstElementChild as HTMLElement;
-    if (this._element && newElement) {
-      this._element.replaceWith(newElement);
-    }
+    this._element?.replaceWith(newElement);
     this._element = newElement;
     this._addEvents();
     this.addAttributes();
@@ -217,23 +204,50 @@ private _addEvents(): void {
     return this._element;
   }
 
-  private _makePropsProxy(props: any): any {
+  private _makePropsProxy(props: BlockProps): BlockProps {
     const self = this;
-
     return new Proxy(props, {
-      get(target: any, prop: string) {
-        const value = target[prop];
-        return typeof value === 'function' ? value.bind(target) : value;
-      },
-      set(target: any, prop: string, value: any) {
-        const oldTarget = { ...target };
-        target[prop] = value;
-        self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
-        return true;
-      },
-      deleteProperty() {
-        throw new Error('No access');
-      },
+        get(target: BlockProps, prop: string | symbol) {
+            if (typeof prop === 'symbol') {
+                return Reflect.get(target, prop);
+            }
+            const value = (target as Record<string, unknown>)[prop];            
+            if (typeof value === 'function') {
+                return value.bind(target);
+            }
+            
+            return value;
+        },
+        set<K extends keyof BlockProps>(target: BlockProps, prop: K, value: BlockProps[K]): boolean {
+            const oldTarget = { ...target };
+            target[prop] = value;
+            self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
+            return true;
+        },
+        deleteProperty(): boolean {
+            throw new Error('No access');
+        }
+    });
+  }
+  
+  private _makePropsProxyForBlock(props: Record<string, Block[]>): Record<string, Block[]> {
+    const self = this;
+    return new Proxy(props, {
+        get(target: Record<string, Block[]>, prop: string): Block[] | undefined {
+            return target[prop];
+        },
+        set(target: Record<string, Block[]>, prop: string, value: unknown): boolean {
+            if (!Array.isArray(value) || !value.every(item => item instanceof Block)) {
+                throw new Error('Это не массив');
+            }
+            const oldTarget = { ...target };
+            target[prop] = value;
+            self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
+            return true;
+        },
+        deleteProperty(): boolean {
+            throw new Error('No access');
+        }
     });
   }
 

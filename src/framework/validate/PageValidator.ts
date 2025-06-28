@@ -4,7 +4,7 @@ import ValidateStartPage from '../../pages/startPage/validate';
 
 export default class PageValidator{    
     public validate(page:string, name?: string): boolean{    
-        debugger;
+        //any используется, чтобы не дублировать методы после switch
         let validClass: any;
         let ret: boolean;
         switch(page){

@@ -3,6 +3,7 @@ import CommonValidator from "../../framework/validate/CommonValidate";
 export default class ValidateRegistrationPage extends CommonValidator{
 
     initButton(id: string): void {
+        debugger;
         this.button    = document.getElementById(id) as HTMLButtonElement;
     }
 
@@ -13,6 +14,10 @@ export default class ValidateRegistrationPage extends CommonValidator{
        
         if(!this.name)
             return this.check;
+
+        if(!this.button){
+            this.button    = document.getElementById('createProfile') as HTMLButtonElement;
+        }
 
         this.inputElement   = document.getElementById(this.name) as HTMLInputElement;     
         let inputValue      = this.inputElement.value;
@@ -26,8 +31,8 @@ export default class ValidateRegistrationPage extends CommonValidator{
                 }
                 break;
             case "login":
-                if(inputValue.length > 3 
-                || inputValue.length < 20
+                if(inputValue.length < 3 
+                || inputValue.length > 20
                 || /[a-zA-Z-_]/.test(inputValue) === false
                 || /[а-яА-Я-_]/.test(inputValue) === true){
                     this.check    = false;
@@ -35,8 +40,8 @@ export default class ValidateRegistrationPage extends CommonValidator{
                 }
                 break;
             case "password":
-                if(inputValue.length > 8 
-                || inputValue.length < 40
+                if(inputValue.length < 8 
+                || inputValue.length > 40
                 || /[A-Z]/.test(inputValue) === false
                 || /[0-9]/.test(inputValue) === false){
                     this.check    = false;
@@ -50,9 +55,9 @@ export default class ValidateRegistrationPage extends CommonValidator{
                 }
                 break;
             case "phone":
-                if(inputValue.length > 10 
-                || inputValue.length < 15
-                || /^[0-9+][0-9]$/.test(inputValue) === false){
+                if(inputValue.length < 10 
+                || inputValue.length > 15
+                || /^[0-9+][0-9]/.test(inputValue) === false){
                     this.check    = false;
                     this.errorTxt = "Условия не соблюдены: от 10 до 15 символов, состоит из цифр, может начинается с плюса.";                    
                 }

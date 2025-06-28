@@ -4,58 +4,62 @@
 }
 
 .leftBox {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100vh;
   background: var(--background-color);
   box-shadow: 2px 0 5px var(--secondary-color);
-  z-index: 1000;
+  box-sizing: border-box;
+  height: 100vh;
+  left: 0;
   overflow-y: auto;
   padding: 20px;
-  box-sizing: border-box;
-}
-.profileLink {
-  margin-left: 140px;
-  font-size: 18px;
-}
-.messageElements {
   position: fixed;
+  top: 0;
+  width: 300px;
+  z-index: 1000;
+}
+
+.profileLink {
+  font-size: 18px;
+  margin-left: 140px;
+}
+
+.messageElements {
+  background: var(--background-color);
   bottom: 0;
   left: 300px;
-  width: calc(100% - 320px);
   padding: 15px;
-  background: var(--background-color);
+  position: fixed;
+  width: calc(100% - 320px);
 }
+
 .messageContainer {
-  display: flex;
   align-items: center;
+  display: flex;
   gap: 8px;
 }
 
 .right-content { 
   margin-left: 300px; 
-  width: calc(100% - 300px);
+  min-height: 100vh;
   padding: 20px;
   position: relative;
-  min-height: 100vh;
+  width: calc(100% - 300px);
 }
+
 .miniImg {
   border-radius: 50%; 
-  width: 50px;   
-  height: 50px;  
-  object-fit: cover; 
+  height: 50px; 
+  object-fit: cover;
+  width: 50px;     
 }
 
 .contactTextType {
-  font-weight: bold;
   font-size: 1rem;
+  font-weight: bold;
 }
 
 .contactTextMessageType {
-  font-weight: bold;
   font-size: 0.8rem;
+  font-weight: bold;
 }
 
 .lineBreak {
@@ -64,13 +68,13 @@
 
 .round-img_Common {
   border-radius: 50%; 
-  width: 75px;   
   height: 75px;  
   object-fit: cover;   
+  width: 75px;   
 }
 
 figure {
+    display: block; 
     margin: 0; 
     padding: 0; 
-    display: block; 
 }

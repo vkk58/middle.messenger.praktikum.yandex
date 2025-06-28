@@ -9,9 +9,12 @@ export default class ValidateStartPage extends CommonValidator{
     public validateInput():boolean {
         this.check    = true;
         this.errorTxt = '';
-        
         if(!this.name)
             return this.check;
+
+        if(!this.button){
+            this.button    = document.getElementById('signIn') as HTMLButtonElement;
+        }
 
         this.inputElement       = document.getElementById(this.name) as HTMLInputElement;        
         let counter             = this.inputElement.value.length;

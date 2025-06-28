@@ -1,39 +1,39 @@
-export type EventCallback = (...args: any[]) => void;
+export type EventCallback<Args extends unknown[] = unknown[]> = (...args: Args) => void;
 
-export default class EventBus {
+export default class EventBus<Events extends Record<string, unknown[]> = Record<string, unknown[]>> {
+    private listeners: {
+        [E in keyof Events]?: EventCallback<Events[E]>[]
+    } = {};
 
-    private listener: Record<string, EventCallback[]>;
-
-    constructor() {
-        
-        this.listener = {};
-    }
-
-    public on(event:string, callback: EventCallback): void {
-        if(!this.listener[event])
-        {
-            this.listener[event] = [];    
+    public on<Event extends keyof Events>(
+        event: Event,
+        callback: EventCallback<Events[Event]>
+    ): void {
+        if (!this.listeners[event]) {
+            this.listeners[event] = [];
         }
-
-        this.listener[event].push(callback);
+        this.listeners[event]!.push(callback);
     }
 
-    public emit(event:string, ...args: any[]): void {
-        if(!this.listener[event])
-        {
-            throw new Error('Событие не найдено: ${event}');            
+    public emit<Event extends keyof Events>(
+        event: Event,
+        ...args: Events[Event]
+    ): void {
+        const callbacks = this.listeners[event];
+        if (!callbacks) {
+            throw new Error(`Событие не найдено: ${String(event)}`);
         }
-
-        this.listener[event].forEach(l => {l(...args)});
+        callbacks.forEach(callback => callback(...args));
     }
 
-    public off(event:string, callback: EventCallback): void {
-        if(!this.listener[event])
-        {
-            throw new Error('Событие не найдено: ${event}');     
+    public off<Event extends keyof Events>(
+        event: Event,
+        callback: EventCallback<Events[Event]>
+    ): void {
+        const callbacks = this.listeners[event];
+        if (!callbacks) {
+            throw new Error(`Событие не найдено: ${String(event)}`);
         }
-
-        this.listener[event] = this.listener[event].filter(l => l!==callback);
+        this.listeners[event] = callbacks.filter(cb => cb !== callback);
     }
-  
 }
