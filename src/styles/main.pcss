@@ -1,41 +1,31 @@
 :root {
-  --primary-color: #349;
-  --secondary-color: #2c3;
-  --background-color: #f44;
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --background-color: #f4f4f4;
   --text-color: #333;
-  --error-color: #e74;
+  --error-color: #e74c3c;
 }
 
-.header-text {
-  width: 50px;
-  height: 20px;
-  position: absolute;
-  top: -340px;
-  left: -3455px;
-}
-
-body {
+.body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: var(--background-color);
 }
 
 .app {
-  background-color: #fff;
+  background-color: var(--background-color);
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgb(44 62 80 / 10%);
+  box-shadow: 0 0 10px var(--secondary-color);
 }
 
 h1,
 h2,
 h3 {
   color: var(--secondary-color);
-  margin-top: 0;
 }
 
 .input,
@@ -45,81 +35,63 @@ h3 {
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #ddd;
-  border-radius: 4px;
 }
 
 .button {
   background-color: var(--primary-color);
-  color: #fff;
+  color: white;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-weight: bold;
-}
 
-.button:hover {
-  background-color: color-mix(in srgb, var(--primary-color) 80%, #000);
-}
+  &:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 80%, black);
+  }
 
-.button:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
+  &:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
 }
 
 .mini-button {
   background-color: var(--primary-color);
   width: 90px;
-  height: 40px;
-  padding: 0;
-  font-size: 0.9rem;
-}
+  height: 40px
+  }
 
 ul {
   list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
 li {
-  background-color: #fff;
+  background-color: white;
   margin: 10px 0;
-  padding: 15px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  padding: 10px;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgb(0 0 0 /10%);
 }
 
 .error {
   color: var(--error-color);
   font-weight: bold;
-  font-size: 0.9rem;
 }
 
 .footer {
-  margin-top: 40px;
+  margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--secondary-color);
   display: flex;
   justify-content: space-around;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .footer-link {
   color: var(--primary-color);
   text-decoration: none;
   font-weight: bold;
-  transition: color 0.2s ease;
-}
 
-.footer-link:hover {
-  text-decoration: underline;
-  color: var(--secondary-color);
-}
-
-.error-message {
-  color: var(--error-color);
-  font-size: 0.8rem; 
-  margin-top: 5px;
-  display: block;
+  &:hover {
+    text-decoration: underline;
+  }
 }
