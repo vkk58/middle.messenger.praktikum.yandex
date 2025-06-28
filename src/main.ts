@@ -5,6 +5,6 @@ import './pages/errorPage/styles.pcss';
 import App from './APP';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new App();
-    app.render();
+  const app = new App();
+  app.render();
 });
