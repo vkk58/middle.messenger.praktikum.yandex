@@ -23,11 +23,6 @@ export class Link extends Block {
       }        
       });    
   }
-/*
-  changePage() {
-    
-  }
-*/
   override render() {
     return '<a>{{text}}</a>';
   }
