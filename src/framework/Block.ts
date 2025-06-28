@@ -1,11 +1,12 @@
 import EventBus, { EventCallback } from './EventBus';
 import Handlebars from 'handlebars';
 
-interface BlockProps<P = any> {
-  props?: P & {
-    events?: Record<string, () => void>;
+interface BlockProps {
+  props?: {
+    id: string;
+    type?: string;
   };
-  events?: Record<string, () => void>;
+  events?: Record<string, (e?: Event) => void>;
   attr?: Record<string, string>;
   children?: Record<string, Block>;
   lists?: Block[];
@@ -14,7 +15,7 @@ interface BlockProps<P = any> {
   captionText?: string;
 }
 
-export default class Block<P = any> {
+export default class Block{
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -26,7 +27,7 @@ export default class Block<P = any> {
 
   protected _id: number = Math.floor(100000 + Math.random() * 900000);
 
-  protected props: BlockProps<P>;
+  protected props: BlockProps;
 
   protected children: Record<string, Block>;
 
@@ -34,12 +35,11 @@ export default class Block<P = any> {
 
   protected eventBus: () => EventBus;
 
-  constructor(propsWithChildren: BlockProps<P>) {
-    
+  constructor(propsWithChildren: BlockProps) {    
     const eventBus = new EventBus();
     const { props, children, lists } = this._getChildrenPropsAndProps(propsWithChildren);
     this.props = this._makePropsProxy({ ...props });
-    this.children = children;
+    this.children = props.children? props.children : children;
     this.lists = this._makePropsProxy({ ...lists });
     this.eventBus = () => eventBus;
     this._registerEvents(eventBus);
@@ -95,13 +95,13 @@ private _addEvents(): void {
     return true;
   }
 
-  private _getChildrenPropsAndProps(propsAndChildren: BlockProps<P>): {
+  private _getChildrenPropsAndProps(propsAndChildren: BlockProps): {
     children: Record<string, Block>,
-    props: BlockProps<P>,
+    props: BlockProps,
     lists: Record<string, any[]>
 } {
     const children: Record<string, Block> = {};
-    const props: Partial<BlockProps<P>> = {};
+    const props: Partial<BlockProps> = {};
     const lists: Record<string, any[]> = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
@@ -110,21 +110,21 @@ private _addEvents(): void {
         } else if (Array.isArray(value)) {
             lists[key] = value;
         } else {
-            const validKey = key as keyof BlockProps<P>;
+            const validKey = key as keyof BlockProps;
             props[validKey] = value;
         }
     });
 
     return {
         children,
-        props: props as BlockProps<P>,
+        props: props as BlockProps,
         lists
     };
 }
 
   protected addAttributes(): void {
     if (!this.props.attr) return;
-    const { attr = {} } = this.props.attr as Record<string, string>;
+    const attr = this.props.attr as Record<string, string>;
 
     Object.entries(attr).forEach(([key, value]) => {
       if (this._element) {
@@ -161,7 +161,7 @@ private _addEvents(): void {
     return this._element;
   }
 
-  private _render(): void {
+  private _render(): void {    
     const propsAndStubs: Record<string, any> = { ...this.props };
     const tmpId =  Math.floor(100000 + Math.random() * 900000);
     Object.entries(this.children).forEach(([key, child]) => {

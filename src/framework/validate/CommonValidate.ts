@@ -1,22 +1,29 @@
 export default class CommonValidator {
-    protected button:HTMLButtonElement;
+    protected name?:        string;
+    protected error:        string;
+    protected errorTxt:     string;
+    protected check:        boolean;
+    protected button:       HTMLButtonElement;
     protected inputElement: HTMLInputElement; 
+
+    constructor(name?: string){
+      this.name = name;
+    }
+
     public getInputList():HTMLCollectionOf<HTMLInputElement> {
         const inputElements = document.getElementsByTagName('input');
 
         return inputElements;
   }
 
-  public initButton(): void{}
-
-  protected createErrorText(id: string, errorTxt: string): void {
-    if(document.getElementById('error_' + id)){
+  protected createErrorText(): void {
+    if(document.getElementById('error_' + this.name)){
         return;
     }
     const errorElement          = document.createElement('div');
     errorElement.className      = 'error-message';
-    errorElement.textContent    = errorTxt;
-    errorElement.id             = 'error_' + id;
+    errorElement.textContent    = this.errorTxt;
+    errorElement.id             = 'error_' + this.name;
     this.inputElement?.after(errorElement);
     this.inputElement?.classList.add('input-error'); 
     if(this.button){ 
@@ -24,8 +31,8 @@ export default class CommonValidator {
     }
   }
 
-  protected deleteErrorText(id: string): void{
-    const errorElement          = document.getElementById('error_' + id);
+  protected deleteErrorText(): void{
+    const errorElement          = document.getElementById('error_' + this.name);
     if(errorElement){
         errorElement.remove();
     }
@@ -33,4 +40,13 @@ export default class CommonValidator {
         this.button.disabled = false;
     }
   }
+
+  public setupErrorText(){
+    if(this.check){
+        this.deleteErrorText();
+    } else{
+        this.createErrorText();
+    }
+  }
+
 }

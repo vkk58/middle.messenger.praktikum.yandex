@@ -7,7 +7,7 @@ interface InputProps {
   placeholder:  string,
   value:        string,
   class:        string,  
-  events?:      Record<string, () => void>;
+  events?:      Record<string, (e?: Event) => void>;
 }
 
 export class Input extends Block {

@@ -16,38 +16,36 @@ export default class CommonPage extends Block{
                           alt:          "Пользователь1",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p",
                           captionText:  "Друг1"}),
           new ListElement({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", 
                           class:  "miniImg", 
                           alt:    "Пользователь2",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p",
                           captionText:  "Друг2"}),
           new ListElement({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", 
                           class:  "miniImg", 
                           alt:    "Пользователь3",
                           text:         "Последнее сообщение",
                           classSecond:  "contactTextMessageType",
-                          id:           "p",
                           captionText:  "Друг3"})
         ];
         super(
             {
-                LinkList: new LinkList(),
-                
-                LinkProfile: new Link({
-                                        href:     '#',
-                                        datapage: "profilePage",
-                                        text:     "Профиль >",
-                                        class: "footer-link profileLink"
-                                      }),
-                InputWithLabelSearch:   new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input'}),
-                LabelForMessage:        new Label({text: "Отправка сообщения", for: 'message'}),
-                InputMessage:           new Input({id: "message", type: "text", class: "input", name: "message"}),
-                ButtonSendMessage:      new Button({text: "Отправить", id: 'createProfile', class: 'miniButton', type: 'submit'}),
-                listEl
+                children:{
+                          LinkList:               new LinkList(),                          
+                          LinkProfile:            new Link({
+                                                            href:     '#',
+                                                            datapage: "profilePage",
+                                                            text:     "Профиль >",
+                                                            class: "footer-link profileLink"
+                                                          }),
+                          InputWithLabelSearch:   new InputWithLabel({text: "Поиск", name: 'search', type: 'text', class: 'input', currentPage:"commonPage"}),
+                          LabelForMessage:        new Label({text: "Отправка сообщения", for: 'message'}),
+                          InputMessage:           new Input({id: "message", type: "text", class: "input", name: "message", placeholder: "Сообщение...", value:""}),
+                          ButtonSendMessage:      new Button({text: "Отправить", id: 'createProfile', class: 'miniButton', type: 'submit'}),
+                                    },
+                lists: listEl
             }
         );
     };
@@ -63,7 +61,7 @@ export default class CommonPage extends Block{
                     <div class="lineBreak"></div>
                     </form>
                     <main class="gridCommonPage">    
-                    {{{ listEl }}}
+                    {{{ lists }}}
                     </main>
                   </aside>
                   <main class="right-content">

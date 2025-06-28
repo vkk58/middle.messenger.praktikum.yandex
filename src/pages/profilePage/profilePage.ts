@@ -4,31 +4,51 @@ import { LinkList } from "../../components/LinkList";
 import Block from "../../framework/Block";
 import { Image } from "../../components/Image";
 import { Input } from "../../components/Input";
+import PageRouter from "../../framework/PageRouter";
+import ValidateProfilePage from "./validate";
+import { Global } from "../../helpers/functions";
 
 export default class ProfilePage extends Block{
     constructor() {
-        let inputWithLabelArray: InputWithLabel[] = [
-            new InputWithLabel({text: "Имя", name: 'first_name', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Фамилия", name: 'second_name', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Ник", name: 'display_name', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Логин", name: 'login', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Почта", name: 'email', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Номер телефона", name: 'phone', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Старый пароль", name: 'oldPassword', type: 'text', class: 'input', value: "", placeholder: ""}),
-            new InputWithLabel({text: "Новый пароль", name: 'newPassword', type: 'text', class: 'input', value: "", placeholder: ""})
+        let globalClass  = new Global();
+        let router       = new PageRouter();
+        let validatePage = new ValidateProfilePage();
+        let blocksArray: InputWithLabel[] = [
+            new InputWithLabel({text: "Имя", name: 'first_name', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Фамилия", name: 'second_name', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Ник", name: 'display_name', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Логин", name: 'login', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Почта", name: 'email', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Номер телефона", name: 'phone', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Старый пароль", name: 'oldPassword', type: 'text', class: 'input',currentPage: 'profilePage'}),
+            new InputWithLabel({text: "Новый пароль", name: 'newPassword', type: 'text', class: 'input',currentPage: 'profilePage'}),            
         ];
-        let buttonArray: Button[] = [
-            new Button({text: "Изменить данные", id: 'changeProfileData', class: 'button', type: 'submit'}),
-            new Button({text: "Вернуться к сообщениям", id: 'returnToCommonPage', class: 'button', type: 'button', buttonRoute: 'commonPage'}),
-            new Button({text: "Выйти из профиля", id: 'exitFromProfile', class: 'button', type: 'button', buttonRoute: 'startPage'})
-        ]
         super(
             {
-                LinkList: new LinkList(),
-                ImageAvatar:            new Image({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", class: "round-img", alt: "Пользователь"}),
-                InputAvatar:            new Input({id: "avatar",  type: "file",  name: "avatar", class: "input", value: "", placeholder: ""}),
-                inputWithLabelArray,
-                buttonArray
+                children:{
+                    LinkList:           new LinkList(),
+                    ImageAvatar:        new Image({image: "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig", class: "round-img", alt: "Пользователь"}),
+                    InputAvatar:        new Input({id: "avatar",  type: "file",  name: "avatar", class: "input", value: "", placeholder: "",
+                                                        events:{change: (e: Event) => {globalClass.changePicture(e, "round-img")}}
+                                                    }),
+                    ChangeProfileButton:new Button({text: "Изменить данные", id: 'changeProfileData', class: 'button', type: 'submit',
+                                                    events: {
+                                                                click: () => {
+                                                                    validatePage.initButton('changeProfileData');
+                                                                    if(validatePage.validateInputs()) {
+                                                                        router.go("commonPage");
+                                                                    }
+                                                                },
+                                                            }
+                                                    }),
+                    ReturnButton: new Button({text: "Вернуться к сообщениям", id: 'returnToCommonPage', class: 'button', type: 'button',                                        
+                                            events: {click: () => {router.go("commonPage");}}
+                                            }),
+                    ExitButton: new Button({text: "Выйти из профиля", id: 'exitFromProfile', class: 'button', type: 'button',                                        
+                                            events: {click: () => {router.go("startPage");}}
+                                            }),
+                },
+                lists: blocksArray
             }
         );
     };
@@ -40,9 +60,11 @@ export default class ProfilePage extends Block{
                   {{{ ImageAvatar }}}
                   {{{ InputAvatar }}}
                   </form>
-                  <form class="registrationPage">
-                  {{{ inputWithLabelArray }}}
-                  {{{ buttonArray }}}
+                  <form class="profilePage">
+                  {{{ lists }}}
+                  {{{ ChangeProfileButton }}}
+                  {{{ ReturnButton }}}
+                  {{{ ExitButton }}}
                   </form>
                   {{{ LinkList}}}
                 </main>`;

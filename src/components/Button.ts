@@ -5,10 +5,11 @@ interface ButtonProps {
   id:     string,
   type:   string,
   class:  string,
+  currentPage?: string,
   events?: Record<string, () => void>;
 }
 
-export class Button extends Block<ButtonProps> {
+export class Button extends Block {
   constructor(props: ButtonProps) {
     super({
       ...props,

@@ -8,8 +8,8 @@ interface InputWithLabelProps {
   type:         string,
   class:        string,
   name:         string,
-  value?:        string,
-  placeholder:  string,
+  value?:       string,
+  placeholder?:  string,
   currentPage:  string,
 }
 
@@ -29,7 +29,7 @@ export class InputWithLabel extends Block {
             id: props.name, 
             type: props.type, 
             name: props.name, 
-            placeholder: props.placeholder, 
+            placeholder: props.placeholder || '', 
             class: props.class,
             value: props.value || '',
             events:{blur:() => {validateRoute.validate(props.currentPage, props.name);}}

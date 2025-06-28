@@ -9,10 +9,12 @@ export default class StartPage extends Block{
     {
         super(
             {
-                LinkList: new LinkList(),
-                ErrorText: new ErrorText({text: errorTxt, class: "errorTitleText"}),
-                ErrorDescription: new Text({text: errorDesc, class: "errorDescriptionText"}),
-                Footer: new Footer({linkPage: "commonPage", text: 'Назад к чатам'})           
+                children: {
+                    LinkList:           new LinkList(),
+                    ErrorText:          new ErrorText({text: errorTxt, class: "errorTitleText"}),
+                    ErrorDescription:   new Text({text: errorDesc, class: "errorDescriptionText"}),
+                Footer:                 new Footer({linkPage: "commonPage", text: 'Назад к чатам'})       
+                }    
             }
         );
     };

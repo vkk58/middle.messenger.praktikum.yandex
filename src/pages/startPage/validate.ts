@@ -2,29 +2,28 @@ import CommonValidator from "../../framework/validate/CommonValidate";
 
 export default class ValidateStartPage extends CommonValidator{
 
-    override initButton(): void {
-        this.button    = document.getElementById('signIn') as HTMLButtonElement;
+    initButton(id:string): void {
+        this.button    = document.getElementById(id) as HTMLButtonElement;
     }
 
-    public validateInput(name: string):boolean {
-        let   check    = true;
-        let   errorTxt = '';
+    public validateInput():boolean {
+        this.check    = true;
+        this.errorTxt = '';
         
-        this.inputElement       = document.getElementById(name) as HTMLInputElement;        
+        if(!this.name)
+            return this.check;
+
+        this.inputElement       = document.getElementById(this.name) as HTMLInputElement;        
         let counter             = this.inputElement.value.length;
         if(counter === 0)
         {
-            check         = false;
-            errorTxt    = "Поле обязательно для заполнения";
+            this.check         = false;
+            this.errorTxt    = "Поле обязательно для заполнения";
         }
 
-        if(check){
-            this.deleteErrorText(name);
-        } else{
-            this.createErrorText(name, errorTxt);
-        }
+        this.setupErrorText();
 
-        return check;
+        return this.check;
     }
 
     public validateInputs(){
@@ -35,7 +34,8 @@ export default class ValidateStartPage extends CommonValidator{
         while(counter != 0)
         {
             counter--;
-            ret = this.validateInput(inputElements.item(counter)?.name as string) && ret;
+            this.name = inputElements.item(counter)?.name;
+            ret = this.validateInput() && ret;
         }
 
         if(!ret){

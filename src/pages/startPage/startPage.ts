@@ -8,7 +8,7 @@ import PageRouter from "../../framework/PageRouter";
 
 export default class StartPage extends Block{
     constructor() {
-        let router       = new PageRouter
+        let router       = new PageRouter();
         let validatePage = new ValidateStartPage();
         let inputWithLabelArray: InputWithLabel[] = [
             new InputWithLabel({text: "Логин", name: 'login', type: 'text', class: 'input', placeholder: "Логин",currentPage: 'startPage' }),
@@ -17,11 +17,11 @@ export default class StartPage extends Block{
         super(
             {
                 children:{
-                LinkList: new LinkList(),                
+                LinkList: new LinkList(),             
                 ButtonSignIn: new Button({text: "Вход", id: 'signIn', class: 'button', type: 'submit',                                         
                                         events: {
                                             click: () => {
-                                                validatePage.initButton();
+                                                validatePage.initButton('signIn');
                                                 if(validatePage.validateInputs()) {
                                                     router.go("commonPage");
                                                 }
@@ -40,7 +40,7 @@ export default class StartPage extends Block{
         return `<main class="app">
             <h1>Вход</h1>
             <form class="startPage">
-            {{{ inputWithLabelArray }}}
+            {{{ lists }}}
             {{{ ButtonSignIn }}}
             </form>
             {{{ FooterRegistry }}}
