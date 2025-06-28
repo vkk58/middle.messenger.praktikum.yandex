@@ -2,30 +2,40 @@
   --primary-color: #3498db;
   --secondary-color: #2c3e50;
   --background-color: #f4f4f4;
-  --text-color: #333;
+  --text-color: #333333;
   --error-color: #e74c3c;
 }
 
-.body {
+.header-text {
+  width: 50px;
+  height: 20px;
+  position: absolute;
+  top: -340px;
+  left: -3455px;
+}
+
+body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  background-color: var(--background-color);
 }
 
 .app {
-  background-color: var(--background-color);
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 0 10px var(--secondary-color);
+  box-shadow: 0 0 10px rgba(44, 62, 80, 0.1);
 }
 
 h1,
 h2,
 h3 {
   color: var(--secondary-color);
+  margin-top: 0;
 }
 
 .input,
@@ -35,51 +45,58 @@ h3 {
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
 }
 
 .button {
   background-color: var(--primary-color);
-  color: white;
+  color: #ffffff;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--primary-color) 80%, black);
-  }
-
-  &:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-  }
+  font-weight: bold;
 }
 
-.minibutton {
+.button:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 80%, #000000);
+}
+
+.button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.mini-button {
   background-color: var(--primary-color);
   width: 90px;
-  height: 40px
-  }
+  height: 40px;
+  padding: 0;
+  font-size: 0.9rem;
+}
 
 ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
 li {
-  background-color: white;
+  background-color: #ffffff;
   margin: 10px 0;
-  padding: 10px;
-  border-radius: 3px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .error {
   color: var(--error-color);
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .footer {
-  margin-top: 20px;
+  margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid var(--secondary-color);
   display: flex;
@@ -90,14 +107,32 @@ li {
   color: var(--primary-color);
   text-decoration: none;
   font-weight: bold;
+  transition: color 0.2s ease;
+}
 
-  &:hover {
-    text-decoration: underline;
-  }
+.footer-link:hover {
+  text-decoration: underline;
+  color: var(--secondary-color);
 }
 
 .error-message {
   color: var(--error-color);
-  font-size: 80%; 
-  margin-top: 2px;
+  font-size: 0.8rem; 
+  margin-top: 5px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+  
+  .app {
+    padding: 15px;
+  }
+  
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
