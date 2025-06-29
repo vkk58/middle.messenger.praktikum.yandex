@@ -7,7 +7,7 @@ Figma: https://www.figma.com/design/jF5fFFzgGOxQeB4CmKWTiE/Chat_external_link?no
 ## Установка
 - `npm install` — установка стабильной версии,
 - `npm start` — запуск версии для разработчика,
-- `npm run build:prod` — сборка стабильной версии.
+- `npm run build` — сборка проекта.
 
 ## Веб-приложение
 Netlify: https://firstmsgr.netlify.app/
