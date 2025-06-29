@@ -2,20 +2,20 @@ import Block from '../framework/Block';
 
 interface LabelProps {
   text: string,
-  for:  string
+  for: string
 }
 
 export class Label extends Block {
   constructor(props: LabelProps) {
     super({
-        text: props.text,
+      text: props.text,
       attr: {
-        for: props.for
+        for: props.for,
       },
-      })
-    };
+    });
+  }
 
   override render(): string {
-    return `<label>{{text}}</label>`;
+    return '<label>{{text}}</label>';
   }
 }

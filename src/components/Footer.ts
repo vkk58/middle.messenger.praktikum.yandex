@@ -1,22 +1,22 @@
 import Block from '../framework/Block';
-import { Link } from '../components/Link';
+import { Link } from './Link';
 
 interface FooterProps {
-  linkPage:   string,
-  text:       string
+  linkPage: string,
+  text: string
 }
 
 export class Footer extends Block {
   constructor(props:FooterProps) {
     super({
-      children:{
-      LinkCreate: new Link({
-        href:     '#',
-        datapage: props.linkPage,
-        text:     props.text,
-        class: 'footer-link',
-      })
-    }
+      children: {
+        LinkCreate: new Link({
+          href: '#',
+          datapage: props.linkPage,
+          text: props.text,
+          class: 'footer-link',
+        }),
+      },
     });
   }
 

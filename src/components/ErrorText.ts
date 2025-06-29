@@ -1,21 +1,21 @@
 import Block from '../framework/Block';
 
 interface ErrorTextProps {
-  text:   string,
-  class:  string
+  text: string,
+  class: string
 }
 
 export class ErrorText extends Block {
   constructor(props: ErrorTextProps) {
-    super({        
-        text: props.text,
+    super({
+      text: props.text,
       attr: {
-        class:           props.class
+        class: props.class,
       },
-      })
-    };
+    });
+  }
 
   override render(): string {
-    return `<h1>{{text}}</h1>`;
+    return '<h1>{{text}}</h1>';
   }
 }

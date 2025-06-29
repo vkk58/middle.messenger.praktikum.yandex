@@ -2,10 +2,10 @@ import Block from '../framework/Block';
 
 export class ErrorMessage extends Block {
   constructor(message: string) {
-    super({message: message})
-    };
+    super({ message });
+  }
 
   override render(): string {
-    return `<p class="error">{{message}}</p>`;
+    return '<p class="error">{{message}}</p>';
   }
 }

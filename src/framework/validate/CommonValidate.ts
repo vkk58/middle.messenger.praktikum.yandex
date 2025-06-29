@@ -1,51 +1,56 @@
 export default class CommonValidator {
-  protected name?:        string;
-  protected error:        string;
-  protected errorTxt:     string;
-  protected check:        boolean;
-  protected button:       HTMLButtonElement;
-  protected inputElement: HTMLInputElement; 
+  protected name?: string;
 
-  constructor(name?: string){
+  protected error: string;
+
+  protected errorTxt: string;
+
+  protected check: boolean;
+
+  protected button: HTMLButtonElement;
+
+  protected inputElement: HTMLInputElement;
+
+  constructor(name?: string) {
     this.name = name;
   }
 
   public getInputList():HTMLCollectionOf<HTMLInputElement> {
-      const inputElements = document.getElementsByTagName('input');
+    const inputElements = document.getElementsByTagName('input');
 
-      return inputElements;
+    return inputElements;
   }
 
   protected createErrorText(): void {
-    if(document.getElementById('error_' + this.name)){
-        return;
+    if (document.getElementById(`error_${this.name}`)) {
+      return;
     }
-    const errorElement          = document.createElement('div');
-    errorElement.className      = 'error-message';
-    errorElement.textContent    = this.errorTxt;
-    errorElement.id             = 'error_' + this.name;
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = this.errorTxt;
+    errorElement.id = `error_${this.name}`;
     this.inputElement?.after(errorElement);
-    this.inputElement?.classList.add('input-error'); 
-    if(this.button){ 
-        this.button.disabled = true;
+    this.inputElement?.classList.add('input-error');
+    if (this.button) {
+      this.button.disabled = true;
     }
   }
 
-  protected deleteErrorText(): void{
-    const errorElement          = document.getElementById('error_' + this.name);
-    if(errorElement){
-        errorElement.remove();
+  protected deleteErrorText(): void {
+    const errorElement = document.getElementById(`error_${this.name}`);
+    if (errorElement) {
+      errorElement.remove();
     }
-    if(this.button){ 
-        this.button.disabled = false;
+    if (this.button) {
+      this.button.disabled = false;
     }
   }
 
-  public setupErrorText(){
-    if(this.check){
-        this.deleteErrorText();
-    } else{
-        this.createErrorText();
+  public setupErrorText() {
+    if (this.check) {
+      this.deleteErrorText();
+    } else {
+      this.createErrorText();
     }
   }
 }
