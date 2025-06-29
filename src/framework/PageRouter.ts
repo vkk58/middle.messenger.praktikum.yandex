@@ -6,8 +6,7 @@ import ErrorPage from '../pages/errorPage/errorPage';
 
 export default class PageRouter {
   public go(pageName: string) {
-    // использовал any для того, чтобы не дублировать код
-    let changingPage: any;
+    let changingPage: RegistrationPage | ProfilePage | StartPage | CommonPage | ErrorPage;
     switch (pageName) {
       case 'registrationPage':
         changingPage = new RegistrationPage();
