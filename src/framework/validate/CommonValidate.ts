@@ -22,6 +22,10 @@ export default class CommonValidator {
   }
 
   protected createErrorText(): void {
+    if (this.errorTxt) {
+      console.log(this.errorTxt);
+    }
+
     if (document.getElementById(`error_${this.name}`)) {
       return;
     }
@@ -44,6 +48,8 @@ export default class CommonValidator {
     if (this.button) {
       this.button.disabled = false;
     }
+
+    console.log(this.inputElement);
   }
 
   public setupErrorText() {

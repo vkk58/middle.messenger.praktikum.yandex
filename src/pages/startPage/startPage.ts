@@ -3,13 +3,11 @@ import { Footer } from '../../components/Footer';
 import { Button } from '../../components/Button';
 import Block from '../../framework/Block';
 import { LinkList } from '../../components/LinkList';
-import ValidateStartPage from './validate';
 import PageRouter from '../../framework/PageRouter';
 
 export default class StartPage extends Block {
   constructor() {
     const router = new PageRouter();
-    const validatePage = new ValidateStartPage();
     const inputWithLabelArray: InputWithLabel[] = [
       new InputWithLabel({
         text: 'Логин', name: 'login', type: 'text', class: 'input', placeholder: 'Логин', currentPage: 'startPage',
@@ -28,12 +26,7 @@ export default class StartPage extends Block {
             class: 'button',
             type: 'submit',
             events: {
-              click: () => {
-                validatePage.initButton('signIn');
-                if (validatePage.validateInputs()) {
-                  router.go('commonPage');
-                }
-              },
+              click: () => {router.go('commonPage');},
             },
           }),
           FooterRegistry: new Footer({ linkPage: 'registrationPage', text: 'Нет аккаунта?' }),

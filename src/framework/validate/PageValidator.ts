@@ -1,16 +1,12 @@
 import ValidateCommonPage from '../../pages/commonPage/validate';
 import ValidateProfilePage from '../../pages/profilePage/validate';
 import ValidateRegistrationPage from '../../pages/registrationPage/validate';
-import ValidateStartPage from '../../pages/startPage/validate';
 
 export default class PageValidator {
   static validate(page:string, name?: string): boolean {
-    let validClass: ValidateStartPage | ValidateRegistrationPage | ValidateProfilePage | ValidateCommonPage;
+    let validClass: ValidateRegistrationPage | ValidateProfilePage | ValidateCommonPage;
     let ret: boolean;
     switch (page) {
-      case 'startPage':
-        validClass = new ValidateStartPage(name);
-        break;
       case 'registrationPage':
         validClass = new ValidateRegistrationPage(name);
         break;
