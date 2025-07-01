@@ -6,7 +6,6 @@ export default class ValidateCommonPage extends CommonValidator {
   }
 
   public validateInput():boolean {
-    debugger;
     this.check = true;
     this.errorTxt = '';
 

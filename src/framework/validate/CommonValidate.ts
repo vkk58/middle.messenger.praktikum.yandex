@@ -48,7 +48,7 @@ export default class CommonValidator {
     if (this.button) {
       this.button.disabled = false;
     }
-
+    
     console.log(this.inputElement);
   }
 

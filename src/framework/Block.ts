@@ -15,7 +15,7 @@ interface BlockProps {
   captionText?: string;
 }
 
-export default class Block {
+export default abstract class Block  {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -66,7 +66,6 @@ export default class Block {
       : {};
 
     Object.entries(events).forEach(([eventName, handler]) => {
-      debugger;
       if (this._element && typeof handler === 'function') {
         this._element.removeEventListener(eventName, handler as EventListener);
       }
