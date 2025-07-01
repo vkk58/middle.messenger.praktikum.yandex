@@ -4,6 +4,8 @@
   --background-color: #f4f4f4;
   --text-color: #333;
   --error-color: #e74c3c;
+  --background-color-for-button: #bdc3c7;
+  --linebreak-color: #000;
 }
 
 .body {
@@ -49,7 +51,7 @@ h3 {
   }
 
   &:disabled {
-    background-color: #bdc3c7;
+    background-color: var(--background-color-for-button);
     cursor: not-allowed;
   }
 }
