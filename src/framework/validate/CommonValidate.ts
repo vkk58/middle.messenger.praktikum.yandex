@@ -53,4 +53,8 @@ export default class CommonValidator {
       this.createErrorText();
     }
   }
+
+  public checkLength(inputValue:string, minLength: number, maxLength: number): boolean {
+    return (inputValue.length < minLength || inputValue.length > maxLength) ? true : false;
+  }
 }
