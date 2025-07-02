@@ -1,46 +1,19 @@
-import CommonValidator from '../../framework/validate/CommonValidate';
+import ValidateRegistrationPage from '../registrationPage/validate';
 
-export default class ValidateStartPage extends CommonValidator {
+export default class ValidateStartPage extends ValidateRegistrationPage {
   initButton(id:string): void {
-    this.button = document.getElementById(id) as HTMLButtonElement;
+    this.button    = document.getElementById(id) as HTMLButtonElement;
   }
 
   public validateInput():boolean {
-    this.check = true;
-    this.errorTxt = '';
-    if (!this.name) return this.check;
+    if (!this.name) return true;
 
     if (!this.button) {
       this.button = document.getElementById('signIn') as HTMLButtonElement;
     }
 
-    this.inputElement = document.getElementById(this.name) as HTMLInputElement;
-    const counter = this.inputElement.value.length;
-    if (counter === 0) {
-      this.check = false;
-      this.errorTxt = 'Поле обязательно для заполнения';
-    }
-
-    this.setupErrorText();
+    this.check = super.validateInput();
 
     return this.check;
-  }
-
-  public validateInputs() {
-    const inputElements = this.getInputList();
-    let ret = true;
-    let counter = inputElements.length;
-
-    while (counter !== 0) {
-      counter -= 1;
-      this.name = inputElements.item(counter)?.name;
-      ret = this.validateInput() && ret;
-    }
-
-    if (!ret) {
-      this.button.disabled = true;
-    }
-
-    return ret;
   }
 }

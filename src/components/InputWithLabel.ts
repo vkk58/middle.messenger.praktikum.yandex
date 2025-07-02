@@ -37,9 +37,9 @@ export class InputWithLabel extends Block {
   }
 
   override render(): string {
-    return `<form>
+    return `<div>
             {{{ Label }}}
             {{{ Input }}}
-             </form>`;
+             </div>`;
   }
 }

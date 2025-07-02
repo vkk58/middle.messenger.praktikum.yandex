@@ -7,9 +7,12 @@ import { Label } from '../../components/Label';
 import Block from '../../framework/Block';
 import { ListElement } from '../../components/ListElement';
 import PageRouter from '../../framework/PageRouter';
+import ValidateCommonPage from './validate';
+import PageValidator from '../../framework/validate/PageValidator';
 
 export default class CommonPage extends Block {
   constructor() {
+    const validateInput = new ValidateCommonPage();
     const router = new PageRouter();
     const listEl: ListElement[] = [
       new ListElement({
@@ -52,14 +55,22 @@ export default class CommonPage extends Block {
           }),
           LabelForMessage: new Label({ text: 'Отправка сообщения', for: 'message' }),
           InputMessage: new Input({
-            id: 'message', type: 'text', class: 'input', name: 'message', placeholder: 'Сообщение...', value: '',
+            id: 'message', type: 'text', class: 'input', name: 'message', placeholder: 'Сообщение...', value: '', 
+            events: { blur: () => { PageValidator.validate('commonPage', 'message'); } },
           }),
           ButtonSendMessage: new Button({
             text: 'Отправить',
-            id: 'createProfile',
+            id: 'sendMessage',
             class: 'mini-button',
             type: 'submit',
-            events: { click: () => { console.log('Отправка сообщения'); router.go("commonPage")} },
+            events: { click: () => {
+              validateInput.initButton('sendMessage');
+              if (validateInput.validateInput()) {
+                console.log('Отправка сообщения'); 
+                router.go('commonPage');
+              }
+            }, 
+            },
           }),
         },
         lists: listEl,

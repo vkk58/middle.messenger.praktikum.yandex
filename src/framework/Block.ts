@@ -15,13 +15,13 @@ interface BlockProps {
   captionText?: string;
 }
 
-export default class Block {
+export default abstract class Block  {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
     FLOW_CDU: 'flow:component-did-update',
     FLOW_RENDER: 'flow:render',
-  };
+  } as const;
 
   protected _element: HTMLElement | null = null;
 
@@ -54,6 +54,20 @@ export default class Block {
     Object.entries(events).forEach(([eventName, handler]) => {
       if (this._element && typeof handler === 'function') {
         this._element.addEventListener(eventName, handler);
+      }
+    });
+  }
+
+  
+
+  private _removeEvents(): void {
+    const events: Record<string, () => void> = this.props.events
+      ? { ...this.props.events }
+      : {};
+
+    Object.entries(events).forEach(([eventName, handler]) => {
+      if (this._element && typeof handler === 'function') {
+        this._element.removeEventListener(eventName, handler as EventListener);
       }
     });
   }
@@ -183,6 +197,7 @@ export default class Block {
     });
 
     const newElement = fragment.content.firstElementChild as HTMLElement;
+    this._removeEvents();
     this._element?.replaceWith(newElement);
     this._element = newElement;
     this._addEvents();

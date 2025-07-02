@@ -19,8 +19,7 @@ export default class ValidateProfilePage extends ValidateRegistrationPage {
       switch (this.name) {
         case 'oldPassword':
         case 'newPassword':
-          if (inputValue.length < 8
-                    || inputValue.length > 40
+          if (this.checkLength(inputValue, 8, 40)
                     || /[A-Z]/.test(inputValue) === false
                     || /[0-9]/.test(inputValue) === false) {
             this.check = false;
