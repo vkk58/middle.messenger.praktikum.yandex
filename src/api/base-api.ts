@@ -6,6 +6,8 @@ enum METHOD {
   DELETE = 'DELETE',
 }
 
+const URLAPI = "https://ya-praktikum.tech/api/v2";
+
 type Options = {
   method: METHOD;
   data?: Record<string, string | number | boolean>;
@@ -13,12 +15,12 @@ type Options = {
 
 type OptionsWithoutMethod = Omit<Options, 'method'>;
 
-class HTTPTransport {
+export class BaseApi {
   get(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.GET });
   }
 
-  post(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
+  async post(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.POST });
   }
 
@@ -32,15 +34,15 @@ class HTTPTransport {
 
   request(url: string, options: Options = { method: METHOD.GET }): Promise<XMLHttpRequest> {
     const { method, data } = options;
-
+    url = URLAPI + url;
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.open(method,  
         method == METHOD.GET && data ? `${url}${this.queryStringify(data)}` : url);
-
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.withCredentials = true;
       xhr.onload = function () {
-        resolve(xhr);
+        resolve(JSON.parse(xhr.response));
       };
 
       xhr.onabort = reject;

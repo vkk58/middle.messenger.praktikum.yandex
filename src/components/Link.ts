@@ -18,7 +18,7 @@ export class Link extends Block {
         },
       },
       attr: {
-        href: props.href,
+        //href: props.href,
         class: props.class,
         datapage: props.datapage,
       },

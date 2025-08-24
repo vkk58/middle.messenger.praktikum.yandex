@@ -15,13 +15,21 @@ export default class CommonValidator {
     this.name = name;
   }
 
+  public parmInputElement(_element = this.inputElement): void{
+    this.inputElement = _element;  
+  }
+
+  public parmErrorTxt(_errorTxt = this.errorTxt): void{
+    this.errorTxt = _errorTxt;  
+  }
+
   public getInputList():HTMLCollectionOf<HTMLInputElement> {
     const inputElements = document.getElementsByTagName('input');
 
     return inputElements;
   }
 
-  protected createErrorText(): void {
+  public createErrorText(): void {
     if (this.errorTxt) {
       console.log(this.errorTxt);
     }

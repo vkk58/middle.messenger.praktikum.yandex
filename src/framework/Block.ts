@@ -202,10 +202,14 @@ export default abstract class Block  {
     this._element = newElement;
     this._addEvents();
     this.addAttributes();
+    this.addData();
   }
 
   public render(): string {
     return '';
+  }
+
+  public addData() {
   }
 
   public getContent(): HTMLElement {

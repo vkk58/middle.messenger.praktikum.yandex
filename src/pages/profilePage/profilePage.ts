@@ -7,12 +7,14 @@ import { Input } from '../../components/Input';
 import PageRouter from '../../framework/PageRouter';
 import ValidateProfilePage from './validate';
 import { Global } from '../../helpers/functions';
+import ProfileApi from '../../api/ProfileApi';
 
 export default class ProfilePage extends Block {
   constructor() {
     const globalClass = new Global();
     const router = new PageRouter();
     const validatePage = new ValidateProfilePage();
+    const profileApi = new ProfileApi();
     const blocksArray: InputWithLabel[] = [
       new InputWithLabel({
         text: 'Имя', name: 'first_name', type: 'text', class: 'input', currentPage: 'profilePage',
@@ -51,13 +53,16 @@ export default class ProfilePage extends Block {
             class: 'input',
             value: '',
             placeholder: '',
-            events: { change: (e: Event) => { globalClass.changePicture(e, 'round-img'); } },
+            events: { change: async (e: Event) => { 
+              globalClass.changePicture(e, 'round-img'); 
+              profileApi.changeAvatar();
+            } },
           }),
           ChangeProfileButton: new Button({
             text: 'Изменить данные',
             id: 'changeProfileData',
             class: 'button',
-            type: 'submit',
+            type: 'button',//'submit',
             events: {
               click: () => {
                 validatePage.initButton('changeProfileData');
@@ -79,12 +84,24 @@ export default class ProfilePage extends Block {
             id: 'exitFromProfile',
             class: 'button',
             type: 'button',
-            events: { click: () => { router.go('startPage'); } },
+            events: { click: async () => { 
+                const logout = await profileApi.logout();                  
+                if(logout) {                    
+                  router.go('startPage');
+                } 
+              }
+            },
           }),
         },
         lists: blocksArray,
       },
     );
+  }
+
+  override addData() {
+    debugger;
+    const profileApi = new ProfileApi();
+    profileApi.getuserInfo();
   }
 
   override render(): string {

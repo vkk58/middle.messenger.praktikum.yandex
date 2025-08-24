@@ -5,9 +5,11 @@ import { LinkList } from '../../components/LinkList';
 import Block from '../../framework/Block';
 import PageRouter from '../../framework/PageRouter';
 import ValidateRegistrationPage from './validate';
+import AuthApi from '../../api/AuthApi';
 
 export default class RegistrationPage extends Block {
   constructor() {
+    const apiRequest = new AuthApi();
     const router = new PageRouter();
     const validatePage = new ValidateRegistrationPage();
     const inputWithLabelArray: InputWithLabel[] = [
@@ -39,13 +41,18 @@ export default class RegistrationPage extends Block {
             text: 'Создать профиль',
             id: 'createProfile',
             class: 'button',
-            type: 'submit',
+            type: 'button',//'submit',
             currentPage: 'registrationPage',
             events: {
-              click: () => {
+              click: async() => {
                 validatePage.initButton('createProfile');
                 if (validatePage.validateInputs()) {
-                  router.go('commonPage');
+                  const createUser = await apiRequest.signUpRequest();
+                  
+                  if(createUser)
+                  {                    
+                    router.go('commonPage');
+                  }
                 }
               },
             },

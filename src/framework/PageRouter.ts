@@ -5,6 +5,46 @@ import CommonPage from '../pages/commonPage/commonPage';
 import ErrorPage from '../pages/errorPage/errorPage';
 
 export default class PageRouter {
+  private _urls: Record<string, string> = {
+    'startPage': '/start',
+    'registrationPage': '/registration',
+    'profilePage': '/profile',
+    'commonPage': '/common',
+    'errorPage400': '/error400',
+    'errorPage500': '/error500',
+  };  
+
+  private _pages: Record<string, string> = {
+    '/start': 'startPage',
+    '/registration': 'registrationPage',
+    '/profile': 'profilePage',
+    '/common': 'commonPage',
+    '/error400': 'errorPage400',
+    '/error500': 'errorPage500',
+  };
+
+  private _isHandlingPopState = false;
+  
+  public start() {
+    this.setupRouteListener();
+    this.navigateToCurrentUrl();
+  }
+
+  private setupRouteListener() {
+    window.addEventListener('popstate', () => {
+      this._isHandlingPopState = true;
+      this.navigateToCurrentUrl();
+      this._isHandlingPopState = false;
+    });
+  }
+
+  private navigateToCurrentUrl() {    
+    const path = window.location.pathname;
+    const pageName = this._pages[path] || 'startPage';
+    
+    this.go(pageName);
+  }
+
   public go(pageName: string) {
     let changingPage: RegistrationPage | ProfilePage | StartPage | CommonPage | ErrorPage;
     switch (pageName) {
@@ -29,16 +69,22 @@ export default class PageRouter {
       default:
         return;
     }
-    const mainElement = document.querySelector('main');
+    
+    const url = this._urls[pageName];
+    if (!url) return;
 
-    if (mainElement) {
-      const parent = mainElement.parentElement;
-
-      if (parent) {
-        parent.replaceChild(changingPage.getContent(), mainElement);
-      }
+    const appElement = document.getElementById('app');
+    if (appElement) {
+      appElement.innerHTML = '';
+      appElement.appendChild(changingPage.getContent());
     }
 
-    console.log(changingPage.getContent());
+    if (!this._isHandlingPopState) {
+      window.history.pushState(
+      { page: pageName },
+      '',
+      url
+      );
+    }
   }
 }

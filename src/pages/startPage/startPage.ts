@@ -5,9 +5,11 @@ import Block from '../../framework/Block';
 import { LinkList } from '../../components/LinkList';
 import ValidateStartPage from './validate';
 import PageRouter from '../../framework/PageRouter';
+import AuthApi from '../../api/AuthApi';
 
 export default class StartPage extends Block {
   constructor() {
+    const apiRequest = new AuthApi();
     const router = new PageRouter();
     const validatePage = new ValidateStartPage();
     const inputWithLabelArray: InputWithLabel[] = [
@@ -26,12 +28,18 @@ export default class StartPage extends Block {
             text: 'Вход',
             id: 'signIn',
             class: 'button',
-            type: 'submit',
+            type: 'button',//'submit',
             events: {
-              click: () => {
+              click: async() => {                
                 validatePage.initButton('signIn');
-                if (validatePage.validateInputs()) {
-                  router.go('commonPage');
+                if (validatePage.validateInputs())
+                {
+                  const sign = await apiRequest.signInRequest();
+                  
+                  if(sign)
+                  {
+                    router.go('commonPage');
+                  }
                 }
               },
             },
