@@ -64,10 +64,11 @@ export default class ProfilePage extends Block {
             class: 'button',
             type: 'button',//'submit',
             events: {
-              click: () => {
+              click: async () => {
+                  debugger;
                 validatePage.initButton('changeProfileData');
                 if (validatePage.validateInputs()) {
-                  router.go('commonPage');
+                  await profileApi.changeUserProfile();     
                 }
               },
             },
@@ -85,6 +86,7 @@ export default class ProfilePage extends Block {
             class: 'button',
             type: 'button',
             events: { click: async () => { 
+                debugger;
                 const logout = await profileApi.logout();                  
                 if(logout) {                    
                   router.go('startPage');

@@ -92,6 +92,23 @@ export default class CommonPage extends Block {
                     {{{ lists }}}
                     </main>
                   </aside>
+                  <main class="messages-container">
+                    <div class="message incoming">
+                        Привет! Как твои дела?
+                    </div>
+                    <div class="message outgoing">
+                        Привет! Все отлично, спасибо. А у тебя как?
+                    </div>
+                    <div class="message incoming">
+                        Тоже хорошо. Ты уже посмотрел документы, которые я отправил?
+                    </div>
+                    <div class="message outgoing">
+                        Да, уже ознакомился. В целом все выглядит хорошо, но есть пара замечаний.
+                    </div>
+                    <div class="message incoming">
+                        Какие именно? Можешь уточнить?
+                    </div>
+                  </main>
                   <main class="right-content">
                     <section class="messageElements">
                     {{{ LabelForMessage }}}

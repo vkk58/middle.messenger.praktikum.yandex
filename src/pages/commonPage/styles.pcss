@@ -78,3 +78,34 @@ figure {
     margin: 0; 
     padding: 0; 
 }
+
+.active{
+  background : var(--primary-color)
+}
+        
+.messages-container {
+    padding: 15px;
+    overflow-y: auto;
+    flex-direction: row;
+    margin-left: max(300px);
+    margin-right: calc(100% - 80%);
+    min-width: 100%;
+}
+
+.message {
+    margin-bottom: 15px;
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 18px;
+}
+
+.incoming {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-right: auto;
+}
+
+.outgoing {
+    background-color: #dcf8c6;
+    margin-left: auto;
+}

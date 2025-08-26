@@ -19,6 +19,16 @@ export class ListElement extends Block {
         Image: new Image({ image: props.image, class: props.class, alt: props.alt }),
         Text: new Text({ class: props.classSecond, text: props.text }),
       },
+      events:{
+        'click' : () => {
+          
+          let lists = document.querySelectorAll(".active");
+          lists.forEach(el => {el.classList.remove("active")});
+          if (this._element) {
+            this._element.classList.add("active");
+          }
+        }
+      }
     });
   }
 

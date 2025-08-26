@@ -5,22 +5,19 @@ export default class AuthApi
 {
     async signInRequest(): Promise<boolean> {             
         const https = new HTTPTransport();
-        let loginValue:string;
-        let passwordValue: string;
+        let login:string;
+        let password: string;
         let el: HTMLInputElement;
         let result = false;
 
         el = document.getElementById('login') as HTMLInputElement;
-        loginValue = el.value || '';
+        login = el.value || '';
         el = document.getElementById('password') as HTMLInputElement;
-        passwordValue = el.value || '';
+        password = el.value || '';
 
         try
         {
-            let answer = await https.post("/auth/signin", {data: {
-                                                            login: loginValue,
-                                                            password: passwordValue
-                                                        }}); 
+            let answer = await https.post("/auth/signin", {data: {login,password}}); 
                                                                 
             if(answer.status < 400)
             {

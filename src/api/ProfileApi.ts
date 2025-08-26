@@ -70,6 +70,94 @@ export default class ProfileApi extends HTTPTransport
             console.log(error);
         }
     }
+    
+    async changeUserProfile() {                  
+        let el: HTMLInputElement;
+        let avatarElement: HTMLImageElement;
+        let first_name: string;
+        let second_name: string;
+        let login: string;
+        let display_name: string;
+        let email: string;
+        let phone: string;               
+        let elOldPassword: HTMLInputElement;               
+        let elNewPassword: HTMLInputElement;               
+        debugger;
+        el = document.getElementById('first_name') as HTMLInputElement;
+        first_name = el.value;
+        el = document.getElementById('second_name') as HTMLInputElement;
+        second_name = el.value;
+        el = document.getElementById('login') as HTMLInputElement;
+        login = el.value;
+        el = document.getElementById('display_name') as HTMLInputElement;
+        display_name = el.value;
+        el = document.getElementById('email') as HTMLInputElement;
+        email = el.value;
+        el = document.getElementById('phone') as HTMLInputElement;
+        phone = el.value;
+        
+        try
+        {
+            let answer = await this.put("/user/profile", {data: {first_name, second_name, login, display_name, email, phone}});      
+            let profileValue = JSON.parse(answer.response);
+            
+            if(answer.status < 400)
+            {
+
+                el = document.getElementById('first_name') as HTMLInputElement;
+                el.value = profileValue.first_name;
+                el = document.getElementById('second_name') as HTMLInputElement;
+                el.value = profileValue.second_name;
+                el = document.getElementById('login') as HTMLInputElement;
+                el.value = profileValue.login;
+                el = document.getElementById('display_name') as HTMLInputElement;
+                el.value = profileValue.display_name;
+                el = document.getElementById('email') as HTMLInputElement;
+                el.value = profileValue.email;
+                el = document.getElementById('phone') as HTMLInputElement;
+                el.value = profileValue.phone;                
+                avatarElement = document.getElementsByTagName("img")[0] as HTMLImageElement;
+                avatarElement.src = URLResources + profileValue.avatar;
+            }
+            else
+            {
+                console.log(profileValue.reason);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+        
+        elOldPassword = document.getElementById('oldPassword') as HTMLInputElement;
+        elNewPassword = document.getElementById('newPassword') as HTMLInputElement;
+
+        if(elNewPassword.value != "" && elOldPassword.value != "" && elNewPassword.value != elOldPassword.value)
+        {
+            this.changeUserPassword(elOldPassword.value, elNewPassword.value);   
+            elNewPassword.value = "";
+            elOldPassword.value = "";    
+        }
+    }
+
+    async changeUserPassword(oldPassword:string, newPassword:string) {  
+        try
+        {            
+            let answer = await this.put("/user/password", {data: {oldPassword, newPassword}});     
+            if(answer.status < 400)
+            {
+                alert("Пароль изменен");
+            }
+            else
+            {
+                let jsonParse = JSON.parse(answer.responseText);
+                alert(jsonParse.reason);
+            } 
+        }
+        catch (error) {
+            console.log(error);
+        }             
+
+    }        
 
     async logout() {
         let result = false;
@@ -77,7 +165,7 @@ export default class ProfileApi extends HTTPTransport
         try
         {
 
-            let answer = await this.get('/auth/logout')
+            let answer = await this.post('/auth/logout')
                                                                 
             if(answer.status < 400)
             {
