@@ -10,4 +10,4 @@ document.addEventListener('DOMContentLoaded', () => {
   app.start();
 });
 
-//window.chatApi = chatAPI;
+window.chatApi = chatAPI;
