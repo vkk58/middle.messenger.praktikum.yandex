@@ -1,26 +1,27 @@
-import Handlebars from 'handlebars';
-import EventBus, { EventCallback } from './EventBus';
+import Handlebars from "handlebars";
+import EventBus, { EventCallback } from "./EventBus";
 
-interface BlockProps {
-  props?: {
-    id: string;
-    type?: string;
-  };
+export interface TST {
+  id: string;
+  type?: string;
+}
+export interface BlockProps {
+  props?: TST;
   events?: Record<string, (e?: Event) => void>;
   attr?: Record<string, string>;
-  children?: Record<string, Block>;
+  children?: Record<string, Block> | Record<string, Block[]>;
   lists?: Block[];
   text?: string;
   message?: string;
   captionText?: string;
 }
 
-export default abstract class Block  {
+export default abstract class Block {
   static EVENTS = {
-    INIT: 'init',
-    FLOW_CDM: 'flow:component-did-mount',
-    FLOW_CDU: 'flow:component-did-update',
-    FLOW_RENDER: 'flow:render',
+    INIT: "init",
+    FLOW_CDM: "flow:component-did-mount",
+    FLOW_CDU: "flow:component-did-update",
+    FLOW_RENDER: "flow:render",
   } as const;
 
   protected _element: HTMLElement | null = null;
@@ -29,7 +30,7 @@ export default abstract class Block  {
 
   protected props: BlockProps;
 
-  protected children: Record<string, Block>;
+  protected children: Record<string, Block> | Record<string, Block[]>;
 
   protected lists: Record<string, Block[]>;
 
@@ -37,7 +38,8 @@ export default abstract class Block  {
 
   constructor(propsWithChildren: BlockProps) {
     const eventBus = new EventBus();
-    const { props, children, lists } = this._getChildrenPropsAndProps(propsWithChildren);
+    const { props, children, lists } =
+      this._getChildrenPropsAndProps(propsWithChildren);
     this.props = this._makePropsProxy({ ...props });
     this.children = props.children ? props.children : children;
     this.lists = this._makePropsProxyForBlock({ ...lists });
@@ -52,13 +54,11 @@ export default abstract class Block  {
       : {};
 
     Object.entries(events).forEach(([eventName, handler]) => {
-      if (this._element && typeof handler === 'function') {
+      if (this._element && typeof handler === "function") {
         this._element.addEventListener(eventName, handler);
       }
     });
   }
-
-  
 
   private _removeEvents(): void {
     const events: Record<string, () => void> = this.props.events
@@ -66,7 +66,7 @@ export default abstract class Block  {
       : {};
 
     Object.entries(events).forEach(([eventName, handler]) => {
-      if (this._element && typeof handler === 'function') {
+      if (this._element && typeof handler === "function") {
         this._element.removeEventListener(eventName, handler as EventListener);
       }
     });
@@ -74,9 +74,18 @@ export default abstract class Block  {
 
   private _registerEvents(eventBus: EventBus): void {
     eventBus.on(Block.EVENTS.INIT, this.init.bind(this) as EventCallback);
-    eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this) as EventCallback);
-    eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this) as EventCallback);
-    eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this) as EventCallback);
+    eventBus.on(
+      Block.EVENTS.FLOW_CDM,
+      this._componentDidMount.bind(this) as EventCallback
+    );
+    eventBus.on(
+      Block.EVENTS.FLOW_CDU,
+      this._componentDidUpdate.bind(this) as EventCallback
+    );
+    eventBus.on(
+      Block.EVENTS.FLOW_RENDER,
+      this._render.bind(this) as EventCallback
+    );
   }
 
   protected init(): void {
@@ -85,17 +94,21 @@ export default abstract class Block  {
 
   private _componentDidMount(): void {
     this.componentDidMount();
-    Object.values(this.children).forEach((child) => { child.dispatchComponentDidMount(); });
+    Object.values(this.children).forEach((child) => {
+      child.dispatchComponentDidMount();
+    });
   }
 
-  protected componentDidMount(): void {
-  }
+  protected componentDidMount(): void {}
 
   public dispatchComponentDidMount(): void {
     this.eventBus().emit(Block.EVENTS.FLOW_CDM);
   }
 
-  private _componentDidUpdate(oldProps: BlockProps, newProps: BlockProps): void {
+  private _componentDidUpdate(
+    oldProps: BlockProps,
+    newProps: BlockProps
+  ): void {
     const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
@@ -103,15 +116,18 @@ export default abstract class Block  {
     this._render();
   }
 
-  protected componentDidUpdate(oldProps: BlockProps, newProps: BlockProps): boolean {
+  protected componentDidUpdate(
+    oldProps: BlockProps,
+    newProps: BlockProps
+  ): boolean {
     console.log(oldProps, newProps);
     return true;
   }
 
   private _getChildrenPropsAndProps(propsAndChildren: BlockProps): {
-    children: Record<string, Block>,
-    props: BlockProps,
-    lists: Record<string, Block[]>
+    children: Record<string, Block>;
+    props: BlockProps;
+    lists: Record<string, Block[]>;
   } {
     const children: Record<string, Block> = {};
     const props: Partial<BlockProps> = {};
@@ -120,7 +136,10 @@ export default abstract class Block  {
     Object.entries(propsAndChildren).forEach(([key, value]) => {
       if (value instanceof Block) {
         children[key] = value;
-      } else if (Array.isArray(value)) {
+      } else if (
+        Array.isArray(value) &&
+        value.every((v) => v instanceof Block)
+      ) {
         lists[key] = value;
       } else {
         const validKey = key as keyof BlockProps;
@@ -170,30 +189,52 @@ export default abstract class Block  {
     const propsAndStubs: Record<string, unknown> = {
       ...this.props,
       ...Object.fromEntries(
-        Object.entries(this.children).map(([key, child]) => [key, `<div data-id="${child._id}"></div>`]),
+        Object.entries(this.children).map(([key, child]) => {
+          console.log(this);
+          if (Array.isArray(child)) {
+            return [key, `<div data-id="__c_${key}_${this._id}"></div>`];
+          } else {
+            return [key, `<div data-id="${child._id}"></div>`];
+          }
+        })
       ),
       ...Object.fromEntries(
-        Object.entries(this.lists).map(([key]) => [key, `<div data-id="__l_${this._id}"></div>`]),
+        Object.entries(this.lists).map(([key]) => [
+          key,
+          `<div data-id="__l_${this._id}"></div>`,
+        ])
       ),
     };
 
-    const fragment = this._createDocumentElement('template');
+    const fragment = this._createDocumentElement("template");
     fragment.innerHTML = Handlebars.compile(this.render())(propsAndStubs);
 
     Object.values(this.children).forEach((child) => {
-      const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
-      stub?.replaceWith(child.getContent());
+      if (!Array.isArray(child)) {
+        const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
+        try {
+          stub?.replaceWith(child.getContent());
+        } catch (e) {
+          console.log(child);
+        }
+      }
     });
 
-    Object.entries(this.lists).forEach(([, items]) => {
-      const listCont = this._createDocumentElement('template');
-      items.forEach((item) => {
-        listCont.content.append(
-          item instanceof Block ? item.getContent() : document.createTextNode(String(item)),
+    Object.values(this.children).forEach((child) => {
+      if (Array.isArray(child)) {
+        const listCont = this._createDocumentElement("template");
+        child.forEach((item) => {
+          listCont.content.append(
+            item instanceof Block
+              ? item.getContent()
+              : document.createTextNode(String(item))
+          );
+        });
+        const stub = fragment.content.querySelector(
+          `[data-id="__l_${this._id}"]`
         );
-      });
-      const stub = fragment.content.querySelector(`[data-id="__l_${this._id}"]`);
-      stub?.replaceWith(listCont.content);
+        stub?.replaceWith(listCont.content);
+      }
     });
 
     const newElement = fragment.content.firstElementChild as HTMLElement;
@@ -206,53 +247,67 @@ export default abstract class Block  {
   }
 
   public render(): string {
-    return '';
+    return "";
   }
 
-  public addData() {
-  }
+  public addData() {}
 
   public getContent(): HTMLElement {
     if (!this._element) {
-      throw new Error('Element is not created');
+      throw new Error("Element is not created");
     }
     return this._element;
   }
 
   private _makePropsProxy(props: BlockProps): BlockProps {
+    const _ = this;
     // const self = this;
     return new Proxy(props, {
       get(target: BlockProps, prop: string | symbol) {
-        if (typeof prop === 'symbol') {
+        if (typeof prop === "symbol") {
           return Reflect.get(target, prop);
         }
         const value = (target as Record<string, unknown>)[prop];
-        if (typeof value === 'function') {
+        if (typeof value === "function") {
           return value.bind(target);
         }
 
         return value;
       },
-      set<K extends keyof BlockProps>(target: BlockProps, prop: K, value: BlockProps[K]): boolean {
+      set<K extends keyof BlockProps>(
+        target: BlockProps,
+        prop: K,
+        value: BlockProps[K]
+      ): boolean {
         const oldTarget = { ...target };
         target[prop] = value;
-        this.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
+
+        _.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
         return true;
       },
       deleteProperty(): boolean {
-        throw new Error('No access');
+        throw new Error("No access");
       },
     });
   }
 
-  private _makePropsProxyForBlock(props: Record<string, Block[]>): Record<string, Block[]> {
+  private _makePropsProxyForBlock(
+    props: Record<string, Block[]>
+  ): Record<string, Block[]> {
     return new Proxy(props, {
       get(target: Record<string, Block[]>, prop: string): Block[] | undefined {
         return target[prop];
       },
-      set(target: Record<string, Block[]>, prop: string, value: unknown): boolean {
-        if (!Array.isArray(value) || !value.every((item) => item instanceof Block)) {
-          throw new Error('Это не массив');
+      set(
+        target: Record<string, Block[]>,
+        prop: string,
+        value: unknown
+      ): boolean {
+        if (
+          !Array.isArray(value) ||
+          !value.every((item) => item instanceof Block)
+        ) {
+          throw new Error("Это не массив");
         }
         const oldTarget = { ...target };
         target[prop] = value;
@@ -260,7 +315,7 @@ export default abstract class Block  {
         return true;
       },
       deleteProperty(): boolean {
-        throw new Error('No access');
+        throw new Error("No access");
       },
     });
   }

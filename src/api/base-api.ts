@@ -1,9 +1,9 @@
 enum METHOD {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  PATCH = "PATCH",
+  DELETE = "DELETE",
 }
 
 const URLAPI = "https://ya-praktikum.tech/api/v2";
@@ -13,36 +13,56 @@ type Options = {
   data?: Record<string, string | number | boolean>;
 };
 
-type OptionsWithoutMethod = Omit<Options, 'method'>;
+type OptionsWithoutMethod = Omit<Options, "method">;
 
 export class BaseApi {
-  get(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.GET });
+  get<T = XMLHttpRequest>(
+    url: string,
+    options: OptionsWithoutMethod = {}
+  ): Promise<T> {
+    return this.request<T>(url, { ...options, method: METHOD.GET });
   }
 
-  async post(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
+  async post(
+    url: string,
+    options: OptionsWithoutMethod = {}
+  ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.POST });
   }
 
-  put(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
+  put(
+    url: string,
+    options: OptionsWithoutMethod = {}
+  ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.PUT });
   }
 
-  delete(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
+  delete(
+    url: string,
+    options: OptionsWithoutMethod = {}
+  ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.DELETE });
   }
 
-  request(url: string, options: Options = { method: METHOD.GET }): Promise<XMLHttpRequest> {
+  request<T = XMLHttpRequest>(
+    url: string,
+    options: Options = { method: METHOD.GET }
+  ): Promise<T> {
     const { method, data } = options;
     url = URLAPI + url;
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(method,  
-        method == METHOD.GET && data ? `${url}${this.queryStringify(data)}` : url);
-      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.open(
+        method,
+        method == METHOD.GET && data
+          ? `${url}${this.queryStringify(data)}`
+          : url
+      );
+      xhr.setRequestHeader("Content-Type", "application/json");
       xhr.withCredentials = true;
       xhr.onload = function () {
-        resolve(JSON.parse(xhr.response));
+        const response = JSON.parse(xhr.response);
+        xhr.status < 400 ? resolve(response) : reject(response);
       };
 
       xhr.onabort = reject;
@@ -58,15 +78,17 @@ export class BaseApi {
   }
 
   queryStringify(data: Record<string, string | number | boolean>) {
-    if (typeof data !== 'object') {
-      throw new Error('Data must be object');
+    if (typeof data !== "object") {
+      throw new Error("Data must be object");
     }
 
     const keys = Object.keys(data);
     return keys.reduce((result, key, index) => {
       const enkey = encodeURIComponent(key);
       const enDatakey = encodeURIComponent(String(data[key]));
-      return `${result}${enkey}=${enDatakey}${index < keys.length - 1 ? '&' : ''}`;
-    }, '?');
+      return `${result}${enkey}=${enDatakey}${
+        index < keys.length - 1 ? "&" : ""
+      }`;
+    }, "?");
   }
 }

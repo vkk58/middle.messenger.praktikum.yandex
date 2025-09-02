@@ -16,7 +16,10 @@ type Options = {
 type OptionsWithoutMethod = Omit<Options, "method">;
 
 export default class HTTPTransport {
-  get<T>(url: string, options: OptionsWithoutMethod = {}): Promise<T> {
+  get<T = XMLHttpRequest>(
+    url: string,
+    options: OptionsWithoutMethod = {}
+  ): Promise<T> {
     return this.request<T>(url, { ...options, method: METHOD.GET });
   }
 
@@ -66,7 +69,7 @@ export default class HTTPTransport {
       }
       xhr.withCredentials = true;
       xhr.onload = function () {
-        resolve(xhr);
+        resolve(xhr as T);
       };
 
       xhr.onabort = reject;

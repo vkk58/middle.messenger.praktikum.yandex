@@ -10,11 +10,6 @@ export default defineConfig({
       },
     },
   },
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./", import.meta.url)),
-    },
-  },
   css: {
     postcss: "./postcss.config.js",
   },

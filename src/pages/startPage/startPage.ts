@@ -1,11 +1,13 @@
-import { InputWithLabel } from '../../components/InputWithLabel';
-import { Footer } from '../../components/Footer';
-import { Button } from '../../components/Button';
-import Block from '../../framework/Block';
-import { LinkList } from '../../components/LinkList';
-import ValidateStartPage from './validate';
-import PageRouter from '../../framework/PageRouter';
-import AuthApi from '../../api/AuthApi';
+import { InputWithLabel } from "../../components/InputWithLabel";
+import { Footer } from "../../components/Footer";
+import { Button } from "../../components/Button";
+import Block from "../../framework/Block";
+import { LinkList } from "../../components/LinkList";
+import ValidateStartPage from "./validate";
+import PageRouter from "../../framework/PageRouter";
+import AuthApi from "../../api/AuthApi";
+import { chatAPI } from "../../api/ChatApi";
+import CommonValidator from "../../framework/validate/CommonValidate";
 
 export default class StartPage extends Block {
   constructor() {
@@ -14,41 +16,69 @@ export default class StartPage extends Block {
     const validatePage = new ValidateStartPage();
     const inputWithLabelArray: InputWithLabel[] = [
       new InputWithLabel({
-        text: 'Логин', name: 'login', type: 'text', class: 'input', placeholder: 'Логин', currentPage: 'startPage',
+        text: "Логин",
+        name: "login",
+        type: "text",
+        class: "input",
+        placeholder: "Логин",
+        currentPage: "startPage",
       }),
       new InputWithLabel({
-        text: 'Пароль', name: 'password', type: 'text', class: 'input', placeholder: 'Пароль', currentPage: 'startPage',
+        text: "Пароль",
+        name: "password",
+        type: "text",
+        class: "input",
+        placeholder: "Пароль",
+        currentPage: "startPage",
       }),
     ];
-    super(
-      {
-        children: {
-          LinkList: new LinkList(),
-          ButtonSignIn: new Button({
-            text: 'Вход',
-            id: 'signIn',
-            class: 'button',
-            type: 'button',//'submit',
-            events: {
-              click: async() => {                
-                validatePage.initButton('signIn');
-                if (validatePage.validateInputs())
-                {
-                  const sign = await apiRequest.signInRequest();
-                  
-                  if(sign)
-                  {
-                    router.go('commonPage');
-                  }
-                }
-              },
+    super({
+      children: {
+        LinkList: new LinkList(),
+        ButtonSignIn: new Button({
+          text: "Вход",
+          id: "signIn",
+          class: "button",
+          type: "button", //'submit',
+          events: {
+            click: async () => {
+              validatePage.initButton("signIn");
+              if (validatePage.validateInputs()) {
+                let login: string;
+                let password: string;
+                let el: HTMLInputElement;
+                el = document.getElementById("login") as HTMLInputElement;
+                login = el.value || "";
+                el = document.getElementById("password") as HTMLInputElement;
+                password = el.value || "";
+
+                chatAPI
+                  .auth(login, password)
+                  .then(() => router.go("commonPage"))
+                  .catch((e) => {
+                    let valid = new CommonValidator("password");
+                    valid.parmInputElement(el);
+                    valid.parmErrorTxt(e.reason);
+                    valid.createErrorText();
+                  });
+              }
+              // {
+              //   const sign = await apiRequest.signInRequest();
+
+              //   if (sign) {
+              //     router.go("commonPage");
+              //   }
+              // }
             },
-          }),
-          FooterRegistry: new Footer({ linkPage: 'registrationPage', text: 'Нет аккаунта?' }),
-        },
-        lists: inputWithLabelArray,
+          },
+        }),
+        FooterRegistry: new Footer({
+          linkPage: "registrationPage",
+          text: "Нет аккаунта?",
+        }),
       },
-    );
+      lists: inputWithLabelArray,
+    });
   }
 
   override render(): string {

@@ -8,8 +8,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true,
-    "paths": { "@/*": ["src/*"] }
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*.ts", ".eslintrc.cjs", "src/APP.ts"]
 }

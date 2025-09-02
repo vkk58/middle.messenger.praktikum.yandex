@@ -1,5 +1,5 @@
 import { chatAPI } from "../../api/ChatApi";
-import { IChat } from "@/types";
+import { IChat } from "../../types";
 
 class ChatsStore {
   public chats: IChat[] = [];

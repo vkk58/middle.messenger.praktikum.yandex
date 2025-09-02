@@ -10,42 +10,28 @@ import PageRouter from "../../framework/PageRouter";
 import ValidateCommonPage from "./validate";
 import PageValidator from "../../framework/validate/PageValidator";
 import { chatsStore } from "./ChatsStore";
+import { ChatsList } from "../../components/ChatsList";
+import { IChat } from "../../types";
 
 export default class CommonPage extends Block {
-listEl: ListElement[]=[]
-
+  //private ChatsListComponent = new ChatsList();
   constructor() {
+    debugger;
     const validateInput = new ValidateCommonPage();
     const router = new PageRouter();
-    const  = [
-      new ListElement({
-        image:
-          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
-        class: "miniImg",
-        alt: "Пользователь1",
-        text: "Последнее сообщение",
-        classSecond: "contactTextMessageType",
-        captionText: "Друг1",
-      }),
-      new ListElement({
-        image:
-          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
-        class: "miniImg",
-        alt: "Пользователь2",
-        text: "Последнее сообщение",
-        classSecond: "contactTextMessageType",
-        captionText: "Друг2",
-      }),
-      new ListElement({
-        image:
-          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
-        class: "miniImg",
-        alt: "Пользователь3",
-        text: "Последнее сообщение",
-        classSecond: "contactTextMessageType",
-        captionText: "Друг3",
-      }),
-    ];
+    const ChatsListComponent = new ChatsList({
+      chats: [
+        new ListElement({
+          image:
+            "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
+          class: "miniImg",
+          alt: "Пользователь1",
+          text: "Последнее сообщение",
+          classSecond: "contactTextMessageType",
+          captionText: "Друг1",
+        }),
+      ],
+    });
     super({
       children: {
         LinkList: new LinkList(),
@@ -94,15 +80,20 @@ listEl: ListElement[]=[]
             },
           },
         }),
+        ChatsListComponent,
       },
-      lists: listEl,
     });
-  }
 
+    // this.ChatsListComponent = ChatsListComponent;
+
+    // setTimeout(() => this.getChats(), 1500);
+  }
+  /*
   async getChats() {
     await chatsStore.getChats();
+    this.ChatsListComponent.updateChats(chatsStore.chats);
   }
-
+*/
   override render(): string {
     return /*html*/ `<main class="page-layout">
                   <aside class="leftBox">
@@ -113,9 +104,7 @@ listEl: ListElement[]=[]
                     {{{ InputWithLabelSearch }}}
                     <div class="lineBreak"></div>
                     </form>
-                    <main class="gridCommonPage">    
-                    {{{ lists }}}
-                    </main>
+                    {{{ ChatsListComponent }}}
                   </aside>
                   <main class="right-content">
                     <main class="messages-container">
