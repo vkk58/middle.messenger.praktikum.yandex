@@ -109,6 +109,8 @@ export default abstract class Block {
     oldProps: BlockProps,
     newProps: BlockProps
   ): void {
+    console.log("oldProps", oldProps);
+    console.log("newProps", newProps);
     const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
@@ -140,6 +142,7 @@ export default abstract class Block {
         Array.isArray(value) &&
         value.every((v) => v instanceof Block)
       ) {
+        console.log("array --->", value);
         lists[key] = value;
       } else {
         const validKey = key as keyof BlockProps;
@@ -186,55 +189,41 @@ export default abstract class Block {
   }
 
   private _render(): void {
+    console.log(this);
     const propsAndStubs: Record<string, unknown> = {
       ...this.props,
       ...Object.fromEntries(
         Object.entries(this.children).map(([key, child]) => {
-          console.log(this);
-          if (Array.isArray(child)) {
-            return [key, `<div data-id="__c_${key}_${this._id}"></div>`];
-          } else {
-            return [key, `<div data-id="${child._id}"></div>`];
-          }
+          return [key, `<div data-id="${child._id}"></div>`];
         })
       ),
       ...Object.fromEntries(
-        Object.entries(this.lists).map(([key]) => [
-          key,
-          `<div data-id="__l_${this._id}"></div>`,
-        ])
+        Object.entries(this.lists).map(([key]) => {
+          return [key, `<div data-id="__l_${this._id}"></div>`];
+        })
       ),
     };
 
     const fragment = this._createDocumentElement("template");
     fragment.innerHTML = Handlebars.compile(this.render())(propsAndStubs);
-
     Object.values(this.children).forEach((child) => {
-      if (!Array.isArray(child)) {
-        const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
-        try {
-          stub?.replaceWith(child.getContent());
-        } catch (e) {
-          console.log(child);
-        }
-      }
+      const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
+      stub?.replaceWith(child.getContent());
     });
 
-    Object.values(this.children).forEach((child) => {
-      if (Array.isArray(child)) {
-        const listCont = this._createDocumentElement("template");
-        child.forEach((item) => {
-          listCont.content.append(
-            item instanceof Block
-              ? item.getContent()
-              : document.createTextNode(String(item))
-          );
-        });
-        const stub = fragment.content.querySelector(
-          `[data-id="__l_${this._id}"]`
+    Object.entries(this.lists).forEach(([, items]) => {
+      const listCont = this._createDocumentElement("template");
+      items.forEach((item) => {
+        listCont.content.append(
+          item instanceof Block
+            ? item.getContent()
+            : document.createTextNode(String(item))
         );
-        stub?.replaceWith(listCont.content);
-      }
+      });
+      const stub = fragment.content.querySelector(
+        `[data-id="__l_${this._id}"]`
+      );
+      stub?.replaceWith(listCont.content);
     });
 
     const newElement = fragment.content.firstElementChild as HTMLElement;

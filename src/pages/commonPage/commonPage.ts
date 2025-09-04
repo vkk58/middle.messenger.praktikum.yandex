@@ -14,9 +14,10 @@ import { ChatsList } from "../../components/ChatsList";
 import { IChat } from "../../types";
 
 export default class CommonPage extends Block {
-  //private ChatsListComponent = new ChatsList();
+  private ChatsListComponent: ChatsList;
+  private updateInterval: NodeJS.Timeout | null = null;
+  private updateCounter: number = 0;
   constructor() {
-    debugger;
     const validateInput = new ValidateCommonPage();
     const router = new PageRouter();
     const ChatsListComponent = new ChatsList({
@@ -84,16 +85,131 @@ export default class CommonPage extends Block {
       },
     });
 
-    // this.ChatsListComponent = ChatsListComponent;
+    this.ChatsListComponent = ChatsListComponent;
+    this.startChatUpdates();
+  }
 
-    // setTimeout(() => this.getChats(), 1500);
+  /**
+   * Запускает периодическое обновление чатов
+   */
+  private startChatUpdates(): void {
+    console.log("Запуск автоматического обновления чатов...");
+
+    // Первое обновление через 1 секунду после инициализации
+    setTimeout(() => {
+      this.updateChats();
+    }, 1000);
+
+    // Затем каждые 10 секунд
+    this.updateInterval = setInterval(() => {
+      this.updateChats();
+    }, 100000);
   }
-  /*
-  async getChats() {
-    await chatsStore.getChats();
-    this.ChatsListComponent.updateChats(chatsStore.chats);
+
+  /**
+   * Останавливает автоматическое обновление чатов
+   */
+  private stopChatUpdates(): void {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
+      console.log("Автоматическое обновление чатов остановлено");
+    }
   }
-*/
+
+  /**
+   * Обновляет список чатов новыми данными
+   */
+  private updateChats(): void {
+    console.log("Eto apdeit");
+    this.updateCounter++;
+    const newChats = this.generateRandomChats();
+
+    // Используем публичный метод вместо прямого доступа к props
+    this.ChatsListComponent.updateChats(newChats);
+
+    console.log(
+      `Чаты обновлены (${this.updateCounter} раз) в:`,
+      new Date().toLocaleTimeString()
+    );
+  }
+
+  /**
+   * Генерирует случайный список чатов для демонстрации
+   */
+  private generateRandomChats() {
+    const friendNames = [
+      "Алексей",
+      "Мария",
+      "Иван",
+      "Елена",
+      "Дмитрий",
+      "Ольга",
+      "Сергей",
+      "Анна",
+    ];
+    const messages = [
+      "Привет! Как дела?",
+      "Посмотрел документы",
+      "Встречаемся завтра?",
+      "Отправил файлы",
+      "Спасибо за помощь!",
+      "Как прошла презентация?",
+      "Жду ответа",
+      "Отличные новости!",
+      "Нужна твоя помощь",
+      "Когда сможешь созвониться?",
+    ];
+
+    // Случайное количество чатов от 1 до 6
+    const chatCount = Math.floor(Math.random() * 6) + 1;
+    const usedNames = new Set<string>();
+
+    return Array.from({ length: chatCount }, (_, index) => {
+      // Убеждаемся, что имена не повторяются
+      let randomName: string;
+      do {
+        randomName =
+          friendNames[Math.floor(Math.random() * friendNames.length)];
+      } while (
+        usedNames.has(randomName) &&
+        usedNames.size < friendNames.length
+      );
+
+      usedNames.add(randomName);
+
+      const randomMessage =
+        messages[Math.floor(Math.random() * messages.length)];
+      const messageTime = new Date().toLocaleTimeString();
+
+      return new ListElement({
+        image:
+          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
+        class: "miniImg",
+        alt: `Аватар ${randomName}`,
+        text: `${randomMessage} (${messageTime})`,
+        classSecond: "contactTextMessageType",
+        captionText: `${randomName} #${this.updateCounter}.${index + 1}`,
+      });
+    });
+  }
+
+  /**
+   * Метод жизненного цикла - вызывается перед удалением компонента
+   */
+  public componentWillUnmount(): void {
+    this.stopChatUpdates();
+    console.log("Компонент CommonPage будет удален, интервалы очищены");
+  }
+
+  /**
+   * Дополнительный метод для ручного обновления (например, по кнопке)
+   */
+  public manualUpdateChats(): void {
+    console.log("Ручное обновление чатов");
+    this.updateChats();
+  }
+
   override render(): string {
     return /*html*/ `<main class="page-layout">
                   <aside class="leftBox">
