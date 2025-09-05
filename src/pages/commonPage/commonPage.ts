@@ -9,11 +9,10 @@ import { ListElement } from "../../components/ListElement";
 import PageRouter from "../../framework/PageRouter";
 import ValidateCommonPage from "./validate";
 import PageValidator from "../../framework/validate/PageValidator";
-import { chatsStore } from "./ChatsStore";
 import { ChatsList } from "../../components/ChatsList";
-import { IChat } from "../../types";
 import { MessageContainer } from "../../components/MessageContainer";
 import { TextMessage } from "../../components/TextMessage";
+import { chatAPI } from "../../api/ChatApi";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
@@ -112,12 +111,23 @@ export default class CommonPage extends Block {
   /**
    * Обновляет список чатов новыми данными
    */
-  private updateChats(): void {
+  private async updateChats() {
     this.updateCounter++;
-    const newChats = this.generateRandomChats();
+    const chatList = await chatAPI.getChatList();
+    const ret = chatList.map((chat) => {
+      return new ListElement({
+        image:
+          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
+        class: "miniImg",
+        alt: `Аватар`,
+        text: chat.last_message ? chat.last_message : "Сообщений не было",
+        classSecond: "contactTextMessageType",
+        captionText: chat.title,
+      });
+    });
 
     // Используем публичный метод вместо прямого доступа к props
-    this.ChatsListComponent.updateChats(newChats);
+    this.ChatsListComponent.updateChats(ret);
   }
 
   /**
