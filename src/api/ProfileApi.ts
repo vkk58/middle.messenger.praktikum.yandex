@@ -1,182 +1,164 @@
-import HTTPTransport from "../framework/HTTPTransport"
-
+import HTTPTransport from "../framework/HTTPTransport";
 
 const URLResources = "https://ya-praktikum.tech/api/v2/resources";
 
-export default class ProfileApi extends HTTPTransport
-{
-    async getuserInfo() {                  
-        let el: HTMLInputElement;
-        let avatarElement: HTMLImageElement;
-        let result = false;
-        
-        try
-        {
-            let answer = await this.get("/auth/user");      
-            let profileValue = JSON.parse(answer.response);
-            
-            if(answer.status < 400)
-            {
+export default class ProfileApi extends HTTPTransport {
+  async getuserInfo() {
+    let el: HTMLInputElement;
+    let avatarElement: HTMLImageElement;
+    let result = false;
 
-                el = document.getElementById('first_name') as HTMLInputElement;
-                el.value = profileValue.first_name;
-                el = document.getElementById('second_name') as HTMLInputElement;
-                el.value = profileValue.second_name;
-                el = document.getElementById('login') as HTMLInputElement;
-                el.value = profileValue.login;
-                el = document.getElementById('display_name') as HTMLInputElement;
-                el.value = profileValue.display_name;
-                el = document.getElementById('email') as HTMLInputElement;
-                el.value = profileValue.email;
-                el = document.getElementById('phone') as HTMLInputElement;
-                el.value = profileValue.phone;
-                
-                avatarElement = document.getElementsByTagName("img")[0] as HTMLImageElement;
-                avatarElement.src = URLResources + profileValue.avatar;
-            }
-            else
-            {
-                console.log(profileValue.reason);
-            }
-        }
-        catch (error) {
-            console.log(error);
-            return false;
-        }
+    try {
+      let answer = await this.get("/auth/user");
+      let profileValue = JSON.parse(answer.response);
 
-        return result;
+      if (answer.status < 400) {
+        el = document.getElementById("first_name") as HTMLInputElement;
+        el.value = profileValue.first_name;
+        el = document.getElementById("second_name") as HTMLInputElement;
+        el.value = profileValue.second_name;
+        el = document.getElementById("login") as HTMLInputElement;
+        el.value = profileValue.login;
+        el = document.getElementById("display_name") as HTMLInputElement;
+        el.value = profileValue.display_name;
+        el = document.getElementById("email") as HTMLInputElement;
+        el.value = profileValue.email;
+        el = document.getElementById("phone") as HTMLInputElement;
+        el.value = profileValue.phone;
+
+        avatarElement = document.getElementsByTagName(
+          "img"
+        )[0] as HTMLImageElement;
+        avatarElement.src = URLResources + profileValue.avatar;
+      } else {
+        console.log(profileValue.reason);
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
     }
 
-    async changeAvatar() {    
-        debugger;
-        const fileInput = document.getElementById('avatar') as HTMLInputElement;
-        
-        if (fileInput && !fileInput.files?.[0]) {
-            alert('Выберите файл');
-            return;
-        }
+    return result;
+  }
 
-        const formData = new FormData();
-        if(fileInput.files)
-        {
-            formData.append('avatar', fileInput.files[0]);
-        }
+  async changeAvatar() {
+    const fileInput = document.getElementById("avatar") as HTMLInputElement;
 
-        try
-        {
-            this.put('/user/profile/avatar', {data: formData});
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
-    
-    async changeUserProfile() {                  
-        let el: HTMLInputElement;
-        let avatarElement: HTMLImageElement;
-        let first_name: string;
-        let second_name: string;
-        let login: string;
-        let display_name: string;
-        let email: string;
-        let phone: string;               
-        let elOldPassword: HTMLInputElement;               
-        let elNewPassword: HTMLInputElement;               
-        debugger;
-        el = document.getElementById('first_name') as HTMLInputElement;
-        first_name = el.value;
-        el = document.getElementById('second_name') as HTMLInputElement;
-        second_name = el.value;
-        el = document.getElementById('login') as HTMLInputElement;
-        login = el.value;
-        el = document.getElementById('display_name') as HTMLInputElement;
-        display_name = el.value;
-        el = document.getElementById('email') as HTMLInputElement;
-        email = el.value;
-        el = document.getElementById('phone') as HTMLInputElement;
-        phone = el.value;
-        
-        try
-        {
-            let answer = await this.put("/user/profile", {data: {first_name, second_name, login, display_name, email, phone}});      
-            let profileValue = JSON.parse(answer.response);
-            
-            if(answer.status < 400)
-            {
-
-                el = document.getElementById('first_name') as HTMLInputElement;
-                el.value = profileValue.first_name;
-                el = document.getElementById('second_name') as HTMLInputElement;
-                el.value = profileValue.second_name;
-                el = document.getElementById('login') as HTMLInputElement;
-                el.value = profileValue.login;
-                el = document.getElementById('display_name') as HTMLInputElement;
-                el.value = profileValue.display_name;
-                el = document.getElementById('email') as HTMLInputElement;
-                el.value = profileValue.email;
-                el = document.getElementById('phone') as HTMLInputElement;
-                el.value = profileValue.phone;                
-                avatarElement = document.getElementsByTagName("img")[0] as HTMLImageElement;
-                avatarElement.src = URLResources + profileValue.avatar;
-            }
-            else
-            {
-                console.log(profileValue.reason);
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-        
-        elOldPassword = document.getElementById('oldPassword') as HTMLInputElement;
-        elNewPassword = document.getElementById('newPassword') as HTMLInputElement;
-
-        if(elNewPassword.value != "" && elOldPassword.value != "" && elNewPassword.value != elOldPassword.value)
-        {
-            this.changeUserPassword(elOldPassword.value, elNewPassword.value);   
-            elNewPassword.value = "";
-            elOldPassword.value = "";    
-        }
+    if (fileInput && !fileInput.files?.[0]) {
+      alert("Выберите файл");
+      return;
     }
 
-    async changeUserPassword(oldPassword:string, newPassword:string) {  
-        try
-        {            
-            let answer = await this.put("/user/password", {data: {oldPassword, newPassword}});     
-            if(answer.status < 400)
-            {
-                alert("Пароль изменен");
-            }
-            else
-            {
-                let jsonParse = JSON.parse(answer.responseText);
-                alert(jsonParse.reason);
-            } 
-        }
-        catch (error) {
-            console.log(error);
-        }             
-
-    }        
-
-    async logout() {
-        let result = false;
-
-        try
-        {
-
-            let answer = await this.post('/auth/logout')
-                                                                
-            if(answer.status < 400)
-            {
-                result = true;
-            }
-        } 
-        catch (error) {
-            console.log(error);
-            return false;
-        }
-
-        return result;
+    const formData = new FormData();
+    if (fileInput.files) {
+      formData.append("avatar", fileInput.files[0]);
     }
+
+    try {
+      this.put("/user/profile/avatar", { data: formData });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async changeUserProfile() {
+    let el: HTMLInputElement;
+    let avatarElement: HTMLImageElement;
+    let first_name: string;
+    let second_name: string;
+    let login: string;
+    let display_name: string;
+    let email: string;
+    let phone: string;
+    let elOldPassword: HTMLInputElement;
+    let elNewPassword: HTMLInputElement;
+    el = document.getElementById("first_name") as HTMLInputElement;
+    first_name = el.value;
+    el = document.getElementById("second_name") as HTMLInputElement;
+    second_name = el.value;
+    el = document.getElementById("login") as HTMLInputElement;
+    login = el.value;
+    el = document.getElementById("display_name") as HTMLInputElement;
+    display_name = el.value;
+    el = document.getElementById("email") as HTMLInputElement;
+    email = el.value;
+    el = document.getElementById("phone") as HTMLInputElement;
+    phone = el.value;
+
+    try {
+      let answer = await this.put("/user/profile", {
+        data: { first_name, second_name, login, display_name, email, phone },
+      });
+      let profileValue = JSON.parse(answer.response);
+
+      if (answer.status < 400) {
+        el = document.getElementById("first_name") as HTMLInputElement;
+        el.value = profileValue.first_name;
+        el = document.getElementById("second_name") as HTMLInputElement;
+        el.value = profileValue.second_name;
+        el = document.getElementById("login") as HTMLInputElement;
+        el.value = profileValue.login;
+        el = document.getElementById("display_name") as HTMLInputElement;
+        el.value = profileValue.display_name;
+        el = document.getElementById("email") as HTMLInputElement;
+        el.value = profileValue.email;
+        el = document.getElementById("phone") as HTMLInputElement;
+        el.value = profileValue.phone;
+        avatarElement = document.getElementsByTagName(
+          "img"
+        )[0] as HTMLImageElement;
+        avatarElement.src = URLResources + profileValue.avatar;
+      } else {
+        console.log(profileValue.reason);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    elOldPassword = document.getElementById("oldPassword") as HTMLInputElement;
+    elNewPassword = document.getElementById("newPassword") as HTMLInputElement;
+
+    if (
+      elNewPassword.value != "" &&
+      elOldPassword.value != "" &&
+      elNewPassword.value != elOldPassword.value
+    ) {
+      this.changeUserPassword(elOldPassword.value, elNewPassword.value);
+      elNewPassword.value = "";
+      elOldPassword.value = "";
+    }
+  }
+
+  async changeUserPassword(oldPassword: string, newPassword: string) {
+    try {
+      let answer = await this.put("/user/password", {
+        data: { oldPassword, newPassword },
+      });
+      if (answer.status < 400) {
+        alert("Пароль изменен");
+      } else {
+        let jsonParse = JSON.parse(answer.responseText);
+        alert(jsonParse.reason);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async logout() {
+    let result = false;
+
+    try {
+      let answer = await this.post("/auth/logout");
+
+      if (answer.status < 400) {
+        result = true;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+
+    return result;
+  }
 }

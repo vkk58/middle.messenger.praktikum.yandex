@@ -12,27 +12,20 @@ import PageValidator from "../../framework/validate/PageValidator";
 import { chatsStore } from "./ChatsStore";
 import { ChatsList } from "../../components/ChatsList";
 import { IChat } from "../../types";
+import { MessageContainer } from "../../components/MessageContainer";
+import { TextMessage } from "../../components/TextMessage";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
+  private MessageContainerComponent: MessageContainer;
   private updateInterval: NodeJS.Timeout | null = null;
+  private updateInterval4Message: NodeJS.Timeout | null = null;
   private updateCounter: number = 0;
   constructor() {
     const validateInput = new ValidateCommonPage();
     const router = new PageRouter();
-    const ChatsListComponent = new ChatsList({
-      chats: [
-        new ListElement({
-          image:
-            "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
-          class: "miniImg",
-          alt: "Пользователь1",
-          text: "Последнее сообщение",
-          classSecond: "contactTextMessageType",
-          captionText: "Друг1",
-        }),
-      ],
-    });
+    const ChatsListComponent = new ChatsList({ chats: [] });
+    const MessageContainerComponent = new MessageContainer({ chatStock: [] });
     super({
       children: {
         LinkList: new LinkList(),
@@ -75,35 +68,35 @@ export default class CommonPage extends Block {
             click: () => {
               validateInput.initButton("sendMessage");
               if (validateInput.validateInput()) {
-                console.log("Отправка сообщения");
                 router.go("commonPage");
               }
             },
           },
         }),
         ChatsListComponent,
+        MessageContainerComponent,
       },
     });
 
     this.ChatsListComponent = ChatsListComponent;
     this.startChatUpdates();
+
+    this.MessageContainerComponent = MessageContainerComponent;
+    this.startMessageUpdates();
   }
 
+  /**СПИСОК ЧАТОВ НАЧАЛО---------------> */
   /**
    * Запускает периодическое обновление чатов
    */
   private startChatUpdates(): void {
-    console.log("Запуск автоматического обновления чатов...");
-
-    // Первое обновление через 1 секунду после инициализации
     setTimeout(() => {
       this.updateChats();
     }, 1000);
 
-    // Затем каждые 10 секунд
     this.updateInterval = setInterval(() => {
       this.updateChats();
-    }, 100000);
+    }, 10000);
   }
 
   /**
@@ -113,7 +106,6 @@ export default class CommonPage extends Block {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
-      console.log("Автоматическое обновление чатов остановлено");
     }
   }
 
@@ -121,17 +113,11 @@ export default class CommonPage extends Block {
    * Обновляет список чатов новыми данными
    */
   private updateChats(): void {
-    console.log("Eto apdeit");
     this.updateCounter++;
     const newChats = this.generateRandomChats();
 
     // Используем публичный метод вместо прямого доступа к props
     this.ChatsListComponent.updateChats(newChats);
-
-    console.log(
-      `Чаты обновлены (${this.updateCounter} раз) в:`,
-      new Date().toLocaleTimeString()
-    );
   }
 
   /**
@@ -199,16 +185,88 @@ export default class CommonPage extends Block {
    */
   public componentWillUnmount(): void {
     this.stopChatUpdates();
-    console.log("Компонент CommonPage будет удален, интервалы очищены");
   }
 
   /**
    * Дополнительный метод для ручного обновления (например, по кнопке)
    */
   public manualUpdateChats(): void {
-    console.log("Ручное обновление чатов");
     this.updateChats();
   }
+  /**<--------------- СПИСОК ЧАТОВ КОНЕЦ */
+
+  /**СООБЩЕНИЯ НАЧАЛО ---------------> */
+  private startMessageUpdates(): void {
+    setTimeout(() => {
+      this.updateMessages();
+    }, 1000);
+
+    this.updateInterval4Message = setInterval(() => {
+      this.updateMessages();
+    }, 10000);
+  }
+
+  private stopMessagesUpdates(): void {
+    if (this.updateInterval4Message) {
+      clearInterval(this.updateInterval4Message);
+      this.updateInterval4Message = null;
+    }
+  }
+
+  private updateMessages(): void {
+    this.updateCounter++;
+    const newChats = this.generateRandomMessages();
+
+    // Используем публичный метод вместо прямого доступа к props
+    this.MessageContainerComponent.updateMessages(newChats);
+  }
+
+  private generateRandomMessages() {
+    const messages = [
+      "Привет! Как дела?",
+      "Посмотрел документы",
+      "Встречаемся завтра?",
+      "Отправил файлы",
+      "Спасибо за помощь!",
+      "Как прошла презентация?",
+      "Жду ответа",
+      "Отличные новости!",
+      "Нужна твоя помощь",
+      "Когда сможешь созвониться?",
+    ];
+
+    // Случайное количество чатов от 1 до 6
+    const chatCount = Math.floor(Math.random() * 6) + 1;
+    const usedNames = new Set<string>();
+
+    return Array.from({ length: chatCount }, (_, index) => {
+      // Убеждаемся, что имена не повторяются
+
+      const randomMessage =
+        messages[Math.floor(Math.random() * messages.length)];
+      const messageTime = new Date().toLocaleTimeString();
+
+      return new TextMessage({
+        class: "message outgoing",
+        text: `${randomMessage} (${messageTime})`,
+      });
+    });
+  }
+
+  /**
+   * Метод жизненного цикла - вызывается перед удалением компонента
+   */
+  public messagesComponentWillUnmount(): void {
+    this.stopMessagesUpdates();
+  }
+
+  /**
+   * Дополнительный метод для ручного обновления (например, по кнопке)
+  + */
+  public manualUpdateMessages(): void {
+    this.updateMessages();
+  }
+  /**<--------------- СООБЩЕНИЯ КОНЕЦ */
 
   override render(): string {
     return /*html*/ `<main class="page-layout">
@@ -223,24 +281,7 @@ export default class CommonPage extends Block {
                     {{{ ChatsListComponent }}}
                   </aside>
                   <main class="right-content">
-                    <main class="messages-container">
-                      <div class="message incoming">
-                          Привет! Как твои дела?
-                      </div>
-                      <div class="message outgoing">
-                          Привет! Все отлично, спасибо. А у тебя как?
-                      </div>
-                      <div class="message incoming">
-                          Тоже хорошо. Ты уже посмотрел документы, которые я отправил?
-                      </div>
-                      <div class="message outgoing">
-                          Да, уже ознакомился. В целом все выглядит хорошо, но есть пара замечаний.
-                      </div>
-                      <div class="message incoming">
-                          Какие именно? Можешь уточнить?
-                      </div>
-                    </main>  
-
+                    {{{MessageContainerComponent}}}
                     <section class="messageElements">
                     {{{ LabelForMessage }}}
                       <form class="messageContainer">

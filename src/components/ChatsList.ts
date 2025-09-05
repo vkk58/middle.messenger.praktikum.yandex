@@ -7,16 +7,13 @@ interface ListProps extends BlockProps {
 
 export class ChatsList extends Block {
   constructor(props: ListProps) {
-    const safeProps = {
-      ...props,
-      chats: props.chats || [],
-    };
-    console.log(safeProps);
-    super(safeProps);
+    super({
+      children: {},
+      lists: props.chats || [],
+    });
   }
 
   public updateChats(newChats: ListElement[]): void {
-    console.log("newChats = ", newChats);
     this.setProps({
       ...this.props,
       chats: newChats,
@@ -28,6 +25,7 @@ export class ChatsList extends Block {
     newProps: ListProps
   ): boolean {
     if (oldProps.chats !== newProps.chats) {
+      this.lists = { lists: newProps.chats } as any;
       return true;
     }
 
@@ -36,7 +34,7 @@ export class ChatsList extends Block {
 
   override render(): string {
     return /*html*/ `<main class="gridCommonPage">    
-           {{{chats}}}
+           {{{ lists }}}
             </main>`;
   }
 }

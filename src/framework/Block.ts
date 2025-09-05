@@ -189,7 +189,6 @@ export default abstract class Block {
   }
 
   private _render(): void {
-    console.log(this);
     const propsAndStubs: Record<string, unknown> = {
       ...this.props,
       ...Object.fromEntries(
