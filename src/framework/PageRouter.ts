@@ -1,90 +1,111 @@
-import RegistrationPage from '../pages/registrationPage/registrationPage';
-import ProfilePage from '../pages/profilePage/profilePage';
-import StartPage from '../pages/startPage/startPage';
-import CommonPage from '../pages/commonPage/commonPage';
-import ErrorPage from '../pages/errorPage/errorPage';
+import RegistrationPage from "../pages/registrationPage/registrationPage";
+import ProfilePage from "../pages/profilePage/profilePage";
+import StartPage from "../pages/startPage/startPage";
+import CommonPage from "../pages/commonPage/commonPage";
+import ErrorPage from "../pages/errorPage/errorPage";
+import AuthApi from "../api/AuthApi";
+import Block from "./Block";
 
 export default class PageRouter {
+  private changingPage:
+    | RegistrationPage
+    | ProfilePage
+    | StartPage
+    | CommonPage
+    | ErrorPage;
+  private static instance: PageRouter | null = null;
   private _urls: Record<string, string> = {
-    'startPage': '/start',
-    'registrationPage': '/registration',
-    'profilePage': '/profile',
-    'commonPage': '/common',
-    'errorPage400': '/error400',
-    'errorPage500': '/error500',
-  };  
+    startPage: "/start",
+    registrationPage: "/registration",
+    profilePage: "/profile",
+    commonPage: "/common",
+    errorPage400: "/error400",
+    errorPage500: "/error500",
+  };
+
+  public static getInstance(): PageRouter {
+    if (!PageRouter.instance) {
+      PageRouter.instance = new PageRouter();
+    }
+    return PageRouter.instance;
+  }
 
   private _pages: Record<string, string> = {
-    '/start': 'startPage',
-    '/registration': 'registrationPage',
-    '/profile': 'profilePage',
-    '/common': 'commonPage',
-    '/error400': 'errorPage400',
-    '/error500': 'errorPage500',
+    "/start": "startPage",
+    "/registration": "registrationPage",
+    "/profile": "profilePage",
+    "/common": "commonPage",
+    "/error400": "errorPage400",
+    "/error500": "errorPage500",
   };
 
   private _isHandlingPopState = false;
-  
+
   public start() {
     this.setupRouteListener();
     this.navigateToCurrentUrl();
   }
 
   private setupRouteListener() {
-    window.addEventListener('popstate', () => {
+    window.addEventListener("popstate", () => {
       this._isHandlingPopState = true;
       this.navigateToCurrentUrl();
       this._isHandlingPopState = false;
     });
   }
 
-  private navigateToCurrentUrl() {    
+  private async navigateToCurrentUrl() {
+    const authApi = new AuthApi();
     const path = window.location.pathname;
-    const pageName = this._pages[path] || 'startPage';
-    
-    this.go(pageName);
+
+    if (this._pages[path]) {
+      this.go(this._pages[path]);
+    } else {
+      this.go(
+        (await authApi.checkIsUserAuth()) == true ? "commonPage" : "startPage"
+      );
+    }
   }
 
   public go(pageName: string) {
-    let changingPage: RegistrationPage | ProfilePage | StartPage | CommonPage | ErrorPage;
+    if (this.changingPage != null) {
+      this.changingPage.componentWillUnmount();
+    }
+
     switch (pageName) {
-      case 'registrationPage':
-        changingPage = new RegistrationPage();
+      case "registrationPage":
+        this.changingPage = new RegistrationPage();
         break;
-      case 'profilePage':
-        changingPage = new ProfilePage();
+      case "profilePage":
+        this.changingPage = new ProfilePage();
         break;
-      case 'startPage':
-        changingPage = new StartPage();
+      case "startPage":
+        this.changingPage = new StartPage();
         break;
-      case 'commonPage':
-        changingPage = new CommonPage();
+      case "commonPage":
+        this.changingPage = new CommonPage();
         break;
-      case 'errorPage400':
-        changingPage = new ErrorPage('400', 'Не туда попали');
+      case "errorPage400":
+        this.changingPage = new ErrorPage("400", "Не туда попали");
         break;
-      case 'errorPage500':
-        changingPage = new ErrorPage('500', 'Мы уже фиксим');
+      case "errorPage500":
+        this.changingPage = new ErrorPage("500", "Мы уже фиксим");
         break;
       default:
         return;
     }
-    
+
     const url = this._urls[pageName];
     if (!url) return;
 
-    const appElement = document.getElementById('app');
+    const appElement = document.getElementById("app");
     if (appElement) {
-      appElement.innerHTML = '';
-      appElement.appendChild(changingPage.getContent());
+      appElement.innerHTML = "";
+      appElement.appendChild(this.changingPage.getContent());
     }
 
     if (!this._isHandlingPopState) {
-      window.history.pushState(
-      { page: pageName },
-      '',
-      url
-      );
+      window.history.pushState({ page: pageName }, "", url);
     }
   }
 }

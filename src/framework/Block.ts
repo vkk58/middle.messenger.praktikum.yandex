@@ -1,12 +1,12 @@
 import Handlebars from "handlebars";
 import EventBus, { EventCallback } from "./EventBus";
 
-export interface TST {
-  id: string;
-  type?: string;
-}
 export interface BlockProps {
-  props?: TST;
+  props?: {
+    id: string;
+    type?: string;
+    visible?: boolean;
+  };
   events?: Record<string, (e?: Event) => void>;
   attr?: Record<string, string>;
   children?: Record<string, Block> | Record<string, Block[]>;
@@ -22,6 +22,7 @@ export default abstract class Block {
     FLOW_CDM: "flow:component-did-mount",
     FLOW_CDU: "flow:component-did-update",
     FLOW_RENDER: "flow:render",
+    FLOW_CWU: "flow:component-will-unmount",
   } as const;
 
   protected _element: HTMLElement | null = null;
@@ -86,6 +87,10 @@ export default abstract class Block {
       Block.EVENTS.FLOW_RENDER,
       this._render.bind(this) as EventCallback
     );
+    eventBus.on(
+      Block.EVENTS.FLOW_CWU,
+      this._componentWillUnmount.bind(this) as EventCallback
+    );
   }
 
   protected init(): void {
@@ -99,18 +104,32 @@ export default abstract class Block {
     });
   }
 
+  private _componentWillUnmount(): void {
+    this.componentWillUnmount();
+    // Рекурсивно вызываем для детей
+    Object.values(this.children).forEach((child) => {
+      if (child instanceof Block) {
+        child.dispatchComponentWillUnmount();
+      }
+    });
+  }
+
+  public componentWillUnmount(): void {}
+
   protected componentDidMount(): void {}
 
   public dispatchComponentDidMount(): void {
     this.eventBus().emit(Block.EVENTS.FLOW_CDM);
   }
 
+  public dispatchComponentWillUnmount(): void {
+    this.eventBus().emit(Block.EVENTS.FLOW_CWU);
+  }
+
   private _componentDidUpdate(
     oldProps: BlockProps,
     newProps: BlockProps
   ): void {
-    console.log("oldProps", oldProps);
-    console.log("newProps", newProps);
     const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
@@ -122,7 +141,6 @@ export default abstract class Block {
     oldProps: BlockProps,
     newProps: BlockProps
   ): boolean {
-    console.log(oldProps, newProps);
     return true;
   }
 
@@ -142,7 +160,6 @@ export default abstract class Block {
         Array.isArray(value) &&
         value.every((v) => v instanceof Block)
       ) {
-        console.log("array --->", value);
         lists[key] = value;
       } else {
         const validKey = key as keyof BlockProps;

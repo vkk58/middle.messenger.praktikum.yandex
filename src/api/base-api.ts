@@ -7,10 +7,11 @@ enum METHOD {
 }
 
 const URLAPI = "https://ya-praktikum.tech/api/v2";
+export const URLRESOURCES = "https://ya-praktikum.tech/api/v2/resources";
 
 type Options = {
   method: METHOD;
-  data?: Record<string, string | number | boolean>;
+  data?: Record<string, string | number | boolean> | FormData;
 };
 
 type OptionsWithoutMethod = Omit<Options, "method">;
@@ -55,10 +56,14 @@ export class BaseApi {
       xhr.open(
         method,
         method == METHOD.GET && data
-          ? `${url}${this.queryStringify(data)}`
+          ? `${url}${this.queryStringify(
+              data as Record<string, string | number | boolean>
+            )}`
           : url
       );
-      xhr.setRequestHeader("Content-Type", "application/json");
+      if (!(data instanceof FormData)) {
+        xhr.setRequestHeader("Content-Type", "application/json");
+      }
       xhr.withCredentials = true;
       xhr.onload = function () {
         const response = JSON.parse(xhr.response);
@@ -71,6 +76,8 @@ export class BaseApi {
 
       if (method === METHOD.GET || !data) {
         xhr.send();
+      } else if (data instanceof FormData) {
+        xhr.send(data);
       } else {
         xhr.send(JSON.stringify(data));
       }

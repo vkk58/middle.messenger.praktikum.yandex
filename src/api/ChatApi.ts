@@ -15,6 +15,10 @@ class ChatAPI extends BaseApi {
   async auth(login: string, password: string) {
     return this.post("/auth/signin", { data: { login, password } });
   }
+
+  async uploadChatAvatar(formData: FormData) {
+    return this.put("/chats/avatar", { data: formData });
+  }
 }
 
 export const chatAPI = new ChatAPI();

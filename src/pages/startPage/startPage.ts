@@ -10,7 +10,7 @@ import AuthApi from "../../api/AuthApi";
 export default class StartPage extends Block {
   constructor() {
     const apiRequest = new AuthApi();
-    const router = new PageRouter();
+    const router = PageRouter.getInstance();
     const validatePage = new ValidateStartPage();
     const inputWithLabelArray: InputWithLabel[] = [
       new InputWithLabel({

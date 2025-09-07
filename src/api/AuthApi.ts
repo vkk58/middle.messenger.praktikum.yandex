@@ -1,7 +1,7 @@
 import HTTPTransport from "../framework/HTTPTransport";
 import CommonValidator from "../framework/validate/CommonValidate";
 
-export default class AuthApi {
+export default class AuthApi extends HTTPTransport {
   async signInRequest(): Promise<boolean> {
     const https = new HTTPTransport();
     let login: string;
@@ -86,5 +86,15 @@ export default class AuthApi {
     }
 
     return result;
+  }
+
+  public async checkIsUserAuth() {
+    let answer = await this.get("/auth/user");
+
+    if (answer.status < 400) {
+      return true;
+    }
+
+    return false;
   }
 }

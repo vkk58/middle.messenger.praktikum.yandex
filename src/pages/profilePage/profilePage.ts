@@ -12,7 +12,7 @@ import ProfileApi from "../../api/ProfileApi";
 export default class ProfilePage extends Block {
   constructor() {
     const globalClass = new Global();
-    const router = new PageRouter();
+    const router = PageRouter.getInstance();
     const validatePage = new ValidateProfilePage();
     const profileApi = new ProfileApi();
     const blocksArray: InputWithLabel[] = [

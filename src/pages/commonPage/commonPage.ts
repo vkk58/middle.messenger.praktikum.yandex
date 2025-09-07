@@ -13,6 +13,8 @@ import { ChatsList } from "../../components/ChatsList";
 import { MessageContainer } from "../../components/MessageContainer";
 import { TextMessage } from "../../components/TextMessage";
 import { chatAPI } from "../../api/ChatApi";
+import { Dialog } from "../../components/Dialog";
+import { URLRESOURCES } from "../../api/base-api";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
@@ -20,11 +22,13 @@ export default class CommonPage extends Block {
   private updateInterval: NodeJS.Timeout | null = null;
   private updateInterval4Message: NodeJS.Timeout | null = null;
   private updateCounter: number = 0;
+  private DialogCreator: Dialog;
   constructor() {
     const validateInput = new ValidateCommonPage();
-    const router = new PageRouter();
+    const router = PageRouter.getInstance();
     const ChatsListComponent = new ChatsList({ chats: [] });
     const MessageContainerComponent = new MessageContainer({ chatStock: [] });
+    const DialogCreator = new Dialog({ class: "dialog-hidden" });
     super({
       children: {
         LinkList: new LinkList(),
@@ -40,6 +44,28 @@ export default class CommonPage extends Block {
           type: "text",
           class: "input",
           currentPage: "commonPage",
+        }),
+        ButtonCreateChat: new Button({
+          text: "Создать чат",
+          id: "createChat",
+          class: "mini-button",
+          type: "button",
+          events: {
+            click: () => {
+              this.DialogCreator.show();
+            },
+          },
+        }),
+        ButtonDeleteChat: new Button({
+          text: "Удалить чат",
+          id: "deleteChat",
+          class: "mini-button",
+          type: "button",
+          events: {
+            click: () => {
+              alert("delete диалог");
+            },
+          },
         }),
         LabelForMessage: new Label({
           text: "Отправка сообщения",
@@ -74,6 +100,7 @@ export default class CommonPage extends Block {
         }),
         ChatsListComponent,
         MessageContainerComponent,
+        DialogCreator,
       },
     });
 
@@ -82,6 +109,8 @@ export default class CommonPage extends Block {
 
     this.MessageContainerComponent = MessageContainerComponent;
     this.startMessageUpdates();
+
+    this.DialogCreator = DialogCreator;
   }
 
   /**СПИСОК ЧАТОВ НАЧАЛО---------------> */
@@ -89,13 +118,11 @@ export default class CommonPage extends Block {
    * Запускает периодическое обновление чатов
    */
   private startChatUpdates(): void {
-    setTimeout(() => {
-      this.updateChats();
-    }, 1000);
+    this.updateChats();
 
     this.updateInterval = setInterval(() => {
       this.updateChats();
-    }, 10000);
+    }, 5000);
   }
 
   /**
@@ -117,7 +144,9 @@ export default class CommonPage extends Block {
     const ret = chatList.map((chat) => {
       return new ListElement({
         image:
-          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
+          chat.avatar == null
+            ? "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig"
+            : URLRESOURCES + chat.avatar,
         class: "miniImg",
         alt: `Аватар`,
         text: chat.last_message ? chat.last_message : "Сообщений не было",
@@ -194,6 +223,7 @@ export default class CommonPage extends Block {
    * Метод жизненного цикла - вызывается перед удалением компонента
    */
   public componentWillUnmount(): void {
+    this.stopMessagesUpdates();
     this.stopChatUpdates();
   }
 
@@ -264,13 +294,6 @@ export default class CommonPage extends Block {
   }
 
   /**
-   * Метод жизненного цикла - вызывается перед удалением компонента
-   */
-  public messagesComponentWillUnmount(): void {
-    this.stopMessagesUpdates();
-  }
-
-  /**
    * Дополнительный метод для ручного обновления (например, по кнопке)
   + */
   public manualUpdateMessages(): void {
@@ -286,10 +309,13 @@ export default class CommonPage extends Block {
                     </div>
                     <form>
                     {{{ InputWithLabelSearch }}}
+                    {{{ButtonCreateChat}}}
+                    {{{ButtonDeleteChat}}}
                     <div class="lineBreak"></div>
                     </form>
                     {{{ ChatsListComponent }}}
                   </aside>
+                  {{{DialogCreator}}}
                   <main class="right-content">
                     {{{MessageContainerComponent}}}
                     <section class="messageElements">

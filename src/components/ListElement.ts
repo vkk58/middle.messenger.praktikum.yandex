@@ -3,6 +3,7 @@ import { Image } from "./Image";
 import { Text } from "./Text";
 
 export interface ListElementProps {
+  id: string;
   captionText: string;
   image: string;
   class: string;
@@ -38,7 +39,7 @@ export class ListElement extends Block {
   }
 
   override render(): string {
-    return `<figure class="gridElementCommonPage">
+    return `<figure class="gridElementCommonPage" data-id="{{id}}">
             <figcaption class="contactTextType">{{captionText}}</figcaption>
             <form class="messageContainer">     
             {{{ Image }}}
