@@ -15,6 +15,7 @@ import { TextMessage } from "../../components/TextMessage";
 import { chatAPI } from "../../api/ChatApi";
 import { Dialog } from "../../components/Dialog";
 import { URLRESOURCES } from "../../api/base-api";
+import CommonPageController from "./CommonPageController";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
@@ -52,6 +53,8 @@ export default class CommonPage extends Block {
           type: "button",
           events: {
             click: () => {
+              debugger;
+              CommonPageController.clearDialogBeforeCreate();
               this.DialogCreator.show();
             },
           },
@@ -62,8 +65,12 @@ export default class CommonPage extends Block {
           class: "mini-button",
           type: "button",
           events: {
-            click: () => {
-              alert("delete диалог");
+            click: async () => {
+              const commonPageController = new CommonPageController();
+              if (commonPageController) {
+                await commonPageController.deleteChat();
+                this.updateChats();
+              }
             },
           },
         }),
@@ -122,7 +129,7 @@ export default class CommonPage extends Block {
 
     this.updateInterval = setInterval(() => {
       this.updateChats();
-    }, 5000);
+    }, 10000);
   }
 
   /**
@@ -138,7 +145,7 @@ export default class CommonPage extends Block {
   /**
    * Обновляет список чатов новыми данными
    */
-  private async updateChats() {
+  public async updateChats() {
     this.updateCounter++;
     const chatList = await chatAPI.getChatList();
     const ret = chatList.map((chat) => {
@@ -152,6 +159,11 @@ export default class CommonPage extends Block {
         text: chat.last_message ? chat.last_message : "Сообщений не было",
         classSecond: "contactTextMessageType",
         captionText: chat.title,
+        id: chat.id.toString(),
+        classSelectedChat:
+          chat.id == CommonPageController.getInstance().chatId
+            ? "selectedCurrentChat"
+            : "",
       });
     });
 
@@ -159,79 +171,9 @@ export default class CommonPage extends Block {
     this.ChatsListComponent.updateChats(ret);
   }
 
-  /**
-   * Генерирует случайный список чатов для демонстрации
-   */
-  private generateRandomChats() {
-    const friendNames = [
-      "Алексей",
-      "Мария",
-      "Иван",
-      "Елена",
-      "Дмитрий",
-      "Ольга",
-      "Сергей",
-      "Анна",
-    ];
-    const messages = [
-      "Привет! Как дела?",
-      "Посмотрел документы",
-      "Встречаемся завтра?",
-      "Отправил файлы",
-      "Спасибо за помощь!",
-      "Как прошла презентация?",
-      "Жду ответа",
-      "Отличные новости!",
-      "Нужна твоя помощь",
-      "Когда сможешь созвониться?",
-    ];
-
-    // Случайное количество чатов от 1 до 6
-    const chatCount = Math.floor(Math.random() * 6) + 1;
-    const usedNames = new Set<string>();
-
-    return Array.from({ length: chatCount }, (_, index) => {
-      // Убеждаемся, что имена не повторяются
-      let randomName: string;
-      do {
-        randomName =
-          friendNames[Math.floor(Math.random() * friendNames.length)];
-      } while (
-        usedNames.has(randomName) &&
-        usedNames.size < friendNames.length
-      );
-
-      usedNames.add(randomName);
-
-      const randomMessage =
-        messages[Math.floor(Math.random() * messages.length)];
-      const messageTime = new Date().toLocaleTimeString();
-
-      return new ListElement({
-        image:
-          "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
-        class: "miniImg",
-        alt: `Аватар ${randomName}`,
-        text: `${randomMessage} (${messageTime})`,
-        classSecond: "contactTextMessageType",
-        captionText: `${randomName} #${this.updateCounter}.${index + 1}`,
-      });
-    });
-  }
-
-  /**
-   * Метод жизненного цикла - вызывается перед удалением компонента
-   */
   public componentWillUnmount(): void {
     this.stopMessagesUpdates();
     this.stopChatUpdates();
-  }
-
-  /**
-   * Дополнительный метод для ручного обновления (например, по кнопке)
-   */
-  public manualUpdateChats(): void {
-    this.updateChats();
   }
   /**<--------------- СПИСОК ЧАТОВ КОНЕЦ */
 

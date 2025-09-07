@@ -1,6 +1,8 @@
 import { chatAPI } from "../api/ChatApi";
 import Block, { BlockProps } from "../framework/Block";
+import PageRouter from "../framework/PageRouter";
 import { Global } from "../helpers/functions";
+import CommonPage from "../pages/commonPage/commonPage";
 import CommonPageController from "../pages/commonPage/CommonPageController";
 import { Button } from "./Button";
 import { Image } from "./Image";
@@ -13,7 +15,6 @@ interface DialogProps extends BlockProps {
 }
 
 export class Dialog extends Block {
-  private pageController: CommonPageController;
   public visible: boolean;
   private InputWithLabelChatName: InputWithLabel;
   constructor(props: DialogProps) {
@@ -54,8 +55,16 @@ export class Dialog extends Block {
           class: "mini-button",
           type: "button",
           events: {
-            click: () => {
-              this.createChat();
+            click: async () => {
+              await this.createChat();
+              debugger;
+              const commonPage = PageRouter.getInstance().parmChangingPage();
+              if (
+                commonPage &&
+                typeof (commonPage as CommonPage).updateChats === "function"
+              ) {
+                await (commonPage as CommonPage).updateChats();
+              }
             },
           },
         }),
@@ -89,8 +98,9 @@ export class Dialog extends Block {
   }
 
   private async createChat(): Promise<void> {
-    this.pageController = new CommonPageController();
-    if (await this.pageController.createChat()) {
+    const pageController = CommonPageController.getInstance();
+    debugger;
+    if (await pageController.createChat()) {
       this.hide();
     }
   }

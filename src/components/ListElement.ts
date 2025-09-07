@@ -1,20 +1,26 @@
-import Block from "../framework/Block";
+import Block, { BlockProps } from "../framework/Block";
+import CommonPageController from "../pages/commonPage/CommonPageController";
 import { Image } from "./Image";
 import { Text } from "./Text";
 
-export interface ListElementProps {
-  id: string;
+export interface ListElementProps extends BlockProps {
   captionText: string;
   image: string;
   class: string;
   alt: string;
   classSecond: string;
   text: string;
+  classSelectedChat?: string;
+  id?: string;
 }
 
 export class ListElement extends Block {
   constructor(props: ListElementProps) {
     super({
+      attr: {
+        id: props.id || "",
+        class: props.classSelectedChat || "",
+      },
       captionText: props.captionText || "",
       children: {
         Image: new Image({
@@ -26,12 +32,15 @@ export class ListElement extends Block {
       },
       events: {
         click: () => {
-          let lists = document.querySelectorAll(".active");
+          let lists = document.querySelectorAll(".selectedCurrentChat");
           lists.forEach((el) => {
-            el.classList.remove("active");
+            el.classList.remove("selectedCurrentChat");
           });
           if (this._element) {
-            this._element.classList.add("active");
+            this._element.classList.add("selectedCurrentChat");
+            CommonPageController.getInstance().chatId = Number(
+              this._element.getAttribute("id")
+            );
           }
         },
       },
@@ -39,7 +48,7 @@ export class ListElement extends Block {
   }
 
   override render(): string {
-    return `<figure class="gridElementCommonPage" data-id="{{id}}">
+    return `<figure class="gridElementCommonPage">
             <figcaption class="contactTextType">{{captionText}}</figcaption>
             <form class="messageContainer">     
             {{{ Image }}}

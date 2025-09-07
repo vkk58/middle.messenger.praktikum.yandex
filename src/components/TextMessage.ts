@@ -16,7 +16,6 @@ export class TextMessage extends Block {
   }
 
   override render(): string {
-    console.log(this);
     return `<div>
             {{ text }}
             </div>`;

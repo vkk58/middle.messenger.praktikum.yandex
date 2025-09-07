@@ -19,6 +19,10 @@ class ChatAPI extends BaseApi {
   async uploadChatAvatar(formData: FormData) {
     return this.put("/chats/avatar", { data: formData });
   }
+
+  async deleteChat(chatId: number) {
+    return this.delete("/chats", { data: { chatId } });
+  }
 }
 
 export const chatAPI = new ChatAPI();

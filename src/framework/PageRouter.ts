@@ -4,7 +4,6 @@ import StartPage from "../pages/startPage/startPage";
 import CommonPage from "../pages/commonPage/commonPage";
 import ErrorPage from "../pages/errorPage/errorPage";
 import AuthApi from "../api/AuthApi";
-import Block from "./Block";
 
 export default class PageRouter {
   private changingPage:
@@ -28,6 +27,10 @@ export default class PageRouter {
       PageRouter.instance = new PageRouter();
     }
     return PageRouter.instance;
+  }
+
+  public parmChangingPage() {
+    return this.changingPage;
   }
 
   private _pages: Record<string, string> = {
