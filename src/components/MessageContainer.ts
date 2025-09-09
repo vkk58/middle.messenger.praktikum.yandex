@@ -26,7 +26,7 @@ export class MessageContainer extends Block {
     newProps: MessageProps
   ): boolean {
     if (oldProps.chatStock !== newProps.chatStock) {
-      this.lists = { lists: newProps.chatStock } as any;
+      this.lists = { lists: newProps.chatStock };
       return true;
     }
 

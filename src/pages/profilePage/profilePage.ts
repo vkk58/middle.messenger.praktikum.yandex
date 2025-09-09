@@ -100,7 +100,7 @@ export default class ProfilePage extends Block {
           text: "Изменить данные",
           id: "changeProfileData",
           class: "button",
-          type: "button", //'submit',
+          type: "button",
           events: {
             click: async () => {
               validatePage.initButton("changeProfileData");

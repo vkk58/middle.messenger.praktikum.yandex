@@ -37,7 +37,7 @@ export default class StartPage extends Block {
           text: "Вход",
           id: "signIn",
           class: "button",
-          type: "button", //'submit',
+          type: "button",
           events: {
             click: async () => {
               validatePage.initButton("signIn");
@@ -50,29 +50,12 @@ export default class StartPage extends Block {
                 el = document.getElementById("password") as HTMLInputElement;
                 password = el.value || "";
 
-                // chatAPI
-                //   .auth(login, password)
-                //   .then(() => router.go("commonPage"))
-                //   .catch((e) => {
-                //     let valid = new CommonValidator("password");
-                //     valid.parmInputElement(el);
-                //     valid.parmErrorTxt(e.reason);
-                //     valid.createErrorText();
-                //   });
-
                 const sign = await apiRequest.signInRequest();
 
                 if (sign) {
                   router.go("commonPage");
                 }
               }
-              // {
-              //   const sign = await apiRequest.signInRequest();
-
-              //   if (sign) {
-              //     router.go("commonPage");
-              //   }
-              // }
             },
           },
         }),

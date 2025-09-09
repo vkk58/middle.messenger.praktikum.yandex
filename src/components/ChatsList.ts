@@ -25,7 +25,7 @@ export class ChatsList extends Block {
     newProps: ListProps
   ): boolean {
     if (oldProps.chats !== newProps.chats) {
-      this.lists = { lists: newProps.chats } as any;
+      this.lists = { lists: newProps.chats };
       return true;
     }
 
@@ -33,7 +33,7 @@ export class ChatsList extends Block {
   }
 
   override render(): string {
-    return /*html*/ `<main class="gridCommonPage">    
+    return `<main class="gridCommonPage">    
            {{{ lists }}}
             </main>`;
   }

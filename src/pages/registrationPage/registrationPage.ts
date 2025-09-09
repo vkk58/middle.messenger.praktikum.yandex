@@ -64,7 +64,7 @@ export default class RegistrationPage extends Block {
           text: "Создать профиль",
           id: "createProfile",
           class: "button",
-          type: "button", //'submit',
+          type: "button",
           currentPage: "registrationPage",
           events: {
             click: async () => {

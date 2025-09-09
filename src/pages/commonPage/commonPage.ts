@@ -16,16 +16,13 @@ import { chatAPI } from "../../api/ChatApi";
 import { Dialog } from "../../components/Dialog";
 import { URLRESOURCES } from "../../api/base-api";
 import CommonPageController from "./CommonPageController";
-import WebSocketController from "../../framework/WebSocketController";
 import { ChatsStore } from "./ChatsStore";
+import { MessageData } from "../../framework/WebSocketController";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
   private MessageContainerComponent: MessageContainer;
-  private messages: any;
-  private socketController: WebSocketController | null = null;
   private updateInterval: NodeJS.Timeout | null = null;
-  private updateInterval4Message: NodeJS.Timeout | null = null;
   private updateCounter: number = 0;
   private DialogCreator: Dialog;
   constructor() {
@@ -175,66 +172,8 @@ export default class CommonPage extends Block {
   /**<--------------- СПИСОК ЧАТОВ КОНЕЦ */
 
   /**СООБЩЕНИЯ НАЧАЛО ---------------> */
-  public setupMessageListeners(): void {
-    const controller = CommonPageController.getInstance();
-
-    controller.addMessageListener((data: any) => {
-      this.handleIncomingMessage(data);
-    });
-
-    this.setupChatSelectionListeners();
-  }
 
   /** НАСТРОЙКА ВЫБОРА ЧАТА */
-  private setupChatSelectionListeners(): void {
-    setTimeout(() => {
-      const chatsContainer = document.querySelector(".chats-list");
-      if (chatsContainer) {
-        chatsContainer.addEventListener("click", (event) => {
-          const target = event.target as HTMLElement;
-          const chatElement = target.closest(".list-element");
-
-          if (chatElement) {
-            const chatId = chatElement.getAttribute("id");
-            if (chatId) {
-              this.handleChatSelection(Number(chatId));
-            }
-          }
-        });
-      }
-    }, 100);
-  }
-
-  private async handleChatSelection(chatId: number): Promise<void> {
-    debugger;
-    try {
-      const controller = CommonPageController.getInstance();
-
-      await controller.initWebSocket(chatId);
-
-      // Обновляем выделение выбранного чата
-      this.updateChatSelection(chatId);
-    } catch (error) {
-      console.error("Ошибка при выборе чата:", error);
-      alert("Не удалось подключиться к чату");
-    }
-  }
-
-  /** ОБНОВЛЕНИЕ ВЫДЕЛЕНИЯ ВЫБРАННОГО ЧАТА */
-  private updateChatSelection(selectedChatId: number): void {
-    // Убираем выделение со всех чатов
-    const allChats = document.querySelectorAll(".list-element");
-    allChats.forEach((chat) => {
-      chat.classList.remove("selectedCurrentChat");
-    });
-
-    // Добавляем выделение выбранному чату
-    const selectedChat = document.querySelector(`[id="${selectedChatId}"]`);
-    if (selectedChat) {
-      selectedChat.classList.add("selectedCurrentChat");
-    }
-  }
-
   private handleSendMessage(): void {
     const elMessage = document.getElementById("message") as HTMLInputElement;
 
@@ -245,20 +184,7 @@ export default class CommonPage extends Block {
     }
   }
 
-  private handleIncomingMessage(data: any): void {
-    debugger;
-    if (Array.isArray(data)) {
-      this.messages = data.map((msg) => this.normalizeMessage(msg));
-    } else if (data.type === "message") {
-      // Новое сообщение
-      const newMessage = this.normalizeMessage(data);
-      this.messages.push(newMessage);
-    }
-
-    this.updateMessageDisplay();
-  }
-
-  private normalizeMessage(data: {}) {
+  private normalizeMessage(data: MessageData) {
     const userId = CommonPageController.getInstance().userId;
 
     return {
@@ -271,25 +197,7 @@ export default class CommonPage extends Block {
     };
   }
 
-  private updateMessageDisplay(): void {
-    const sortedMessages = [...this.messages].sort(
-      (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-    );
-
-    const messageElements = sortedMessages.map(
-      (message) =>
-        new TextMessage({
-          class: message.isMine ? "message outgoing" : "message incoming",
-          text: `${message.content} (${new Date(
-            message.time
-          ).toLocaleTimeString()})`,
-        })
-    );
-
-    this.MessageContainerComponent.updateMessages(messageElements);
-  }
-
-  public updateMessages(messages: []): void {
+  public updateMessages(messages: MessageData[]): void {
     const chatStore = ChatsStore.getInstance();
     chatStore.messages = messages
       .sort((a, b) => Date.parse(a.time) - Date.parse(b.time))

@@ -37,7 +37,6 @@ export default class CommonPageController {
         const answer = await chatAPI.createChat(el.value as string);
         const fileInput = document.getElementById("avatar") as HTMLInputElement;
 
-        // Проверяем файл только один раз
         const avatarFile = fileInput.files?.[0];
         if (avatarFile) {
           const formData = new FormData();
@@ -126,7 +125,6 @@ export default class CommonPageController {
           token
         );
         await this.socketController.connect();
-        // Получаем историю сообщений
         this.socketController.getOldMessages(0);
       }
     } catch (error) {
@@ -143,7 +141,7 @@ export default class CommonPageController {
     }
   }
 
-  public addMessageListener(listener: (data: any) => void): void {
+  public addMessageListener(listener: (data: unknown) => void): void {
     if (this.socketController) {
       this.socketController.addMessageListener(listener);
     }

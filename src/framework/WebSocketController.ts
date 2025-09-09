@@ -2,10 +2,27 @@ import { ChatsStore } from "../pages/commonPage/ChatsStore";
 import CommonPage from "../pages/commonPage/commonPage";
 import PageRouter from "./PageRouter";
 
+export interface MessageData {
+  content: string;
+  id: number;
+  user_id: number;
+  time: string;
+  type: string;
+  isMine: boolean;
+  file: {
+    id: number;
+    user_id: number;
+    path: string;
+    filename: string;
+    content_type: string;
+    content_size: number;
+    upload_date: string;
+  };
+}
 export default class WebSocketController {
   private socket: WebSocket | null = null;
   private pingInterval: NodeJS.Timeout | null = null;
-  private messageListeners: ((data: any) => void)[] = [];
+  private messageListeners: ((data: unknown) => void)[] = [];
 
   constructor(
     private userId: number,
@@ -65,11 +82,11 @@ export default class WebSocketController {
     }
   }
 
-  public addMessageListener(listener: (data: any) => void): void {
+  public addMessageListener(listener: (data: unknown) => void): void {
     this.messageListeners.push(listener);
   }
 
-  public removeMessageListener(listener: (data: any) => void): void {
+  public removeMessageListener(listener: (data: unknown) => void): void {
     this.messageListeners = this.messageListeners.filter((l) => l !== listener);
   }
 
@@ -98,7 +115,7 @@ export default class WebSocketController {
 
   private handleMessage(data: string): void {
     try {
-      const parsedData = JSON.parse(data);
+      const parsedData = JSON.parse(data) as MessageData;
       if (parsedData.type === "pong") {
         return;
       }
