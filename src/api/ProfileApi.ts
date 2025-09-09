@@ -6,11 +6,11 @@ export default class ProfileApi extends HTTPTransport {
   async getuserInfo() {
     let el: HTMLInputElement;
     let avatarElement: HTMLImageElement;
-    let result = false;
+    const result = false;
 
     try {
-      let answer = await this.get("/auth/user");
-      let profileValue = JSON.parse(answer.response);
+      const answer = await this.get("/auth/user");
+      const profileValue = JSON.parse(answer.response);
 
       if (answer.status < 400) {
         el = document.getElementById("first_name") as HTMLInputElement;
@@ -26,9 +26,7 @@ export default class ProfileApi extends HTTPTransport {
         el = document.getElementById("phone") as HTMLInputElement;
         el.value = profileValue.phone;
 
-        avatarElement = document.getElementsByTagName(
-          "img"
-        )[0] as HTMLImageElement;
+        avatarElement = document.getElementsByTagName("img")[0];
         avatarElement.src = URLResources + profileValue.avatar;
       } else {
         console.log(profileValue.reason);
@@ -55,7 +53,7 @@ export default class ProfileApi extends HTTPTransport {
     }
 
     try {
-      this.put("/user/profile/avatar", { data: formData });
+      await this.put("/user/profile/avatar", { data: formData });
     } catch (error) {
       console.log(error);
     }
@@ -64,32 +62,26 @@ export default class ProfileApi extends HTTPTransport {
   async changeUserProfile() {
     let el: HTMLInputElement;
     let avatarElement: HTMLImageElement;
-    let first_name: string;
-    let second_name: string;
-    let login: string;
-    let display_name: string;
-    let email: string;
-    let phone: string;
     let elOldPassword: HTMLInputElement;
     let elNewPassword: HTMLInputElement;
     el = document.getElementById("first_name") as HTMLInputElement;
-    first_name = el.value;
+    const first_name = el.value;
     el = document.getElementById("second_name") as HTMLInputElement;
-    second_name = el.value;
+    const second_name = el.value;
     el = document.getElementById("login") as HTMLInputElement;
-    login = el.value;
+    const login = el.value;
     el = document.getElementById("display_name") as HTMLInputElement;
-    display_name = el.value;
+    const display_name = el.value;
     el = document.getElementById("email") as HTMLInputElement;
-    email = el.value;
+    const email = el.value;
     el = document.getElementById("phone") as HTMLInputElement;
-    phone = el.value;
+    const phone = el.value;
 
     try {
-      let answer = await this.put("/user/profile", {
+      const answer = await this.put("/user/profile", {
         data: { first_name, second_name, login, display_name, email, phone },
       });
-      let profileValue = JSON.parse(answer.response);
+      const profileValue = JSON.parse(answer.response);
 
       if (answer.status < 400) {
         el = document.getElementById("first_name") as HTMLInputElement;
@@ -104,9 +96,7 @@ export default class ProfileApi extends HTTPTransport {
         el.value = profileValue.email;
         el = document.getElementById("phone") as HTMLInputElement;
         el.value = profileValue.phone;
-        avatarElement = document.getElementsByTagName(
-          "img"
-        )[0] as HTMLImageElement;
+        avatarElement = document.getElementsByTagName("img")[0];
         avatarElement.src = URLResources + profileValue.avatar;
       } else {
         console.log(profileValue.reason);
@@ -131,13 +121,13 @@ export default class ProfileApi extends HTTPTransport {
 
   async changeUserPassword(oldPassword: string, newPassword: string) {
     try {
-      let answer = await this.put("/user/password", {
+      const answer = await this.put("/user/password", {
         data: { oldPassword, newPassword },
       });
       if (answer.status < 400) {
         alert("Пароль изменен");
       } else {
-        let jsonParse = JSON.parse(answer.responseText);
+        const jsonParse = JSON.parse(answer.responseText);
         alert(jsonParse.reason);
       }
     } catch (error) {
@@ -149,7 +139,7 @@ export default class ProfileApi extends HTTPTransport {
     let result = false;
 
     try {
-      let answer = await this.post("/auth/logout");
+      const answer = await this.post("/auth/logout");
 
       if (answer.status < 400) {
         result = true;

@@ -1,7 +1,7 @@
-import Block from "../framework/Block";
-import { Label } from "./Label";
-import { Input } from "./Input";
-import PageValidator from "../framework/validate/PageValidator";
+import Block from '../framework/Block';
+import { Label } from './Label';
+import { Input } from './Input';
+import PageValidator from '../framework/validate/PageValidator';
 
 interface InputWithLabelProps {
   text: string;
@@ -26,9 +26,9 @@ export class InputWithLabel extends Block {
           id: props.name,
           type: props.type,
           name: props.name,
-          placeholder: props.placeholder || "",
+          placeholder: props.placeholder || '',
           class: props.class,
-          value: props.value || "",
+          value: props.value || '',
           events: {
             blur: () => {
               PageValidator.validate(props.currentPage, props.name);

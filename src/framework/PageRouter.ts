@@ -1,25 +1,27 @@
-import RegistrationPage from "../pages/registrationPage/registrationPage";
-import ProfilePage from "../pages/profilePage/profilePage";
-import StartPage from "../pages/startPage/startPage";
-import CommonPage from "../pages/commonPage/commonPage";
-import ErrorPage from "../pages/errorPage/errorPage";
-import AuthApi from "../api/AuthApi";
+import RegistrationPage from '../pages/registrationPage/registrationPage';
+import ProfilePage from '../pages/profilePage/profilePage';
+import StartPage from '../pages/startPage/startPage';
+import CommonPage from '../pages/commonPage/commonPage';
+import ErrorPage from '../pages/errorPage/errorPage';
+import AuthApi from '../api/AuthApi';
 
 export default class PageRouter {
   private changingPage:
-    | RegistrationPage
-    | ProfilePage
-    | StartPage
-    | CommonPage
-    | ErrorPage;
+  | RegistrationPage
+  | ProfilePage
+  | StartPage
+  | CommonPage
+  | ErrorPage;
+
   private static instance: PageRouter | null = null;
+
   private _urls: Record<string, string> = {
-    startPage: "/start",
-    registrationPage: "/registration",
-    profilePage: "/profile",
-    commonPage: "/common",
-    errorPage400: "/error400",
-    errorPage500: "/error500",
+    startPage: '/start',
+    registrationPage: '/registration',
+    profilePage: '/profile',
+    commonPage: '/common',
+    errorPage400: '/error400',
+    errorPage500: '/error500',
   };
 
   public static getInstance(): PageRouter {
@@ -34,12 +36,12 @@ export default class PageRouter {
   }
 
   private _pages: Record<string, string> = {
-    "/start": "startPage",
-    "/registration": "registrationPage",
-    "/profile": "profilePage",
-    "/common": "commonPage",
-    "/error400": "errorPage400",
-    "/error500": "errorPage500",
+    '/start': 'startPage',
+    '/registration': 'registrationPage',
+    '/profile': 'profilePage',
+    '/common': 'commonPage',
+    '/error400': 'errorPage400',
+    '/error500': 'errorPage500',
   };
 
   private _isHandlingPopState = false;
@@ -50,7 +52,7 @@ export default class PageRouter {
   }
 
   private setupRouteListener() {
-    window.addEventListener("popstate", () => {
+    window.addEventListener('popstate', () => {
       this._isHandlingPopState = true;
       this.navigateToCurrentUrl();
       this._isHandlingPopState = false;
@@ -65,7 +67,7 @@ export default class PageRouter {
       this.go(this._pages[path]);
     } else {
       this.go(
-        (await authApi.checkIsUserAuth()) == true ? "commonPage" : "startPage"
+        (await authApi.checkIsUserAuth()) == true ? 'commonPage' : 'startPage',
       );
     }
   }
@@ -76,23 +78,23 @@ export default class PageRouter {
     }
 
     switch (pageName) {
-      case "registrationPage":
+      case 'registrationPage':
         this.changingPage = new RegistrationPage();
         break;
-      case "profilePage":
+      case 'profilePage':
         this.changingPage = new ProfilePage();
         break;
-      case "startPage":
+      case 'startPage':
         this.changingPage = new StartPage();
         break;
-      case "commonPage":
+      case 'commonPage':
         this.changingPage = new CommonPage();
         break;
-      case "errorPage400":
-        this.changingPage = new ErrorPage("400", "Не туда попали");
+      case 'errorPage400':
+        this.changingPage = new ErrorPage('400', 'Не туда попали');
         break;
-      case "errorPage500":
-        this.changingPage = new ErrorPage("500", "Мы уже фиксим");
+      case 'errorPage500':
+        this.changingPage = new ErrorPage('500', 'Мы уже фиксим');
         break;
       default:
         return;
@@ -101,14 +103,14 @@ export default class PageRouter {
     const url = this._urls[pageName];
     if (!url) return;
 
-    const appElement = document.getElementById("app");
+    const appElement = document.getElementById('app');
     if (appElement) {
-      appElement.innerHTML = "";
+      appElement.innerHTML = '';
       appElement.appendChild(this.changingPage.getContent());
     }
 
     if (!this._isHandlingPopState) {
-      window.history.pushState({ page: pageName }, "", url);
+      window.history.pushState({ page: pageName }, '', url);
     }
   }
 }

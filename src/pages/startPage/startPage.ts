@@ -42,16 +42,7 @@ export default class StartPage extends Block {
             click: async () => {
               validatePage.initButton("signIn");
               if (validatePage.validateInputs()) {
-                let login: string;
-                let password: string;
-                let el: HTMLInputElement;
-                el = document.getElementById("login") as HTMLInputElement;
-                login = el.value || "";
-                el = document.getElementById("password") as HTMLInputElement;
-                password = el.value || "";
-
                 const sign = await apiRequest.signInRequest();
-
                 if (sign) {
                   router.go("commonPage");
                 }

@@ -1,5 +1,5 @@
-import Block, { BlockProps } from "../framework/Block";
-import { TextMessage } from "./TextMessage";
+import Block, { BlockProps } from '../framework/Block';
+import { TextMessage } from './TextMessage';
 
 interface MessageProps extends BlockProps {
   chatStock: TextMessage[];
@@ -23,7 +23,7 @@ export class MessageContainer extends Block {
 
   protected componentDidUpdate(
     oldProps: MessageProps,
-    newProps: MessageProps
+    newProps: MessageProps,
   ): boolean {
     if (oldProps.chatStock !== newProps.chatStock) {
       this.lists = { lists: newProps.chatStock };

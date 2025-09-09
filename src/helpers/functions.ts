@@ -1,7 +1,7 @@
 export class Global {
   changePicture(e: Event, className: string): void {
     const roundImg = document.getElementsByClassName(
-      className
+      className,
     )[0] as HTMLImageElement;
     const target = e.target as HTMLInputElement;
     const file = target.files?.[0];

@@ -1,5 +1,5 @@
-import Block from "../framework/Block";
-import PageRouter from "../framework/PageRouter";
+import Block from '../framework/Block';
+import PageRouter from '../framework/PageRouter';
 
 interface LinkProps {
   datapage: string;
@@ -26,6 +26,6 @@ export class Link extends Block {
   }
 
   override render() {
-    return "<a>{{text}}</a>";
+    return '<a>{{text}}</a>';
   }
 }

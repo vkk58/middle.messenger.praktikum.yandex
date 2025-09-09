@@ -4,25 +4,23 @@ import CommonValidator from "../framework/validate/CommonValidate";
 export default class AuthApi extends HTTPTransport {
   async signInRequest(): Promise<boolean> {
     const https = new HTTPTransport();
-    let login: string;
-    let password: string;
     let el: HTMLInputElement;
     let result = false;
 
     el = document.getElementById("login") as HTMLInputElement;
-    login = el.value || "";
+    const login = el.value || "";
     el = document.getElementById("password") as HTMLInputElement;
-    password = el.value || "";
+    const password = el.value || "";
 
     try {
-      let answer = await https.post("/auth/signin", {
+      const answer = await https.post("/auth/signin", {
         data: { login, password },
       });
       if (answer.status < 400) {
         result = true;
       } else {
-        let jsonParse = JSON.parse(answer.responseText);
-        let valid = new CommonValidator("password");
+        const jsonParse = JSON.parse(answer.responseText);
+        const valid = new CommonValidator("password");
         valid.parmInputElement(el);
         valid.parmErrorTxt(jsonParse.reason);
         valid.createErrorText();
@@ -37,30 +35,24 @@ export default class AuthApi extends HTTPTransport {
 
   async signUpRequest(): Promise<boolean> {
     const https = new HTTPTransport();
-    let firstnameValue: string;
-    let secondnameValue: string;
-    let loginValue: string;
-    let emailValue: string;
-    let passwordValue: string;
-    let phoneValue: string;
     let el: HTMLInputElement;
     let result = false;
 
     el = document.getElementById("first_name") as HTMLInputElement;
-    firstnameValue = el.value || "";
+    const firstnameValue = el.value || "";
     el = document.getElementById("second_name") as HTMLInputElement;
-    secondnameValue = el.value || "";
+    const secondnameValue = el.value || "";
     el = document.getElementById("login") as HTMLInputElement;
-    loginValue = el.value || "";
+    const loginValue = el.value || "";
     el = document.getElementById("email") as HTMLInputElement;
-    emailValue = el.value || "";
+    const emailValue = el.value || "";
     el = document.getElementById("password") as HTMLInputElement;
-    passwordValue = el.value || "";
+    const passwordValue = el.value || "";
     el = document.getElementById("phone") as HTMLInputElement;
-    phoneValue = el.value || "";
+    const phoneValue = el.value || "";
 
     try {
-      let answer = await https.post("/auth/signup", {
+      const answer = await https.post("/auth/signup", {
         data: {
           first_name: firstnameValue,
           second_name: secondnameValue,
@@ -74,8 +66,8 @@ export default class AuthApi extends HTTPTransport {
       if (answer.status < 400) {
         result = true;
       } else {
-        let jsonParse = JSON.parse(answer.responseText);
-        let valid = new CommonValidator("phone");
+        const jsonParse = JSON.parse(answer.responseText);
+        const valid = new CommonValidator("phone");
         valid.parmInputElement(el);
         valid.parmErrorTxt(jsonParse.reason);
         valid.createErrorText();
@@ -89,7 +81,7 @@ export default class AuthApi extends HTTPTransport {
   }
 
   public async checkIsUserAuth() {
-    let answer = await this.get("/auth/user");
+    const answer = await this.get("/auth/user");
 
     if (answer.status < 400) {
       return true;

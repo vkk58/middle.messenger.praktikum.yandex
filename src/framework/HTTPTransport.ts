@@ -1,38 +1,38 @@
 enum METHOD {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE",
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
 }
 
-const URLAPI = "https://ya-praktikum.tech/api/v2";
+const URLAPI = 'https://ya-praktikum.tech/api/v2';
 
 type Options = {
   method: METHOD;
   data?: Record<string, string | number | boolean> | FormData;
 };
 
-type OptionsWithoutMethod = Omit<Options, "method">;
+type OptionsWithoutMethod = Omit<Options, 'method'>;
 
 export default class HTTPTransport {
   get<T = XMLHttpRequest>(
     url: string,
-    options: OptionsWithoutMethod = {}
+    options: OptionsWithoutMethod = {},
   ): Promise<T> {
     return this.request<T>(url, { ...options, method: METHOD.GET });
   }
 
   async post(
     url: string,
-    options: OptionsWithoutMethod = {}
+    options: OptionsWithoutMethod = {},
   ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.POST });
   }
 
   put(
     url: string,
-    options: OptionsWithoutMethod = {}
+    options: OptionsWithoutMethod = {},
   ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.PUT });
   }
@@ -43,14 +43,14 @@ export default class HTTPTransport {
 
   delete(
     url: string,
-    options: OptionsWithoutMethod = {}
+    options: OptionsWithoutMethod = {},
   ): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.DELETE });
   }
 
   request<T = XMLHttpRequest>(
     url: string,
-    options: Options = { method: METHOD.GET }
+    options: Options = { method: METHOD.GET },
   ): Promise<T> {
     const { method, data } = options;
     url = URLAPI + url;
@@ -60,12 +60,12 @@ export default class HTTPTransport {
         method,
         method == METHOD.GET && data
           ? `${url}${this.queryStringify(
-              data as Record<string, string | number | boolean>
-            )}`
-          : url
+            data as Record<string, string | number | boolean>,
+          )}`
+          : url,
       );
       if (!(data instanceof FormData)) {
-        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader('Content-Type', 'application/json');
       }
       xhr.withCredentials = true;
       xhr.onload = function () {
@@ -89,8 +89,8 @@ export default class HTTPTransport {
   }
 
   queryStringify(data: Record<string, string | number | boolean>) {
-    if (typeof data !== "object") {
-      throw new Error("Data must be object");
+    if (typeof data !== 'object') {
+      throw new Error('Data must be object');
     }
 
     const keys = Object.keys(data);
@@ -98,8 +98,8 @@ export default class HTTPTransport {
       const enkey = encodeURIComponent(key);
       const enDatakey = encodeURIComponent(String(data[key]));
       return `${result}${enkey}=${enDatakey}${
-        index < keys.length - 1 ? "&" : ""
+        index < keys.length - 1 ? '&' : ''
       }`;
-    }, "?");
+    }, '?');
   }
 }

@@ -1,9 +1,10 @@
-import { chatAPI } from "../../api/ChatApi";
-import { TextMessage } from "../../components/TextMessage";
-import { IChat } from "../../types";
+import { chatAPI } from '../../api/ChatApi';
+import { TextMessage } from '../../components/TextMessage';
+import { IChat } from '../../types';
 
 export class ChatsStore {
   private static instance: ChatsStore;
+
   private _messages: TextMessage[];
 
   public static getInstance(): ChatsStore {

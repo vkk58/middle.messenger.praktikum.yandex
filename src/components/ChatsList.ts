@@ -1,5 +1,5 @@
-import Block, { BlockProps } from "../framework/Block";
-import { ListElement } from "./ListElement";
+import Block, { BlockProps } from '../framework/Block';
+import { ListElement } from './ListElement';
 
 interface ListProps extends BlockProps {
   chats: ListElement[];
@@ -22,7 +22,7 @@ export class ChatsList extends Block {
 
   protected componentDidUpdate(
     oldProps: ListProps,
-    newProps: ListProps
+    newProps: ListProps,
   ): boolean {
     if (oldProps.chats !== newProps.chats) {
       this.lists = { lists: newProps.chats };

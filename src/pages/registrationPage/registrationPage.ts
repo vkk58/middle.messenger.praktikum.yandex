@@ -1,11 +1,11 @@
-import { InputWithLabel } from "../../components/InputWithLabel";
-import { Footer } from "../../components/Footer";
-import { Button } from "../../components/Button";
-import { LinkList } from "../../components/LinkList";
-import Block from "../../framework/Block";
-import PageRouter from "../../framework/PageRouter";
-import ValidateRegistrationPage from "./validate";
-import AuthApi from "../../api/AuthApi";
+import { InputWithLabel } from '../../components/InputWithLabel';
+import { Footer } from '../../components/Footer';
+import { Button } from '../../components/Button';
+import { LinkList } from '../../components/LinkList';
+import Block from '../../framework/Block';
+import PageRouter from '../../framework/PageRouter';
+import ValidateRegistrationPage from './validate';
+import AuthApi from '../../api/AuthApi';
 
 export default class RegistrationPage extends Block {
   constructor() {
@@ -14,46 +14,46 @@ export default class RegistrationPage extends Block {
     const validatePage = new ValidateRegistrationPage();
     const inputWithLabelArray: InputWithLabel[] = [
       new InputWithLabel({
-        text: "Имя",
-        name: "first_name",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Имя',
+        name: 'first_name',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
       new InputWithLabel({
-        text: "Фамилия",
-        name: "second_name",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Фамилия',
+        name: 'second_name',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
       new InputWithLabel({
-        text: "Логин",
-        name: "login",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Логин',
+        name: 'login',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
       new InputWithLabel({
-        text: "Пароль",
-        name: "password",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Пароль',
+        name: 'password',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
       new InputWithLabel({
-        text: "Почта",
-        name: "email",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Почта',
+        name: 'email',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
       new InputWithLabel({
-        text: "Номер телефона",
-        name: "phone",
-        type: "text",
-        class: "input",
-        currentPage: "registrationPage",
+        text: 'Номер телефона',
+        name: 'phone',
+        type: 'text',
+        class: 'input',
+        currentPage: 'registrationPage',
       }),
     ];
     super({
@@ -61,25 +61,25 @@ export default class RegistrationPage extends Block {
       children: {
         LinkList: new LinkList(),
         CommonButton: new Button({
-          text: "Создать профиль",
-          id: "createProfile",
-          class: "button",
-          type: "button",
-          currentPage: "registrationPage",
+          text: 'Создать профиль',
+          id: 'createProfile',
+          class: 'button',
+          type: 'button',
+          currentPage: 'registrationPage',
           events: {
             click: async () => {
-              validatePage.initButton("createProfile");
+              validatePage.initButton('createProfile');
               if (validatePage.validateInputs()) {
                 const createUser = await apiRequest.signUpRequest();
 
                 if (createUser) {
-                  router.go("commonPage");
+                  router.go('commonPage');
                 }
               }
             },
           },
         }),
-        FooterSignIn: new Footer({ linkPage: "startPage", text: "Войти" }),
+        FooterSignIn: new Footer({ linkPage: 'startPage', text: 'Войти' }),
       },
     });
   }

@@ -15,11 +15,11 @@ export default class CommonValidator {
     this.name = name;
   }
 
-  public parmInputElement(_element = this.inputElement): void{
+  public parmInputElement(_element = this.inputElement): void {
     this.inputElement = _element;  
   }
 
-  public parmErrorTxt(_errorTxt = this.errorTxt): void{
+  public parmErrorTxt(_errorTxt = this.errorTxt): void {
     this.errorTxt = _errorTxt;  
   }
 

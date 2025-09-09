@@ -1,6 +1,6 @@
-import { ChatsStore } from "../pages/commonPage/ChatsStore";
-import CommonPage from "../pages/commonPage/commonPage";
-import PageRouter from "./PageRouter";
+import { ChatsStore } from '../pages/commonPage/ChatsStore';
+import CommonPage from '../pages/commonPage/commonPage';
+import PageRouter from './PageRouter';
 
 export interface MessageData {
   content: string;
@@ -21,36 +21,38 @@ export interface MessageData {
 }
 export default class WebSocketController {
   private socket: WebSocket | null = null;
+
   private pingInterval: NodeJS.Timeout | null = null;
+
   private messageListeners: ((data: unknown) => void)[] = [];
 
   constructor(
     private userId: number,
     private chatId: number,
-    private token: string
+    private token: string,
   ) {}
 
   public connect() {
     try {
       const wsUrl = `wss://ya-praktikum.tech/ws/chats/${this.userId}/${this.chatId}/${this.token}`;
       this.socket = new WebSocket(wsUrl);
-      this.socket.addEventListener("open", () => {
-        console.log("WebSocket соединение установлено");
+      this.socket.addEventListener('open', () => {
+        console.log('WebSocket соединение установлено');
         setTimeout(() => this.getOldMessages(0), 100);
         this.startPing();
       });
 
-      this.socket.addEventListener("message", (event) => {
+      this.socket.addEventListener('message', (event) => {
         this.handleMessage(event.data);
       });
 
-      this.socket.addEventListener("close", (event) => {
-        console.log("WebSocket соединение закрыто", event);
+      this.socket.addEventListener('close', (event) => {
+        console.log('WebSocket соединение закрыто', event);
         this.cleanup();
       });
 
-      this.socket.addEventListener("error", (error) => {
-        console.error("WebSocket ошибка:", error);
+      this.socket.addEventListener('error', (error) => {
+        console.error('WebSocket ошибка:', error);
         console.log(error);
       });
     } catch (error) {
@@ -63,11 +65,11 @@ export default class WebSocketController {
       this.socket.send(
         JSON.stringify({
           content,
-          type: "message",
-        })
+          type: 'message',
+        }),
       );
     } else {
-      console.error("WebSocket не готов к отправке");
+      console.error('WebSocket не готов к отправке');
     }
   }
 
@@ -76,8 +78,8 @@ export default class WebSocketController {
       this.socket.send(
         JSON.stringify({
           content: String(offset),
-          type: "get old",
-        })
+          type: 'get old',
+        }),
       );
     }
   }
@@ -100,7 +102,7 @@ export default class WebSocketController {
   private startPing(): void {
     this.pingInterval = setInterval(() => {
       if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({ type: "ping" }));
+        this.socket.send(JSON.stringify({ type: 'ping' }));
       }
     }, 10000);
   }
@@ -116,10 +118,10 @@ export default class WebSocketController {
   private handleMessage(data: string): void {
     try {
       const parsedData = JSON.parse(data) as MessageData;
-      if (parsedData.type === "pong") {
+      if (parsedData.type === 'pong') {
         return;
       }
-      if (parsedData.type === "user connected") {
+      if (parsedData.type === 'user connected') {
         console.log(`Пользователь ${parsedData.content} подключился`);
         return;
       }
@@ -131,7 +133,7 @@ export default class WebSocketController {
           (commonPage as CommonPage).updateMessages(parsedData);
         }
       }
-      if (parsedData.type === "message") {
+      if (parsedData.type === 'message') {
         const commonPage = PageRouter.getInstance().parmChangingPage();
         if (commonPage && typeof (commonPage as CommonPage)) {
           if (parsedData) {
@@ -140,7 +142,7 @@ export default class WebSocketController {
         }
       }
     } catch (error) {
-      console.error("Ошибка парсинга сообщения:", error, data);
+      console.error('Ошибка парсинга сообщения:', error, data);
     }
   }
 }

@@ -1,44 +1,49 @@
-import { InputWithLabel } from "../../components/InputWithLabel";
-import { Link } from "../../components/Link";
-import { Input } from "../../components/Input";
-import { Button } from "../../components/Button";
-import { LinkList } from "../../components/LinkList";
-import { Label } from "../../components/Label";
-import Block from "../../framework/Block";
-import { ListElement } from "../../components/ListElement";
-import PageRouter from "../../framework/PageRouter";
-import ValidateCommonPage from "./validate";
-import PageValidator from "../../framework/validate/PageValidator";
-import { ChatsList } from "../../components/ChatsList";
-import { MessageContainer } from "../../components/MessageContainer";
-import { TextMessage } from "../../components/TextMessage";
-import { chatAPI } from "../../api/ChatApi";
-import { Dialog } from "../../components/Dialog";
-import { URLRESOURCES } from "../../api/base-api";
-import CommonPageController from "./CommonPageController";
-import { ChatsStore } from "./ChatsStore";
-import { MessageData } from "../../framework/WebSocketController";
+import { InputWithLabel } from '../../components/InputWithLabel';
+import { Link } from '../../components/Link';
+import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
+import { LinkList } from '../../components/LinkList';
+import { Label } from '../../components/Label';
+import Block from '../../framework/Block';
+import { ListElement } from '../../components/ListElement';
+import PageRouter from '../../framework/PageRouter';
+import ValidateCommonPage from './validate';
+import PageValidator from '../../framework/validate/PageValidator';
+import { ChatsList } from '../../components/ChatsList';
+import { MessageContainer } from '../../components/MessageContainer';
+import { TextMessage } from '../../components/TextMessage';
+import { chatAPI } from '../../api/ChatApi';
+import { Dialog } from '../../components/Dialog';
+import { URLRESOURCES } from '../../api/base-api';
+import CommonPageController from './CommonPageController';
+import { ChatsStore } from './ChatsStore';
+import { MessageData } from '../../framework/WebSocketController';
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
+
   private MessageContainerComponent: MessageContainer;
+
   private updateInterval: NodeJS.Timeout | null = null;
+
   private updateCounter: number = 0;
+
   private DialogCreator: Dialog;
+
   constructor() {
     const validateInput = new ValidateCommonPage();
     const router = PageRouter.getInstance();
     const ChatsListComponent = new ChatsList({ chats: [] });
     const MessageContainerComponent = new MessageContainer({ chatStock: [] });
-    const DialogCreator = new Dialog({ class: "dialog-hidden" });
+    const DialogCreator = new Dialog({ class: 'dialog-hidden' });
     const ButtonSendMessage = new Button({
-      text: "Отправить",
-      id: "sendMessage",
-      class: "mini-button",
-      type: "button",
+      text: 'Отправить',
+      id: 'sendMessage',
+      class: 'mini-button',
+      type: 'button',
       events: {
         click: () => {
-          validateInput.initButton("sendMessage");
+          validateInput.initButton('sendMessage');
           if (validateInput.validateInput()) {
             this.handleSendMessage();
             this.updateChats();
@@ -50,23 +55,23 @@ export default class CommonPage extends Block {
       children: {
         LinkList: new LinkList(),
         LinkProfile: new Link({
-          href: "#",
-          datapage: "profilePage",
-          text: "Профиль >",
-          class: "footer-link profileLink",
+          href: '#',
+          datapage: 'profilePage',
+          text: 'Профиль >',
+          class: 'footer-link profileLink',
         }),
         InputWithLabelSearch: new InputWithLabel({
-          text: "Поиск",
-          name: "search",
-          type: "text",
-          class: "input",
-          currentPage: "commonPage",
+          text: 'Поиск',
+          name: 'search',
+          type: 'text',
+          class: 'input',
+          currentPage: 'commonPage',
         }),
         ButtonCreateChat: new Button({
-          text: "Создать чат",
-          id: "createChat",
-          class: "mini-button",
-          type: "button",
+          text: 'Создать чат',
+          id: 'createChat',
+          class: 'mini-button',
+          type: 'button',
           events: {
             click: () => {
               CommonPageController.clearDialogBeforeCreate();
@@ -75,10 +80,10 @@ export default class CommonPage extends Block {
           },
         }),
         ButtonDeleteChat: new Button({
-          text: "Удалить чат",
-          id: "deleteChat",
-          class: "mini-button",
-          type: "button",
+          text: 'Удалить чат',
+          id: 'deleteChat',
+          class: 'mini-button',
+          type: 'button',
           events: {
             click: async () => {
               const commonPageController = CommonPageController.getInstance();
@@ -90,19 +95,19 @@ export default class CommonPage extends Block {
           },
         }),
         LabelForMessage: new Label({
-          text: "Отправка сообщения",
-          for: "message",
+          text: 'Отправка сообщения',
+          for: 'message',
         }),
         InputMessage: new Input({
-          id: "message",
-          type: "text",
-          class: "input",
-          name: "message",
-          placeholder: "Сообщение...",
-          value: "",
+          id: 'message',
+          type: 'text',
+          class: 'input',
+          name: 'message',
+          placeholder: 'Сообщение...',
+          value: '',
           events: {
             blur: () => {
-              PageValidator.validate("commonPage", "message");
+              PageValidator.validate('commonPage', 'message');
             },
           },
         }),
@@ -144,20 +149,20 @@ export default class CommonPage extends Block {
       return new ListElement({
         image:
           chat.avatar == null
-            ? "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig"
+            ? 'https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig'
             : URLRESOURCES + chat.avatar,
-        class: "miniImg",
-        alt: `Аватар`,
+        class: 'miniImg',
+        alt: 'Аватар',
         text: chat.last_message?.content
           ? chat.last_message.content
-          : "Сообщений не было",
-        classSecond: "contactTextMessageType",
+          : 'Сообщений не было',
+        classSecond: 'contactTextMessageType',
         captionText: chat.title,
         id: chat.id.toString(),
         classSelectedChat:
           chat.id == CommonPageController.getInstance().chatId
-            ? "selectedCurrentChat"
-            : "",
+            ? 'selectedCurrentChat'
+            : '',
       });
     });
 
@@ -175,12 +180,12 @@ export default class CommonPage extends Block {
 
   /** НАСТРОЙКА ВЫБОРА ЧАТА */
   private handleSendMessage(): void {
-    const elMessage = document.getElementById("message") as HTMLInputElement;
+    const elMessage = document.getElementById('message') as HTMLInputElement;
 
     if (elMessage.value) {
       const controller = CommonPageController.getInstance();
       controller.sendMessage(elMessage.value);
-      elMessage.value = "";
+      elMessage.value = '';
     }
   }
 
@@ -204,9 +209,9 @@ export default class CommonPage extends Block {
       .map((message) => {
         const messageData = this.normalizeMessage(message);
         return new TextMessage({
-          class: messageData.isMine ? "message outgoing" : "message incoming",
+          class: messageData.isMine ? 'message outgoing' : 'message incoming',
           text: `${messageData.content} (${new Date(
-            messageData.time
+            messageData.time,
           ).toLocaleTimeString()})`,
         });
       });
@@ -219,11 +224,11 @@ export default class CommonPage extends Block {
     const messageData = this.normalizeMessage(message);
     chatStore.addMessage(
       new TextMessage({
-        class: messageData.isMine ? "message outgoing" : "message incoming",
+        class: messageData.isMine ? 'message outgoing' : 'message incoming',
         text: `${messageData.content} (${new Date(
-          messageData.time
+          messageData.time,
         ).toLocaleTimeString()})`,
-      })
+      }),
     );
 
     this.MessageContainerComponent.updateMessages(chatStore.messages);

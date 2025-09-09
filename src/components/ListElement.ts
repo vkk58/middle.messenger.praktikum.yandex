@@ -1,7 +1,7 @@
-import Block, { BlockProps } from "../framework/Block";
-import CommonPageController from "../pages/commonPage/CommonPageController";
-import { Image } from "./Image";
-import { Text } from "./Text";
+import Block, { BlockProps } from '../framework/Block';
+import CommonPageController from '../pages/commonPage/CommonPageController';
+import { Image } from './Image';
+import { Text } from './Text';
 
 export interface ListElementProps extends BlockProps {
   captionText: string;
@@ -18,10 +18,10 @@ export class ListElement extends Block {
   constructor(props: ListElementProps) {
     super({
       attr: {
-        id: props.id || "",
-        class: props.classSelectedChat || "",
+        id: props.id || '',
+        class: props.classSelectedChat || '',
       },
-      captionText: props.captionText || "",
+      captionText: props.captionText || '',
       children: {
         Image: new Image({
           image: props.image,
@@ -32,14 +32,14 @@ export class ListElement extends Block {
       },
       events: {
         click: () => {
-          let lists = document.querySelectorAll(".selectedCurrentChat");
+          const lists = document.querySelectorAll('.selectedCurrentChat');
           lists.forEach((el) => {
-            el.classList.remove("selectedCurrentChat");
+            el.classList.remove('selectedCurrentChat');
           });
           if (this._element) {
-            this._element.classList.add("selectedCurrentChat");
+            this._element.classList.add('selectedCurrentChat');
             const commonPage = CommonPageController.getInstance();
-            commonPage.chatId = Number(this._element.getAttribute("id"));
+            commonPage.chatId = Number(this._element.getAttribute('id'));
             commonPage.initWebSocket(commonPage.chatId);
           }
         },

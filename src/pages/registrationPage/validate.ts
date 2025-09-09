@@ -17,8 +17,7 @@ export default class ValidateRegistrationPage extends CommonValidator {
 
     this.inputElement = document.getElementById(this.name) as HTMLInputElement;
 
-    if(this.inputElement.type != "text")
-    {
+    if (this.inputElement.type != 'text') {
       return true;
     }
     const inputValue = this.inputElement.value;

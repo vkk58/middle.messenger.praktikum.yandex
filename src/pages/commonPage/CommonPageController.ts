@@ -5,22 +5,27 @@ export default class CommonPageController {
   private socketController: WebSocketController | null = null;
 
   private _chatId: number = 0;
+
   get chatId(): number {
     return this._chatId;
   }
+
   set chatId(value: number) {
     this._chatId = value;
   }
 
   private _userId: number = 0;
+
   get userId(): number {
     return this._userId;
   }
+
   set userId(value: number) {
     this._userId = value;
   }
 
   private static instance: CommonPageController | null = null;
+
   public static getInstance(): CommonPageController {
     if (!CommonPageController.instance) {
       CommonPageController.instance = new CommonPageController();
@@ -29,12 +34,11 @@ export default class CommonPageController {
   }
 
   public async createChat() {
-    let el: HTMLInputElement;
     let ret = false;
-    el = document.getElementById("nameForNewChat") as HTMLInputElement;
+    const el = document.getElementById("nameForNewChat") as HTMLInputElement;
     if (el.value != "") {
       try {
-        const answer = await chatAPI.createChat(el.value as string);
+        const answer = await chatAPI.createChat(el.value);
         const fileInput = document.getElementById("avatar") as HTMLInputElement;
 
         const avatarFile = fileInput.files?.[0];

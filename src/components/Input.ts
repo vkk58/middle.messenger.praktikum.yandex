@@ -1,4 +1,4 @@
-import Block from "../framework/Block";
+import Block from '../framework/Block';
 
 interface InputProps {
   id: string;
@@ -18,14 +18,14 @@ export class Input extends Block {
         id: props.id,
         type: props.type,
         name: props.name,
-        placeholder: props.placeholder || "",
-        value: props.value || "",
+        placeholder: props.placeholder || '',
+        value: props.value || '',
         class: props.class,
       },
     });
   }
 
   override render(): string {
-    return "<input>";
+    return '<input>';
   }
 }
