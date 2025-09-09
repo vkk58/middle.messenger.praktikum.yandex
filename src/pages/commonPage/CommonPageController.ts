@@ -1,12 +1,23 @@
 import { chatAPI } from "../../api/ChatApi";
+import WebSocketController from "../../framework/WebSocketController";
 
 export default class CommonPageController {
+  private socketController: WebSocketController | null = null;
+
   private _chatId: number = 0;
   get chatId(): number {
     return this._chatId;
   }
   set chatId(value: number) {
     this._chatId = value;
+  }
+
+  private _userId: number = 0;
+  get userId(): number {
+    return this._userId;
+  }
+  set userId(value: number) {
+    this._userId = value;
   }
 
   private static instance: CommonPageController | null = null;
@@ -21,7 +32,6 @@ export default class CommonPageController {
     let el: HTMLInputElement;
     let ret = false;
     el = document.getElementById("nameForNewChat") as HTMLInputElement;
-    debugger;
     if (el.value != "") {
       try {
         const answer = await chatAPI.createChat(el.value as string);
@@ -91,5 +101,59 @@ export default class CommonPageController {
       avatarImage.src =
         "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig";
     }
+  }
+
+  public async initWebSocket(chatId: number): Promise<void> {
+    this.closeWebSocket();
+
+    this.chatId = chatId;
+
+    try {
+      const [tokenResponse, userResponse] = await Promise.all([
+        chatAPI.getToken(chatId),
+        this.userId === 0
+          ? chatAPI.getuserInfo()
+          : Promise.resolve({ id: this.userId }),
+      ]);
+
+      const token = tokenResponse.token;
+      this.userId = userResponse.id;
+
+      if (token && this.userId && chatId) {
+        this.socketController = new WebSocketController(
+          this.userId,
+          chatId,
+          token
+        );
+        await this.socketController.connect();
+        // Получаем историю сообщений
+        this.socketController.getOldMessages(0);
+      }
+    } catch (error) {
+      console.error("Ошибка инициализации WebSocket:", error);
+      throw error;
+    }
+  }
+
+  public sendMessage(message: string): void {
+    if (this.socketController && this.chatId) {
+      this.socketController.sendMessage(message);
+    } else {
+      console.error("WebSocket не инициализирован или чат не выбран");
+    }
+  }
+
+  public addMessageListener(listener: (data: any) => void): void {
+    if (this.socketController) {
+      this.socketController.addMessageListener(listener);
+    }
+  }
+
+  public closeWebSocket(): void {
+    if (this.socketController) {
+      this.socketController.close();
+      this.socketController = null;
+    }
+    this.chatId = 0;
   }
 }

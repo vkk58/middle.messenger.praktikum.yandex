@@ -23,6 +23,10 @@ class ChatAPI extends BaseApi {
   async deleteChat(chatId: number) {
     return this.delete("/chats", { data: { chatId } });
   }
+
+  async getToken(chatId: number) {
+    return this.post(`/chats/token/${chatId}`);
+  }
 }
 
 export const chatAPI = new ChatAPI();

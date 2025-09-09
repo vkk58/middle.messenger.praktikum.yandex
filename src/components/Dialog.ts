@@ -16,7 +16,6 @@ interface DialogProps extends BlockProps {
 
 export class Dialog extends Block {
   public visible: boolean;
-  private InputWithLabelChatName: InputWithLabel;
   constructor(props: DialogProps) {
     const globalClass = new Global();
     const InputWithLabelChatName = new InputWithLabel({
@@ -57,7 +56,6 @@ export class Dialog extends Block {
           events: {
             click: async () => {
               await this.createChat();
-              debugger;
               const commonPage = PageRouter.getInstance().parmChangingPage();
               if (
                 commonPage &&
@@ -99,7 +97,6 @@ export class Dialog extends Block {
 
   private async createChat(): Promise<void> {
     const pageController = CommonPageController.getInstance();
-    debugger;
     if (await pageController.createChat()) {
       this.hide();
     }

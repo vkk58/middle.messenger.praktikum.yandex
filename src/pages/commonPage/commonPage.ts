@@ -16,10 +16,14 @@ import { chatAPI } from "../../api/ChatApi";
 import { Dialog } from "../../components/Dialog";
 import { URLRESOURCES } from "../../api/base-api";
 import CommonPageController from "./CommonPageController";
+import WebSocketController from "../../framework/WebSocketController";
+import { ChatsStore } from "./ChatsStore";
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
   private MessageContainerComponent: MessageContainer;
+  private messages: any;
+  private socketController: WebSocketController | null = null;
   private updateInterval: NodeJS.Timeout | null = null;
   private updateInterval4Message: NodeJS.Timeout | null = null;
   private updateCounter: number = 0;
@@ -30,6 +34,21 @@ export default class CommonPage extends Block {
     const ChatsListComponent = new ChatsList({ chats: [] });
     const MessageContainerComponent = new MessageContainer({ chatStock: [] });
     const DialogCreator = new Dialog({ class: "dialog-hidden" });
+    const ButtonSendMessage = new Button({
+      text: "Отправить",
+      id: "sendMessage",
+      class: "mini-button",
+      type: "button",
+      events: {
+        click: () => {
+          validateInput.initButton("sendMessage");
+          if (validateInput.validateInput()) {
+            this.handleSendMessage();
+            this.updateChats();
+          }
+        },
+      },
+    });
     super({
       children: {
         LinkList: new LinkList(),
@@ -53,7 +72,6 @@ export default class CommonPage extends Block {
           type: "button",
           events: {
             click: () => {
-              debugger;
               CommonPageController.clearDialogBeforeCreate();
               this.DialogCreator.show();
             },
@@ -66,7 +84,7 @@ export default class CommonPage extends Block {
           type: "button",
           events: {
             click: async () => {
-              const commonPageController = new CommonPageController();
+              const commonPageController = CommonPageController.getInstance();
               if (commonPageController) {
                 await commonPageController.deleteChat();
                 this.updateChats();
@@ -91,20 +109,7 @@ export default class CommonPage extends Block {
             },
           },
         }),
-        ButtonSendMessage: new Button({
-          text: "Отправить",
-          id: "sendMessage",
-          class: "mini-button",
-          type: "submit",
-          events: {
-            click: () => {
-              validateInput.initButton("sendMessage");
-              if (validateInput.validateInput()) {
-                router.go("commonPage");
-              }
-            },
-          },
-        }),
+        ButtonSendMessage,
         ChatsListComponent,
         MessageContainerComponent,
         DialogCreator,
@@ -115,15 +120,11 @@ export default class CommonPage extends Block {
     this.startChatUpdates();
 
     this.MessageContainerComponent = MessageContainerComponent;
-    this.startMessageUpdates();
 
     this.DialogCreator = DialogCreator;
   }
 
   /**СПИСОК ЧАТОВ НАЧАЛО---------------> */
-  /**
-   * Запускает периодическое обновление чатов
-   */
   private startChatUpdates(): void {
     this.updateChats();
 
@@ -132,9 +133,6 @@ export default class CommonPage extends Block {
     }, 10000);
   }
 
-  /**
-   * Останавливает автоматическое обновление чатов
-   */
   private stopChatUpdates(): void {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -142,9 +140,6 @@ export default class CommonPage extends Block {
     }
   }
 
-  /**
-   * Обновляет список чатов новыми данными
-   */
   public async updateChats() {
     this.updateCounter++;
     const chatList = await chatAPI.getChatList();
@@ -156,7 +151,9 @@ export default class CommonPage extends Block {
             : URLRESOURCES + chat.avatar,
         class: "miniImg",
         alt: `Аватар`,
-        text: chat.last_message ? chat.last_message : "Сообщений не было",
+        text: chat.last_message?.content
+          ? chat.last_message.content
+          : "Сообщений не было",
         classSecond: "contactTextMessageType",
         captionText: chat.title,
         id: chat.id.toString(),
@@ -167,79 +164,161 @@ export default class CommonPage extends Block {
       });
     });
 
-    // Используем публичный метод вместо прямого доступа к props
     this.ChatsListComponent.updateChats(ret);
   }
 
   public componentWillUnmount(): void {
-    this.stopMessagesUpdates();
     this.stopChatUpdates();
+    const controller = CommonPageController.getInstance();
+    controller.closeWebSocket();
   }
   /**<--------------- СПИСОК ЧАТОВ КОНЕЦ */
 
   /**СООБЩЕНИЯ НАЧАЛО ---------------> */
-  private startMessageUpdates(): void {
-    setTimeout(() => {
-      this.updateMessages();
-    }, 1000);
+  public setupMessageListeners(): void {
+    const controller = CommonPageController.getInstance();
 
-    this.updateInterval4Message = setInterval(() => {
-      this.updateMessages();
-    }, 10000);
+    controller.addMessageListener((data: any) => {
+      this.handleIncomingMessage(data);
+    });
+
+    this.setupChatSelectionListeners();
   }
 
-  private stopMessagesUpdates(): void {
-    if (this.updateInterval4Message) {
-      clearInterval(this.updateInterval4Message);
-      this.updateInterval4Message = null;
+  /** НАСТРОЙКА ВЫБОРА ЧАТА */
+  private setupChatSelectionListeners(): void {
+    setTimeout(() => {
+      const chatsContainer = document.querySelector(".chats-list");
+      if (chatsContainer) {
+        chatsContainer.addEventListener("click", (event) => {
+          const target = event.target as HTMLElement;
+          const chatElement = target.closest(".list-element");
+
+          if (chatElement) {
+            const chatId = chatElement.getAttribute("id");
+            if (chatId) {
+              this.handleChatSelection(Number(chatId));
+            }
+          }
+        });
+      }
+    }, 100);
+  }
+
+  private async handleChatSelection(chatId: number): Promise<void> {
+    debugger;
+    try {
+      const controller = CommonPageController.getInstance();
+
+      await controller.initWebSocket(chatId);
+
+      // Обновляем выделение выбранного чата
+      this.updateChatSelection(chatId);
+    } catch (error) {
+      console.error("Ошибка при выборе чата:", error);
+      alert("Не удалось подключиться к чату");
     }
   }
 
-  private updateMessages(): void {
-    this.updateCounter++;
-    const newChats = this.generateRandomMessages();
-
-    // Используем публичный метод вместо прямого доступа к props
-    this.MessageContainerComponent.updateMessages(newChats);
-  }
-
-  private generateRandomMessages() {
-    const messages = [
-      "Привет! Как дела?",
-      "Посмотрел документы",
-      "Встречаемся завтра?",
-      "Отправил файлы",
-      "Спасибо за помощь!",
-      "Как прошла презентация?",
-      "Жду ответа",
-      "Отличные новости!",
-      "Нужна твоя помощь",
-      "Когда сможешь созвониться?",
-    ];
-
-    // Случайное количество чатов от 1 до 6
-    const chatCount = Math.floor(Math.random() * 6) + 1;
-    const usedNames = new Set<string>();
-
-    return Array.from({ length: chatCount }, (_, index) => {
-      // Убеждаемся, что имена не повторяются
-
-      const randomMessage =
-        messages[Math.floor(Math.random() * messages.length)];
-      const messageTime = new Date().toLocaleTimeString();
-
-      return new TextMessage({
-        class: "message outgoing",
-        text: `${randomMessage} (${messageTime})`,
-      });
+  /** ОБНОВЛЕНИЕ ВЫДЕЛЕНИЯ ВЫБРАННОГО ЧАТА */
+  private updateChatSelection(selectedChatId: number): void {
+    // Убираем выделение со всех чатов
+    const allChats = document.querySelectorAll(".list-element");
+    allChats.forEach((chat) => {
+      chat.classList.remove("selectedCurrentChat");
     });
+
+    // Добавляем выделение выбранному чату
+    const selectedChat = document.querySelector(`[id="${selectedChatId}"]`);
+    if (selectedChat) {
+      selectedChat.classList.add("selectedCurrentChat");
+    }
   }
 
-  /**
-   * Дополнительный метод для ручного обновления (например, по кнопке)
-  + */
-  public manualUpdateMessages(): void {
-    this.updateMessages();
+  private handleSendMessage(): void {
+    const elMessage = document.getElementById("message") as HTMLInputElement;
+
+    if (elMessage.value) {
+      const controller = CommonPageController.getInstance();
+      controller.sendMessage(elMessage.value);
+      elMessage.value = "";
+    }
+  }
+
+  private handleIncomingMessage(data: any): void {
+    debugger;
+    if (Array.isArray(data)) {
+      this.messages = data.map((msg) => this.normalizeMessage(msg));
+    } else if (data.type === "message") {
+      // Новое сообщение
+      const newMessage = this.normalizeMessage(data);
+      this.messages.push(newMessage);
+    }
+
+    this.updateMessageDisplay();
+  }
+
+  private normalizeMessage(data: {}) {
+    const userId = CommonPageController.getInstance().userId;
+
+    return {
+      content: data.content,
+      id: data.id || Date.now(),
+      user_id: data.user_id,
+      time: data.time || new Date().toISOString(),
+      type: data.type,
+      isMine: data.user_id === userId,
+    };
+  }
+
+  private updateMessageDisplay(): void {
+    const sortedMessages = [...this.messages].sort(
+      (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+    );
+
+    const messageElements = sortedMessages.map(
+      (message) =>
+        new TextMessage({
+          class: message.isMine ? "message outgoing" : "message incoming",
+          text: `${message.content} (${new Date(
+            message.time
+          ).toLocaleTimeString()})`,
+        })
+    );
+
+    this.MessageContainerComponent.updateMessages(messageElements);
+  }
+
+  public updateMessages(messages: []): void {
+    const chatStore = ChatsStore.getInstance();
+    chatStore.messages = messages
+      .sort((a, b) => Date.parse(a.time) - Date.parse(b.time))
+      .map((message) => {
+        const messageData = this.normalizeMessage(message);
+        return new TextMessage({
+          class: messageData.isMine ? "message outgoing" : "message incoming",
+          text: `${messageData.content} (${new Date(
+            messageData.time
+          ).toLocaleTimeString()})`,
+        });
+      });
+    this.MessageContainerComponent.updateMessages(chatStore.messages);
+  }
+
+  public async addMessage(message: {}) {
+    this.MessageContainerComponent.updateMessages([]);
+    const chatStore = ChatsStore.getInstance();
+    const messageData = this.normalizeMessage(message);
+    chatStore.addMessage(
+      new TextMessage({
+        class: messageData.isMine ? "message outgoing" : "message incoming",
+        text: `${messageData.content} (${new Date(
+          messageData.time
+        ).toLocaleTimeString()})`,
+      })
+    );
+
+    this.MessageContainerComponent.updateMessages(chatStore.messages);
   }
   /**<--------------- СООБЩЕНИЯ КОНЕЦ */
 

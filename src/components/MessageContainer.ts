@@ -14,6 +14,7 @@ export class MessageContainer extends Block {
   }
 
   public updateMessages(newChatStock: TextMessage[]): void {
+    console.log(newChatStock);
     this.setProps({
       ...this.props,
       chatStock: newChatStock,

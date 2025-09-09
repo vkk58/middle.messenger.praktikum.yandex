@@ -38,9 +38,9 @@ export class ListElement extends Block {
           });
           if (this._element) {
             this._element.classList.add("selectedCurrentChat");
-            CommonPageController.getInstance().chatId = Number(
-              this._element.getAttribute("id")
-            );
+            const commonPage = CommonPageController.getInstance();
+            commonPage.chatId = Number(this._element.getAttribute("id"));
+            commonPage.initWebSocket(commonPage.chatId);
           }
         },
       },

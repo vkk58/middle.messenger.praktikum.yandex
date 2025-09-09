@@ -5,7 +5,6 @@ export interface BlockProps {
   props?: {
     id: string;
     type?: string;
-    visible?: boolean;
   };
   events?: Record<string, (e?: Event) => void>;
   attr?: Record<string, string>;
@@ -14,6 +13,7 @@ export interface BlockProps {
   text?: string;
   message?: string;
   captionText?: string;
+  visible?: boolean;
 }
 
 export default abstract class Block {
@@ -106,7 +106,6 @@ export default abstract class Block {
 
   private _componentWillUnmount(): void {
     this.componentWillUnmount();
-    // Рекурсивно вызываем для детей
     Object.values(this.children).forEach((child) => {
       if (child instanceof Block) {
         child.dispatchComponentWillUnmount();
@@ -266,7 +265,6 @@ export default abstract class Block {
 
   private _makePropsProxy(props: BlockProps): BlockProps {
     const _ = this;
-    // const self = this;
     return new Proxy(props, {
       get(target: BlockProps, prop: string | symbol) {
         if (typeof prop === "symbol") {
