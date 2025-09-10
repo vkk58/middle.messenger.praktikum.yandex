@@ -4,7 +4,7 @@ export default class App {
   private router: PageRouter;
 
   constructor() {
-    const _appElement = document.getElementById("app");
+    document.getElementById("app");
     this.router = PageRouter.getInstance();
   }
 
