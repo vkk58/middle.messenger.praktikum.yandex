@@ -142,6 +142,9 @@ export default abstract class Block {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     newProps: BlockProps
   ): boolean {
+    if (newProps != oldProps) {
+      console.log(newProps, oldProps);
+    }
     return true;
   }
 
