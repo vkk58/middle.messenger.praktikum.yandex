@@ -9,9 +9,14 @@ enum METHOD {
 const URLAPI = 'https://ya-praktikum.tech/api/v2';
 export const URLRESOURCES = 'https://ya-praktikum.tech/api/v2/resources';
 
+interface ChatUsersData {
+  users: number[];
+  chatId: number;
+}
+
 type Options = {
   method: METHOD;
-  data?: Record<string, string | number | boolean> | FormData;
+  data?: Record<string, string | number | boolean> | FormData | ChatUsersData;
 };
 
 type OptionsWithoutMethod = Omit<Options, 'method'>;

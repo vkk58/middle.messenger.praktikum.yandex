@@ -29,6 +29,14 @@ class ChatAPI extends BaseApi {
   async getToken(chatId: number) {
     return this.post(`/chats/token/${chatId}`);
   }
+
+  async getUserList(login: string) {
+    return this.post('/user/search', { data: { login } });
+  }
+
+  async addUserToChat(userId: number[], chatId: number) {
+    return this.put('/chats/users', { data: { users: userId, chatId } });
+  }
 }
 
 export const chatAPI = new ChatAPI();

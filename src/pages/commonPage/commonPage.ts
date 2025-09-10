@@ -6,7 +6,6 @@ import { LinkList } from '../../components/LinkList';
 import { Label } from '../../components/Label';
 import Block from '../../framework/Block';
 import { ListElement } from '../../components/ListElement';
-import PageRouter from '../../framework/PageRouter';
 import ValidateCommonPage from './validate';
 import PageValidator from '../../framework/validate/PageValidator';
 import { ChatsList } from '../../components/ChatsList';
@@ -18,11 +17,22 @@ import { URLRESOURCES } from '../../api/base-api';
 import CommonPageController from './CommonPageController';
 import { ChatsStore } from './ChatsStore';
 import { MessageData } from '../../framework/WebSocketController';
+import { UserList } from '../../components/UserList';
+import { UserPoint } from '../../components/UserPoint';
+
+interface User {
+  id: number;
+  login: string;
+  first_name: string;
+  second_name: string;
+}
 
 export default class CommonPage extends Block {
   private ChatsListComponent: ChatsList;
 
   private MessageContainerComponent: MessageContainer;
+
+  private UserListComponent: UserList;
 
   private updateInterval: NodeJS.Timeout | null = null;
 
@@ -32,9 +42,9 @@ export default class CommonPage extends Block {
 
   constructor() {
     const validateInput = new ValidateCommonPage();
-    const router = PageRouter.getInstance();
     const ChatsListComponent = new ChatsList({ chats: [] });
     const MessageContainerComponent = new MessageContainer({ chatStock: [] });
+    const UserListComponent = new UserList({ userList: [] });
     const DialogCreator = new Dialog({ class: 'dialog-hidden' });
     const ButtonSendMessage = new Button({
       text: 'Отправить',
@@ -61,16 +71,17 @@ export default class CommonPage extends Block {
           class: 'footer-link profileLink',
         }),
         InputWithLabelSearch: new InputWithLabel({
-          text: 'Поиск',
+          text: 'Поиск пользователя',
           name: 'search',
           type: 'text',
           class: 'input',
           currentPage: 'commonPage',
+          list: 'user-list',
         }),
         ButtonCreateChat: new Button({
           text: 'Создать чат',
           id: 'createChat',
-          class: 'mini-button',
+          class: 'mini-button margin-button',
           type: 'button',
           events: {
             click: () => {
@@ -82,7 +93,7 @@ export default class CommonPage extends Block {
         ButtonDeleteChat: new Button({
           text: 'Удалить чат',
           id: 'deleteChat',
-          class: 'mini-button',
+          class: 'mini-button margin-button',
           type: 'button',
           events: {
             click: async () => {
@@ -90,6 +101,32 @@ export default class CommonPage extends Block {
               if (commonPageController) {
                 await commonPageController.deleteChat();
                 this.updateChats();
+              }
+            },
+          },
+        }),
+        ButtonAddUserToChat: new Button({
+          text: 'Добавить пользователя',
+          id: 'addUserToChat',
+          class: 'mini-button-add-user',
+          type: 'button',
+          events: {
+            click: async () => {
+              debugger;
+              const elSearch = document.getElementById(
+                'search',
+              ) as HTMLInputElement;
+              const searchedUserId =
+                CommonPageController.getInstance().searchUserList[
+                  elSearch.value
+                ];
+              if (searchedUserId) {
+                await chatAPI.addUserToChat(
+                  [searchedUserId],
+                  CommonPageController.getInstance().chatId,
+                );
+
+                alert(`Пользователь ${elSearch.value} добавлен`);
               }
             },
           },
@@ -111,6 +148,7 @@ export default class CommonPage extends Block {
             },
           },
         }),
+        UserListComponent,
         ButtonSendMessage,
         ChatsListComponent,
         MessageContainerComponent,
@@ -123,8 +161,32 @@ export default class CommonPage extends Block {
 
     this.MessageContainerComponent = MessageContainerComponent;
 
+    this.UserListComponent = UserListComponent;
+
     this.DialogCreator = DialogCreator;
   }
+
+  /**Поиск пользователей --------------->*/
+  public async updateUserList(userLists: User[]) {
+    const listforStore: Record<string, number> = {};
+    const ret = userLists.map((userList) => {
+      const userValue = `${userList.login} (${userList.first_name} ${userList.second_name})`;
+      listforStore[userValue] = userList.id;
+
+      return new UserPoint({
+        id: String(userList.id),
+        value: userValue,
+      });
+    });
+
+    if (Object.keys(listforStore).length !== 0) {
+      CommonPageController.getInstance().searchUserList = listforStore;
+    }
+    console.log('posle', CommonPageController.getInstance().searchUserList);
+
+    this.UserListComponent.updateUserList(ret);
+  }
+  /**<-------------------- */
 
   /**СПИСОК ЧАТОВ НАЧАЛО---------------> */
   private startChatUpdates(): void {
@@ -218,7 +280,7 @@ export default class CommonPage extends Block {
     this.MessageContainerComponent.updateMessages(chatStore.messages);
   }
 
-  public async addMessage(message: {}) {
+  public async addMessage(message: MessageData) {
     this.MessageContainerComponent.updateMessages([]);
     const chatStore = ChatsStore.getInstance();
     const messageData = this.normalizeMessage(message);
@@ -242,7 +304,11 @@ export default class CommonPage extends Block {
                     {{{ LinkProfile }}}
                     </div>
                     <form>
+                    <div>
                     {{{ InputWithLabelSearch }}}
+                    {{{UserListComponent}}}
+                    {{{ButtonAddUserToChat}}}
+                    </div>
                     {{{ButtonCreateChat}}}
                     {{{ButtonDeleteChat}}}
                     <div class="lineBreak"></div>
