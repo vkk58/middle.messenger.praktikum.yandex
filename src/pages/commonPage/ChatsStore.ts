@@ -1,6 +1,4 @@
-import { chatAPI } from '../../api/ChatApi';
-import { TextMessage } from '../../components/TextMessage';
-import { IChat } from '../../types';
+import { TextMessage } from "../../components/TextMessage";
 
 export class ChatsStore {
   private static instance: ChatsStore;

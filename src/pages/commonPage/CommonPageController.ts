@@ -1,7 +1,15 @@
 import { chatAPI } from "../../api/ChatApi";
 import PageRouter from "../../framework/PageRouter";
 import WebSocketController from "../../framework/WebSocketController";
-import CommonPage from "./commonPage";
+import CommonPage, { User } from "./commonPage";
+
+interface TokenResponse {
+  token: string;
+}
+
+interface UserResponse {
+  id: number;
+}
 
 export default class CommonPageController {
   private socketController: WebSocketController | null = null;
@@ -50,7 +58,8 @@ export default class CommonPageController {
     const el = document.getElementById("nameForNewChat") as HTMLInputElement;
     if (el.value != "") {
       try {
-        const answer = await chatAPI.createChat(el.value);
+        const xhrResponse = await chatAPI.createChat(el.value);
+        const answer = xhrResponse.response;
         const fileInput = document.getElementById("avatar") as HTMLInputElement;
 
         const avatarFile = fileInput.files?.[0];
@@ -125,9 +134,9 @@ export default class CommonPageController {
 
     try {
       const [tokenResponse, userResponse] = await Promise.all([
-        chatAPI.getToken(chatId),
+        chatAPI.getToken(chatId) as unknown as Promise<TokenResponse>,
         this.userId === 0
-          ? chatAPI.getuserInfo()
+          ? (chatAPI.getuserInfo() as unknown as Promise<UserResponse>)
           : Promise.resolve({ id: this.userId }),
       ]);
 
@@ -174,7 +183,8 @@ export default class CommonPageController {
   public async getUserSearchList() {
     const elSearch = document.getElementById("search") as HTMLInputElement;
     if (elSearch && elSearch.value) {
-      const answer = await chatAPI.getUserList(elSearch.value);
+      const xhrResponse = await chatAPI.getUserList(elSearch.value);
+      const answer = xhrResponse.response as User[];
       const commonPage = PageRouter.getInstance().parmChangingPage();
       if (
         commonPage &&

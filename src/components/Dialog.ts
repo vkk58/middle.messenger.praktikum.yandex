@@ -1,13 +1,12 @@
-import { chatAPI } from '../api/ChatApi';
-import Block, { BlockProps } from '../framework/Block';
-import PageRouter from '../framework/PageRouter';
-import { Global } from '../helpers/functions';
-import CommonPage from '../pages/commonPage/commonPage';
-import CommonPageController from '../pages/commonPage/CommonPageController';
-import { Button } from './Button';
-import { Image } from './Image';
-import { Input } from './Input';
-import { InputWithLabel } from './InputWithLabel';
+import Block, { BlockProps } from "../framework/Block";
+import PageRouter from "../framework/PageRouter";
+import { Global } from "../helpers/functions";
+import CommonPage from "../pages/commonPage/commonPage";
+import CommonPageController from "../pages/commonPage/CommonPageController";
+import { Button } from "./Button";
+import { Image } from "./Image";
+import { Input } from "./Input";
+import { InputWithLabel } from "./InputWithLabel";
 
 interface DialogProps extends BlockProps {
   class?: string;
@@ -20,11 +19,11 @@ export class Dialog extends Block {
   constructor(props: DialogProps) {
     const globalClass = new Global();
     const InputWithLabelChatName = new InputWithLabel({
-      text: 'Название чата',
-      name: 'nameForNewChat',
-      type: 'text',
-      class: 'input',
-      currentPage: 'commonPage',
+      text: "Название чата",
+      name: "nameForNewChat",
+      type: "text",
+      class: "input",
+      currentPage: "commonPage",
     });
     super({
       ...props,
@@ -32,35 +31,35 @@ export class Dialog extends Block {
         InputWithLabelChatName,
         ImageAvatar: new Image({
           image:
-            'https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig',
-          class: 'round-img',
-          alt: 'Пользователь',
+            "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig",
+          class: "round-img",
+          alt: "Пользователь",
         }),
         InputAvatar: new Input({
-          id: 'avatar',
-          type: 'file',
-          name: 'avatar',
-          class: 'input',
-          value: '',
-          placeholder: '',
+          id: "avatar",
+          type: "file",
+          name: "avatar",
+          class: "input",
+          value: "",
+          placeholder: "",
           events: {
             change: async (e: Event) => {
-              globalClass.changePicture(e, 'round-img');
+              globalClass.changePicture(e, "round-img");
             },
           },
         }),
         ButtonOk: new Button({
-          text: 'Создать',
-          id: 'createChatConfirm',
-          class: 'mini-button',
-          type: 'button',
+          text: "Создать",
+          id: "createChatConfirm",
+          class: "mini-button",
+          type: "button",
           events: {
             click: async () => {
               await this.createChat();
               const commonPage = PageRouter.getInstance().parmChangingPage();
               if (
                 commonPage &&
-                typeof (commonPage as CommonPage).updateChats === 'function'
+                typeof (commonPage as CommonPage).updateChats === "function"
               ) {
                 await (commonPage as CommonPage).updateChats();
               }
@@ -68,10 +67,10 @@ export class Dialog extends Block {
           },
         }),
         ButtonCancel: new Button({
-          text: 'Отмена',
-          id: 'cancelCreateChat',
-          class: 'mini-button',
-          type: 'button',
+          text: "Отмена",
+          id: "cancelCreateChat",
+          class: "mini-button",
+          type: "button",
           events: {
             click: () => {
               this.hide();
@@ -109,8 +108,8 @@ export class Dialog extends Block {
 
   override render(): string {
     const visibleClass = this.props.visible
-      ? 'dialog-visible'
-      : 'dialog-hidden';
+      ? "dialog-visible"
+      : "dialog-hidden";
     return /*html*/ `<div class="dialog-overlay ${visibleClass}">
                         <div class="dialog-content">   
                             <form>
