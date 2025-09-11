@@ -1,5 +1,5 @@
-import Block, { BlockProps } from "../framework/Block";
-import { UserPoint } from "./UserPoint";
+import Block, { BlockProps } from '../framework/Block';
+import { UserPoint } from './UserPoint';
 
 interface UserListProps extends BlockProps {
   id: string;
@@ -25,7 +25,7 @@ export class UserList extends Block {
 
   protected componentDidUpdate(
     oldProps: UserListProps,
-    newProps: UserListProps
+    newProps: UserListProps,
   ): boolean {
     if (oldProps.userList !== newProps.userList) {
       this.lists = { lists: newProps.userList };

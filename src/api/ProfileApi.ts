@@ -19,9 +19,7 @@ export default class ProfileApi extends HTTPTransport {
     const result = false;
 
     try {
-      const answer = (await this.get(
-        '/auth/user',
-      )) as unknown as UserInfoResponse;
+      const answer = await this.get<UserInfoResponse>('/auth/user');
       el = document.getElementById('first_name') as HTMLInputElement;
       el.value = answer.first_name;
       el = document.getElementById('second_name') as HTMLInputElement;
@@ -81,7 +79,7 @@ export default class ProfileApi extends HTTPTransport {
     el = document.getElementById('phone') as HTMLInputElement;
     const phone = el.value;
     try {
-      const answer = (await this.put('/user/profile', {
+      const answer = await this.put<UserInfoResponse>('/user/profile', {
         data: {
           first_name: firstName,
           second_name: secondName,
@@ -90,7 +88,7 @@ export default class ProfileApi extends HTTPTransport {
           email,
           phone,
         },
-      })) as unknown as UserInfoResponse;
+      });
 
       el = document.getElementById('first_name') as HTMLInputElement;
       el.value = answer.first_name;

@@ -1,11 +1,10 @@
-import { chatAPI } from "../api/ChatApi";
-import Block, { BlockProps } from "../framework/Block";
-import { User } from "../pages/commonPage/commonPage";
-import CommonPageController from "../pages/commonPage/CommonPageController";
-import { Button } from "./Button";
-import { InputWithLabel } from "./InputWithLabel";
-import { UserList } from "./UserList";
-import { UserPoint } from "./UserPoint";
+import { chatAPI } from '../api/ChatApi';
+import Block, { BlockProps } from '../framework/Block';
+import CommonPageController from '../pages/commonPage/CommonPageController';
+import { Button } from './Button';
+import { InputWithLabel } from './InputWithLabel';
+import { UserList } from './UserList';
+import { UserPoint } from './UserPoint';
 
 interface DialogDeleteUserProps extends BlockProps {
   class?: string;
@@ -20,7 +19,7 @@ export class DialogDeleteUser extends Block {
   constructor(props: DialogDeleteUserProps) {
     debugger;
     const CurrentUserListComponent = new UserList({
-      id: "currentuser-list",
+      id: 'currentuser-list',
       userList: [],
     });
     super({
@@ -28,22 +27,22 @@ export class DialogDeleteUser extends Block {
       children: {
         CurrentUserListComponent,
         InputDeleteUserFromChat: new InputWithLabel({
-          text: "Выбор пользователя",
-          name: "chooseUserForDelete",
-          type: "text",
-          class: "input",
-          currentPage: "commonPage",
-          list: "currentuser-list",
+          text: 'Выбор пользователя',
+          name: 'chooseUserForDelete',
+          type: 'text',
+          class: 'input',
+          currentPage: 'commonPage',
+          list: 'currentuser-list',
         }),
         ButtonDeleteUserFromChat: new Button({
-          text: "Удалить",
-          id: "deleteUserFromChatChat",
-          class: "mini-button-add-user",
-          type: "button",
+          text: 'Удалить',
+          id: 'deleteUserFromChatChat',
+          class: 'mini-button-add-user',
+          type: 'button',
           events: {
             click: () => {
               const elSearch = document.getElementById(
-                "chooseUserForDelete"
+                'chooseUserForDelete',
               ) as HTMLInputElement;
               const searchedUserId =
                 CommonPageController.getInstance().searchUserList[
@@ -53,7 +52,7 @@ export class DialogDeleteUser extends Block {
                 chatAPI
                   .deleteUserFromChat(
                     [searchedUserId],
-                    CommonPageController.getInstance().chatId
+                    CommonPageController.getInstance().chatId,
                   )
                   .then(() => {
                     alert(`Пользователь ${elSearch.value} удален`);
@@ -67,10 +66,10 @@ export class DialogDeleteUser extends Block {
           },
         }),
         ButtonCancelDeleteUser: new Button({
-          text: "Отмена",
-          id: "cancelDeleteUserFromChatChat",
-          class: "mini-button-add-user",
-          type: "button",
+          text: 'Отмена',
+          id: 'cancelDeleteUserFromChatChat',
+          class: 'mini-button-add-user',
+          type: 'button',
           events: {
             click: () => {
               this.hide();
@@ -107,8 +106,8 @@ export class DialogDeleteUser extends Block {
 
   override render(): string {
     const visibleClass = this.props.visible
-      ? "dialog-visible"
-      : "dialog-hidden";
+      ? 'dialog-visible'
+      : 'dialog-hidden';
     return /*html*/ `<div class="dialog-overlay ${visibleClass}">
                         <div class="dialog-content">   
                         <div>

@@ -1,13 +1,13 @@
 enum METHOD {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE",
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
 }
 
-const URLAPI = "https://ya-praktikum.tech/api/v2";
-export const URLRESOURCES = "https://ya-praktikum.tech/api/v2/resources";
+const URLAPI = 'https://ya-praktikum.tech/api/v2';
+export const URLRESOURCES = 'https://ya-praktikum.tech/api/v2/resources';
 
 interface ChatUsersData {
   users: number[];
@@ -24,7 +24,7 @@ type HTTPMethod = <R = unknown>(
   options?: OptionsWithoutMethod
 ) => Promise<R>;
 
-type OptionsWithoutMethod = Omit<Options, "method">;
+type OptionsWithoutMethod = Omit<Options, 'method'>;
 
 export default class HTTPTransport {
   get: HTTPMethod = (url, options = {}) => {
@@ -45,7 +45,7 @@ export default class HTTPTransport {
 
   request<T = XMLHttpRequest>(
     url: string,
-    options: Options = { method: METHOD.GET }
+    options: Options = { method: METHOD.GET },
   ): Promise<T> {
     const { method, data } = options;
     url = URLAPI + url;
@@ -55,17 +55,17 @@ export default class HTTPTransport {
         method,
         method == METHOD.GET && data
           ? `${url}${this.queryStringify(
-              data as Record<string, string | number | boolean>
-            )}`
-          : url
+            data as Record<string, string | number | boolean>,
+          )}`
+          : url,
       );
       if (!(data instanceof FormData)) {
-        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader('Content-Type', 'application/json');
       }
       xhr.withCredentials = true;
       xhr.onload = function () {
         const response =
-          xhr.responseText === "OK"
+          xhr.responseText === 'OK'
             ? xhr.responseText
             : JSON.parse(xhr.response);
         if (xhr.status < 400) {
@@ -90,8 +90,8 @@ export default class HTTPTransport {
   }
 
   queryStringify(data: Record<string, string | number | boolean>) {
-    if (typeof data !== "object") {
-      throw new Error("Data must be object");
+    if (typeof data !== 'object') {
+      throw new Error('Data must be object');
     }
 
     const keys = Object.keys(data);
@@ -99,8 +99,8 @@ export default class HTTPTransport {
       const enkey = encodeURIComponent(key);
       const enDatakey = encodeURIComponent(String(data[key]));
       return `${result}${enkey}=${enDatakey}${
-        index < keys.length - 1 ? "&" : ""
+        index < keys.length - 1 ? '&' : ''
       }`;
-    }, "?");
+    }, '?');
   }
 }
