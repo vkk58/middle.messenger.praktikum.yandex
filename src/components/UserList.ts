@@ -1,7 +1,8 @@
-import Block, { BlockProps } from '../framework/Block';
-import { UserPoint } from './UserPoint';
+import Block, { BlockProps } from "../framework/Block";
+import { UserPoint } from "./UserPoint";
 
 interface UserListProps extends BlockProps {
+  id: string;
   userList: UserPoint[];
 }
 
@@ -9,6 +10,9 @@ export class UserList extends Block {
   constructor(props: UserListProps) {
     super({
       lists: props.userList || [],
+      attr: {
+        id: props.id,
+      },
     });
   }
 
@@ -21,7 +25,7 @@ export class UserList extends Block {
 
   protected componentDidUpdate(
     oldProps: UserListProps,
-    newProps: UserListProps,
+    newProps: UserListProps
   ): boolean {
     if (oldProps.userList !== newProps.userList) {
       this.lists = { lists: newProps.userList };
@@ -32,7 +36,7 @@ export class UserList extends Block {
   }
 
   override render(): string {
-    return `<datalist id="user-list">  
+    return `<datalist>  
            {{{ lists }}}
            </datalist>`;
   }

@@ -1,7 +1,7 @@
-import { chatAPI } from '../../api/ChatApi';
-import PageRouter from '../../framework/PageRouter';
-import WebSocketController from '../../framework/WebSocketController';
-import CommonPage, { User } from './commonPage';
+import { chatAPI } from "../../api/ChatApi";
+import PageRouter from "../../framework/PageRouter";
+import WebSocketController from "../../framework/WebSocketController";
+import CommonPage, { User } from "./commonPage";
 
 interface TokenResponse {
   token: string;
@@ -55,18 +55,18 @@ export default class CommonPageController {
 
   public async createChat() {
     let ret = false;
-    const el = document.getElementById('nameForNewChat') as HTMLInputElement;
-    if (el.value != '') {
+    const el = document.getElementById("nameForNewChat") as HTMLInputElement;
+    if (el.value != "") {
       try {
         const xhrResponse = await chatAPI.createChat(el.value);
         const answer = xhrResponse as unknown as UserResponse;
-        const fileInput = document.getElementById('avatar') as HTMLInputElement;
+        const fileInput = document.getElementById("avatar") as HTMLInputElement;
 
         const avatarFile = fileInput.files?.[0];
         if (avatarFile) {
           const formData = new FormData();
-          formData.append('chatId', answer.id.toString());
-          formData.append('avatar', avatarFile);
+          formData.append("chatId", answer.id.toString());
+          formData.append("avatar", avatarFile);
 
           try {
             await chatAPI.uploadChatAvatar(formData);
@@ -79,16 +79,16 @@ export default class CommonPageController {
         alert(e);
       }
     } else {
-      alert('Название чата не может быть пустым');
+      alert("Название чата не может быть пустым");
     }
 
     return ret;
   }
 
   public async deleteChat() {
-    const chatElement = document.querySelector('.selectedCurrentChat');
+    const chatElement = document.querySelector(".selectedCurrentChat");
     if (chatElement) {
-      const id = Number(chatElement.getAttribute('id'));
+      const id = Number(chatElement.getAttribute("id"));
 
       if (id) {
         try {
@@ -101,29 +101,39 @@ export default class CommonPageController {
   }
 
   public static clearDialogBeforeCreate() {
-    const dialogContent = document.querySelector('.dialog-content');
+    const dialogContent = document.querySelector(".dialog-content");
     if (!dialogContent) return;
 
     const avatarInput = dialogContent.querySelector(
-      '#avatar',
+      "#avatar"
     ) as HTMLInputElement;
     if (avatarInput) {
-      avatarInput.value = '';
+      avatarInput.value = "";
     }
 
     const chatNameInput = dialogContent.querySelector(
-      '#nameForNewChat',
+      "#nameForNewChat"
     ) as HTMLInputElement;
     if (chatNameInput) {
-      chatNameInput.value = '';
+      chatNameInput.value = "";
     }
 
     const avatarImage = dialogContent.querySelector(
-      '.round-img',
+      ".round-img"
     ) as HTMLImageElement;
     if (avatarImage) {
       avatarImage.src =
-        'https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig';
+        "https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig";
+    }
+  }
+
+  public static clearInputDeleteUserFromChat() {
+    const inputDeleteUserFromChat = document.getElementById(
+      "chooseUserForDelete"
+    ) as HTMLInputElement;
+
+    if (inputDeleteUserFromChat) {
+      inputDeleteUserFromChat.value = "";
     }
   }
 
@@ -147,13 +157,13 @@ export default class CommonPageController {
         this.socketController = new WebSocketController(
           this.userId,
           chatId,
-          token,
+          token
         );
         this.socketController.connect();
         this.socketController.getOldMessages(0);
       }
     } catch (error) {
-      console.error('Ошибка инициализации WebSocket:', error);
+      console.error("Ошибка инициализации WebSocket:", error);
       throw error;
     }
   }
@@ -162,7 +172,7 @@ export default class CommonPageController {
     if (this.socketController && this.chatId) {
       this.socketController.sendMessage(message);
     } else {
-      console.error('WebSocket не инициализирован или чат не выбран');
+      console.error("WebSocket не инициализирован или чат не выбран");
     }
   }
 
@@ -181,17 +191,32 @@ export default class CommonPageController {
   }
 
   public async getUserSearchList() {
-    const elSearch = document.getElementById('search') as HTMLInputElement;
+    const elSearch = document.getElementById("search") as HTMLInputElement;
     if (elSearch && elSearch.value) {
       const xhrResponse = await chatAPI.getUserList(elSearch.value);
       const answer = xhrResponse as unknown as User[];
       const commonPage = PageRouter.getInstance().parmChangingPage();
       if (
         commonPage &&
-        typeof (commonPage as CommonPage).updateChats === 'function'
+        typeof (commonPage as CommonPage).updateChats === "function"
       ) {
         (commonPage as CommonPage).updateUserList(answer);
       }
+    }
+  }
+
+  public async getChatUsers() {
+    const xhrResponse = await chatAPI.getChatUsers(
+      CommonPageController.getInstance().chatId
+    );
+    debugger;
+    const answer = xhrResponse as unknown as User[];
+    const commonPage = PageRouter.getInstance().parmChangingPage();
+    if (
+      commonPage &&
+      typeof (commonPage as CommonPage).updateChats === "function"
+    ) {
+      (commonPage as CommonPage).getChatUsers(answer);
     }
   }
 }
