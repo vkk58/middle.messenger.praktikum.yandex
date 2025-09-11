@@ -1,15 +1,16 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { defineConfig } from "vite";
+import { resolve } from "path";
+import { fileURLToPath, URL } from "url";
 
 export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, "index.html"),
       },
     },
   },
   css: {
-    postcss: './postcss.config.js',
+    postcss: "./postcss.config.js",
   },
 });

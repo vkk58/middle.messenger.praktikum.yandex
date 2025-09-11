@@ -6,5 +6,5 @@ import App from './APP';
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
-  app.render();
+  app.start();
 });

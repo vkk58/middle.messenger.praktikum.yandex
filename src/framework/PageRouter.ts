@@ -3,42 +3,123 @@ import ProfilePage from '../pages/profilePage/profilePage';
 import StartPage from '../pages/startPage/startPage';
 import CommonPage from '../pages/commonPage/commonPage';
 import ErrorPage from '../pages/errorPage/errorPage';
+import AuthApi from '../api/AuthApi';
 
 export default class PageRouter {
+  private changingPage:
+  | RegistrationPage
+  | ProfilePage
+  | StartPage
+  | CommonPage
+  | ErrorPage;
+
+  private static instance: PageRouter | null = null;
+
+  private _urls: Record<string, string> = {
+    startPage: '/start',
+    registrationPage: '/registration',
+    profilePage: '/profile',
+    commonPage: '/common',
+    errorPage400: '/error400',
+    errorPage500: '/error500',
+  };
+
+  public static getInstance(): PageRouter {
+    if (!PageRouter.instance) {
+      PageRouter.instance = new PageRouter();
+    }
+    return PageRouter.instance;
+  }
+
+  public parmChangingPage() {
+    return this.changingPage;
+  }
+
+  private _pages: Record<string, string> = {
+    '/start': 'startPage',
+    '/registration': 'registrationPage',
+    '/profile': 'profilePage',
+    '/common': 'commonPage',
+    '/error400': 'errorPage400',
+    '/error500': 'errorPage500',
+  };
+
+  private _isHandlingPopState = false;
+
+  public start() {
+    this.setupRouteListener();
+    this.navigateToCurrentUrl();
+  }
+
+  private setupRouteListener() {
+    window.addEventListener('popstate', () => {
+      this._isHandlingPopState = true;
+      this.navigateToCurrentUrl();
+      this._isHandlingPopState = false;
+    });
+  }
+
+  public navigateToCurrentUrl() {
+    this._navigateToCurrentUrl()
+      .then(() => {
+        console.log('GO');
+      })
+      .catch(() => {
+        this.go('startPage');
+      });
+  }
+
+  private async _navigateToCurrentUrl() {
+    const authApi = new AuthApi();
+    const path = window.location.pathname;
+    if (this._pages[path] && path != '/start') {
+      this.go(this._pages[path]);
+    } else {
+      this.go(
+        (await authApi.checkIsUserAuth()) == true ? 'commonPage' : 'startPage',
+      );
+    }
+  }
+
   public go(pageName: string) {
-    let changingPage: RegistrationPage | ProfilePage | StartPage | CommonPage | ErrorPage;
+    if (this.changingPage != null) {
+      this.changingPage.componentWillUnmount();
+    }
+
     switch (pageName) {
       case 'registrationPage':
-        changingPage = new RegistrationPage();
+        this.changingPage = new RegistrationPage();
         break;
       case 'profilePage':
-        changingPage = new ProfilePage();
+        this.changingPage = new ProfilePage();
         break;
       case 'startPage':
-        changingPage = new StartPage();
+        this.changingPage = new StartPage();
         break;
       case 'commonPage':
-        changingPage = new CommonPage();
+        this.changingPage = new CommonPage();
         break;
       case 'errorPage400':
-        changingPage = new ErrorPage('400', 'Не туда попали');
+        this.changingPage = new ErrorPage('400', 'Не туда попали');
         break;
       case 'errorPage500':
-        changingPage = new ErrorPage('500', 'Мы уже фиксим');
+        this.changingPage = new ErrorPage('500', 'Мы уже фиксим');
         break;
       default:
         return;
     }
-    const mainElement = document.querySelector('main');
 
-    if (mainElement) {
-      const parent = mainElement.parentElement;
+    const url = this._urls[pageName];
+    if (!url) return;
 
-      if (parent) {
-        parent.replaceChild(changingPage.getContent(), mainElement);
-      }
+    const appElement = document.getElementById('app');
+    if (appElement) {
+      appElement.innerHTML = '';
+      appElement.appendChild(this.changingPage.getContent());
     }
 
-    console.log(changingPage.getContent());
+    if (!this._isHandlingPopState) {
+      window.history.pushState({ page: pageName }, '', url);
+    }
   }
 }

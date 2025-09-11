@@ -12,5 +12,6 @@ Figma: https://www.figma.com/design/jF5fFFzgGOxQeB4CmKWTiE/Chat_external_link?no
 ## Веб-приложение
 Netlify: https://firstmsgr.netlify.app/
 
+
 ### Дополнительная информация
 По кнопкам доступны переходы на разные формы 
