@@ -143,7 +143,7 @@ export default class ProfilePage extends Block {
           type: 'button',
           events: {
             click: () => {
-              profileApi
+              void profileApi
                 .logout()
                 .then(() => {
                   router.go('startPage');

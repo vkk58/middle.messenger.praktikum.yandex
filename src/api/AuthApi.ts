@@ -13,21 +13,16 @@ export default class AuthApi extends HTTPTransport {
     const password = el.value || '';
 
     try {
-      const answer = await https.post('/auth/signin', {
+      await https.post('/auth/signin', {
         data: { login, password },
       });
-      if (answer.status < 400) {
-        result = true;
-      } else {
-        const jsonParse = JSON.parse(answer.responseText);
-        const valid = new CommonValidator('password');
-        valid.parmInputElement(el);
-        valid.parmErrorTxt(jsonParse.reason);
-        valid.createErrorText();
-      }
+      result = true;
     } catch (error) {
       console.log(error);
-      return false;
+      const valid = new CommonValidator('password');
+      valid.parmInputElement(el);
+      valid.parmErrorTxt(error.reason);
+      valid.createErrorText();
     }
 
     return result;
@@ -52,7 +47,7 @@ export default class AuthApi extends HTTPTransport {
     const phoneValue = el.value || '';
 
     try {
-      const answer = await https.post('/auth/signup', {
+      await https.post('/auth/signup', {
         data: {
           first_name: firstnameValue,
           second_name: secondnameValue,
@@ -62,18 +57,14 @@ export default class AuthApi extends HTTPTransport {
           phone: phoneValue,
         },
       });
-
-      if (answer.status < 400) {
-        result = true;
-      } else {
-        const jsonParse = JSON.parse(answer.responseText);
-        const valid = new CommonValidator('phone');
-        valid.parmInputElement(el);
-        valid.parmErrorTxt(jsonParse.reason);
-        valid.createErrorText();
-      }
+      result = true;
     } catch (error) {
       console.log(error);
+      const jsonParse = error;
+      const valid = new CommonValidator('phone');
+      valid.parmInputElement(el);
+      valid.parmErrorTxt(jsonParse.reason);
+      valid.createErrorText();
       return false;
     }
 
@@ -81,12 +72,11 @@ export default class AuthApi extends HTTPTransport {
   }
 
   public async checkIsUserAuth() {
-    const answer = await this.get('/auth/user');
-
-    if (answer.status < 400) {
+    try {
+      await this.get('/auth/user');
       return true;
+    } catch {
+      return false;
     }
-
-    return false;
   }
 }

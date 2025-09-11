@@ -64,16 +64,15 @@ export default class PageRouter {
       .then(() => {
         console.log('GO');
       })
-      .catch((e) => {
-        console.log(e);
+      .catch(() => {
+        this.go('startPage');
       });
   }
 
   private async _navigateToCurrentUrl() {
     const authApi = new AuthApi();
     const path = window.location.pathname;
-
-    if (this._pages[path]) {
+    if (this._pages[path] && path != '/start') {
       this.go(this._pages[path]);
     } else {
       this.go(

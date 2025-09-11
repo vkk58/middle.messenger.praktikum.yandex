@@ -59,7 +59,7 @@ export default class CommonPageController {
     if (el.value != '') {
       try {
         const xhrResponse = await chatAPI.createChat(el.value);
-        const answer = xhrResponse.response;
+        const answer = xhrResponse as unknown as UserResponse;
         const fileInput = document.getElementById('avatar') as HTMLInputElement;
 
         const avatarFile = fileInput.files?.[0];
@@ -184,7 +184,7 @@ export default class CommonPageController {
     const elSearch = document.getElementById('search') as HTMLInputElement;
     if (elSearch && elSearch.value) {
       const xhrResponse = await chatAPI.getUserList(elSearch.value);
-      const answer = xhrResponse.response as User[];
+      const answer = xhrResponse as unknown as User[];
       const commonPage = PageRouter.getInstance().parmChangingPage();
       if (
         commonPage &&

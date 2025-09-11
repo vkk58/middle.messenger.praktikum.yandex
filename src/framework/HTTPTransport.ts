@@ -71,7 +71,10 @@ export default class HTTPTransport {
       }
       xhr.withCredentials = true;
       xhr.onload = function () {
-        const response = JSON.parse(xhr.response);
+        const response =
+          xhr.responseText === 'OK'
+            ? xhr.responseText
+            : JSON.parse(xhr.response);
         if (xhr.status < 400) {
           resolve(response);
         } else {
@@ -82,7 +85,7 @@ export default class HTTPTransport {
       xhr.onabort = reject;
       xhr.onerror = reject;
       xhr.ontimeout = reject;
-
+      console.log(data);
       if (method === METHOD.GET || !data) {
         xhr.send();
       } else if (data instanceof FormData) {

@@ -1,5 +1,15 @@
 import HTTPTransport from '../framework/HTTPTransport';
 
+interface UserInfoResponse {
+  first_name: string;
+  second_name: string;
+  login: string;
+  display_name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+}
+
 const URLResources = 'https://ya-praktikum.tech/api/v2/resources';
 
 export default class ProfileApi extends HTTPTransport {
@@ -9,28 +19,24 @@ export default class ProfileApi extends HTTPTransport {
     const result = false;
 
     try {
-      const answer = await this.get('/auth/user');
-      const profileValue = JSON.parse(answer.response);
+      const answer = (await this.get(
+        '/auth/user',
+      )) as unknown as UserInfoResponse;
+      el = document.getElementById('first_name') as HTMLInputElement;
+      el.value = answer.first_name;
+      el = document.getElementById('second_name') as HTMLInputElement;
+      el.value = answer.second_name;
+      el = document.getElementById('login') as HTMLInputElement;
+      el.value = answer.login;
+      el = document.getElementById('display_name') as HTMLInputElement;
+      el.value = answer.display_name;
+      el = document.getElementById('email') as HTMLInputElement;
+      el.value = answer.email;
+      el = document.getElementById('phone') as HTMLInputElement;
+      el.value = answer.phone;
 
-      if (answer.status < 400) {
-        el = document.getElementById('first_name') as HTMLInputElement;
-        el.value = profileValue.first_name;
-        el = document.getElementById('second_name') as HTMLInputElement;
-        el.value = profileValue.second_name;
-        el = document.getElementById('login') as HTMLInputElement;
-        el.value = profileValue.login;
-        el = document.getElementById('display_name') as HTMLInputElement;
-        el.value = profileValue.display_name;
-        el = document.getElementById('email') as HTMLInputElement;
-        el.value = profileValue.email;
-        el = document.getElementById('phone') as HTMLInputElement;
-        el.value = profileValue.phone;
-
-        avatarElement = document.getElementsByTagName('img')[0];
-        avatarElement.src = URLResources + profileValue.avatar;
-      } else {
-        console.log(profileValue.reason);
-      }
+      avatarElement = document.getElementsByTagName('img')[0];
+      avatarElement.src = URLResources + answer.avatar;
     } catch (error) {
       console.log(error);
       return false;
@@ -74,9 +80,8 @@ export default class ProfileApi extends HTTPTransport {
     const email = el.value;
     el = document.getElementById('phone') as HTMLInputElement;
     const phone = el.value;
-
     try {
-      const answer = await this.put('/user/profile', {
+      const answer = (await this.put('/user/profile', {
         data: {
           first_name: firstName,
           second_name: secondName,
@@ -85,27 +90,23 @@ export default class ProfileApi extends HTTPTransport {
           email,
           phone,
         },
-      });
-      const profileValue = JSON.parse(answer.response);
+      })) as unknown as UserInfoResponse;
 
-      if (answer.status < 400) {
-        el = document.getElementById('first_name') as HTMLInputElement;
-        el.value = profileValue.first_name;
-        el = document.getElementById('second_name') as HTMLInputElement;
-        el.value = profileValue.second_name;
-        el = document.getElementById('login') as HTMLInputElement;
-        el.value = profileValue.login;
-        el = document.getElementById('display_name') as HTMLInputElement;
-        el.value = profileValue.display_name;
-        el = document.getElementById('email') as HTMLInputElement;
-        el.value = profileValue.email;
-        el = document.getElementById('phone') as HTMLInputElement;
-        el.value = profileValue.phone;
-        avatarElement = document.getElementsByTagName('img')[0];
-        avatarElement.src = URLResources + profileValue.avatar;
-      } else {
-        console.log(profileValue.reason);
-      }
+      el = document.getElementById('first_name') as HTMLInputElement;
+      el.value = answer.first_name;
+      el = document.getElementById('second_name') as HTMLInputElement;
+      el.value = answer.second_name;
+      el = document.getElementById('login') as HTMLInputElement;
+      el.value = answer.login;
+      el = document.getElementById('display_name') as HTMLInputElement;
+      el.value = answer.display_name;
+      el = document.getElementById('email') as HTMLInputElement;
+      el.value = answer.email;
+      el = document.getElementById('phone') as HTMLInputElement;
+      el.value = answer.phone;
+      avatarElement = document.getElementsByTagName('img')[0];
+      avatarElement.src = URLResources + answer.avatar;
+      alert('Данные изменены');
     } catch (error) {
       console.log(error);
     }
@@ -135,29 +136,19 @@ export default class ProfileApi extends HTTPTransport {
 
   async changeUserPassword(oldPassword: string, newPassword: string) {
     try {
-      const answer = await this.put('/user/password', {
+      await this.put('/user/password', {
         data: { oldPassword, newPassword },
       });
-      if (answer.status < 400) {
-        alert('Пароль изменен');
-      } else {
-        const jsonParse = JSON.parse(answer.responseText);
-        alert(jsonParse.reason);
-      }
     } catch (error) {
       console.log(error);
     }
   }
 
   async logout() {
-    let result = false;
+    const result = false;
 
     try {
-      const answer = await this.post('/auth/logout');
-
-      if (answer.status < 400) {
-        result = true;
-      }
+      await this.post('/auth/logout');
     } catch (error) {
       console.log(error);
       return false;

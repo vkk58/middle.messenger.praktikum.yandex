@@ -8,9 +8,6 @@ import AuthApi from '../../api/AuthApi';
 
 export default class StartPage extends Block {
   constructor() {
-    const apiRequest = new AuthApi();
-    const router = PageRouter.getInstance();
-    const validatePage = new ValidateStartPage();
     const inputWithLabelArray: InputWithLabel[] = [
       new InputWithLabel({
         text: 'Логин',
@@ -37,19 +34,7 @@ export default class StartPage extends Block {
           class: 'button',
           type: 'button',
           events: {
-            click: () => {
-              validatePage.initButton('signIn');
-              if (validatePage.validateInputs()) {
-                apiRequest
-                  .signInRequest()
-                  .then(() => {
-                    router.go('commonPage');
-                  })
-                  .catch((error) => {
-                    console.error('При входе возникли ошибки:', error);
-                  });
-              }
-            },
+            click: () => this.handleSignInClick(),
           },
         }),
         FooterRegistry: new Footer({
@@ -59,6 +44,25 @@ export default class StartPage extends Block {
       },
       lists: inputWithLabelArray,
     });
+  }
+
+  private handleSignInClick() {
+    const apiRequest = new AuthApi();
+    const router = PageRouter.getInstance();
+    const validatePage = new ValidateStartPage();
+    validatePage.initButton('signIn');
+    if (validatePage.validateInputs()) {
+      apiRequest
+        .signInRequest()
+        .then((result) => {
+          if (result == true) {
+            router.go('commonPage');
+          }
+        })
+        .catch((error) => {
+          console.error('При входе возникли ошибки:', error);
+        });
+    }
   }
 
   override render(): string {
