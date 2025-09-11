@@ -1,7 +1,7 @@
+import HTTPTransport from '../framework/HTTPTransport';
 import { IChat } from '../types';
-import { BaseApi } from './base-api';
 
-class ChatAPI extends BaseApi {
+class ChatAPI extends HTTPTransport {
   async getChatList() {
     return this.get<IChat[]>('/chats');
   }

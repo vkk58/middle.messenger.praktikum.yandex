@@ -41,7 +41,14 @@ export class InputWithLabel extends Block {
               if (props.name == 'search') {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
-                  CommonPageController.getInstance().getUserSearchList();
+                  CommonPageController.getInstance()
+                    .getUserSearchList()
+                    .then(() => {
+                      console.log('Поиск');
+                    })
+                    .catch((error) => {
+                      console.error('ошибки:', error);
+                    });
                 }, 300);
               }
             },

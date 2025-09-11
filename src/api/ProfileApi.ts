@@ -62,16 +62,14 @@ export default class ProfileApi extends HTTPTransport {
   async changeUserProfile() {
     let el: HTMLInputElement;
     let avatarElement: HTMLImageElement;
-    let elOldPassword: HTMLInputElement;
-    let elNewPassword: HTMLInputElement;
     el = document.getElementById('first_name') as HTMLInputElement;
-    const first_name = el.value;
+    const firstName = el.value;
     el = document.getElementById('second_name') as HTMLInputElement;
-    const second_name = el.value;
+    const secondName = el.value;
     el = document.getElementById('login') as HTMLInputElement;
     const login = el.value;
     el = document.getElementById('display_name') as HTMLInputElement;
-    const display_name = el.value;
+    const displayName = el.value;
     el = document.getElementById('email') as HTMLInputElement;
     const email = el.value;
     el = document.getElementById('phone') as HTMLInputElement;
@@ -79,7 +77,14 @@ export default class ProfileApi extends HTTPTransport {
 
     try {
       const answer = await this.put('/user/profile', {
-        data: { first_name, second_name, login, display_name, email, phone },
+        data: {
+          first_name: firstName,
+          second_name: secondName,
+          login,
+          display_name: displayName,
+          email,
+          phone,
+        },
       });
       const profileValue = JSON.parse(answer.response);
 
@@ -105,17 +110,26 @@ export default class ProfileApi extends HTTPTransport {
       console.log(error);
     }
 
-    elOldPassword = document.getElementById('oldPassword') as HTMLInputElement;
-    elNewPassword = document.getElementById('newPassword') as HTMLInputElement;
+    const elOldPassword = document.getElementById(
+      'oldPassword',
+    ) as HTMLInputElement;
+    const elNewPassword = document.getElementById(
+      'newPassword',
+    ) as HTMLInputElement;
 
     if (
       elNewPassword.value != '' &&
       elOldPassword.value != '' &&
       elNewPassword.value != elOldPassword.value
     ) {
-      this.changeUserPassword(elOldPassword.value, elNewPassword.value);
-      elNewPassword.value = '';
-      elOldPassword.value = '';
+      this.changeUserPassword(elOldPassword.value, elNewPassword.value)
+        .then(() => {
+          elNewPassword.value = '';
+          elOldPassword.value = '';
+        })
+        .catch((error) => {
+          console.error('пароль не обновлен:', error);
+        });
     }
   }
 

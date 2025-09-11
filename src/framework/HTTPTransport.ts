@@ -7,10 +7,16 @@ enum METHOD {
 }
 
 const URLAPI = 'https://ya-praktikum.tech/api/v2';
+export const URLRESOURCES = 'https://ya-praktikum.tech/api/v2/resources';
+
+interface ChatUsersData {
+  users: number[];
+  chatId: number;
+}
 
 type Options = {
   method: METHOD;
-  data?: Record<string, string | number | boolean> | FormData;
+  data?: Record<string, string | number | boolean> | FormData | ChatUsersData;
 };
 
 type OptionsWithoutMethod = Omit<Options, 'method'>;
@@ -34,10 +40,6 @@ export default class HTTPTransport {
     url: string,
     options: OptionsWithoutMethod = {},
   ): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.PUT });
-  }
-
-  putImage(url: string, options: FormData): Promise<XMLHttpRequest> {
     return this.request(url, { ...options, method: METHOD.PUT });
   }
 
@@ -69,7 +71,12 @@ export default class HTTPTransport {
       }
       xhr.withCredentials = true;
       xhr.onload = function () {
-        resolve(xhr as T);
+        const response = JSON.parse(xhr.response);
+        if (xhr.status < 400) {
+          resolve(response);
+        } else {
+          reject(response);
+        }
       };
 
       xhr.onabort = reject;
@@ -78,12 +85,10 @@ export default class HTTPTransport {
 
       if (method === METHOD.GET || !data) {
         xhr.send();
+      } else if (data instanceof FormData) {
+        xhr.send(data);
       } else {
-        if (data instanceof FormData) {
-          xhr.send(data);
-        } else {
-          xhr.send(JSON.stringify(data));
-        }
+        xhr.send(JSON.stringify(data));
       }
     });
   }

@@ -1,6 +1,5 @@
 import { InputWithLabel } from '../../components/InputWithLabel';
 import { Button } from '../../components/Button';
-import { LinkList } from '../../components/LinkList';
 import Block from '../../framework/Block';
 import { Image } from '../../components/Image';
 import { Input } from '../../components/Input';
@@ -75,7 +74,6 @@ export default class ProfilePage extends Block {
     ];
     super({
       children: {
-        LinkList: new LinkList(),
         ImageAvatar: new Image({
           image:
             'https://avatars.mds.yandex.net/get-yapic/58107/TKl7WKkXP1ybjbpKY7eyvAwGwi4-1/orig',
@@ -90,9 +88,16 @@ export default class ProfilePage extends Block {
           value: '',
           placeholder: '',
           events: {
-            change: async (e: Event) => {
+            change: (e: Event) => {
               globalClass.changePicture(e, 'round-img');
-              profileApi.changeAvatar();
+              profileApi
+                .changeAvatar()
+                .then(() => {
+                  console.log('Аватарка изменена');
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
             },
           },
         }),
@@ -102,10 +107,20 @@ export default class ProfilePage extends Block {
           class: 'button',
           type: 'button',
           events: {
-            click: async () => {
+            click: () => {
               validatePage.initButton('changeProfileData');
               if (validatePage.validateInputs()) {
-                await profileApi.changeUserProfile();
+                profileApi
+                  .changeUserProfile()
+                  .then(() => {
+                    console.log('Данные пользователя изменены');
+                  })
+                  .catch((error) => {
+                    console.error(
+                      'При обновлении данных пользователя возникли ошибки:',
+                      error,
+                    );
+                  });
               }
             },
           },
@@ -127,11 +142,15 @@ export default class ProfilePage extends Block {
           class: 'button',
           type: 'button',
           events: {
-            click: async () => {
-              const logout = await profileApi.logout();
-              if (logout) {
-                router.go('startPage');
-              }
+            click: () => {
+              profileApi
+                .logout()
+                .then(() => {
+                  router.go('startPage');
+                })
+                .catch((error) => {
+                  console.error('Ошибка при выходе:', error);
+                });
             },
           },
         }),
@@ -140,9 +159,9 @@ export default class ProfilePage extends Block {
     });
   }
 
-  override addData() {
+  override async addData() {
     const profileApi = new ProfileApi();
-    profileApi.getuserInfo();
+    await profileApi.getuserInfo();
   }
 
   override render(): string {
@@ -158,7 +177,6 @@ export default class ProfilePage extends Block {
                   {{{ ReturnButton }}}
                   {{{ ExitButton }}}
                   </form>
-                  {{{ LinkList}}}
                 </main>`;
   }
 }

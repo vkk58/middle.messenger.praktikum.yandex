@@ -2,7 +2,6 @@ import { InputWithLabel } from '../../components/InputWithLabel';
 import { Footer } from '../../components/Footer';
 import { Button } from '../../components/Button';
 import Block from '../../framework/Block';
-import { LinkList } from '../../components/LinkList';
 import ValidateStartPage from './validate';
 import PageRouter from '../../framework/PageRouter';
 import AuthApi from '../../api/AuthApi';
@@ -32,20 +31,23 @@ export default class StartPage extends Block {
     ];
     super({
       children: {
-        LinkList: new LinkList(),
         ButtonSignIn: new Button({
           text: 'Вход',
           id: 'signIn',
           class: 'button',
           type: 'button',
           events: {
-            click: async () => {
+            click: () => {
               validatePage.initButton('signIn');
               if (validatePage.validateInputs()) {
-                const sign = await apiRequest.signInRequest();
-                if (sign) {
-                  router.go('commonPage');
-                }
+                apiRequest
+                  .signInRequest()
+                  .then(() => {
+                    router.go('commonPage');
+                  })
+                  .catch((error) => {
+                    console.error('При входе возникли ошибки:', error);
+                  });
               }
             },
           },
@@ -67,7 +69,6 @@ export default class StartPage extends Block {
             {{{ ButtonSignIn }}}
             </form>
             {{{ FooterRegistry }}}
-             {{{ LinkList}}}
             </main>`;
   }
 }

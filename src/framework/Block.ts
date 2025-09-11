@@ -1,5 +1,5 @@
-import Handlebars from "handlebars";
-import EventBus, { EventCallback } from "./EventBus";
+import Handlebars from 'handlebars';
+import EventBus, { EventCallback } from './EventBus';
 
 export interface BlockProps {
   props?: {
@@ -18,11 +18,11 @@ export interface BlockProps {
 
 export default abstract class Block {
   static EVENTS = {
-    INIT: "init",
-    FLOW_CDM: "flow:component-did-mount",
-    FLOW_CDU: "flow:component-did-update",
-    FLOW_RENDER: "flow:render",
-    FLOW_CWU: "flow:component-will-unmount",
+    INIT: 'init',
+    FLOW_CDM: 'flow:component-did-mount',
+    FLOW_CDU: 'flow:component-did-update',
+    FLOW_RENDER: 'flow:render',
+    FLOW_CWU: 'flow:component-will-unmount',
   } as const;
 
   protected _element: HTMLElement | null = null;
@@ -55,7 +55,7 @@ export default abstract class Block {
       : {};
 
     Object.entries(events).forEach(([eventName, handler]) => {
-      if (this._element && typeof handler === "function") {
+      if (this._element && typeof handler === 'function') {
         this._element.addEventListener(eventName, handler);
       }
     });
@@ -67,7 +67,7 @@ export default abstract class Block {
       : {};
 
     Object.entries(events).forEach(([eventName, handler]) => {
-      if (this._element && typeof handler === "function") {
+      if (this._element && typeof handler === 'function') {
         this._element.removeEventListener(eventName, handler as EventListener);
       }
     });
@@ -77,19 +77,19 @@ export default abstract class Block {
     eventBus.on(Block.EVENTS.INIT, this.init.bind(this) as EventCallback);
     eventBus.on(
       Block.EVENTS.FLOW_CDM,
-      this._componentDidMount.bind(this) as EventCallback
+      this._componentDidMount.bind(this) as EventCallback,
     );
     eventBus.on(
       Block.EVENTS.FLOW_CDU,
-      this._componentDidUpdate.bind(this) as EventCallback
+      this._componentDidUpdate.bind(this) as EventCallback,
     );
     eventBus.on(
       Block.EVENTS.FLOW_RENDER,
-      this._render.bind(this) as EventCallback
+      this._render.bind(this) as EventCallback,
     );
     eventBus.on(
       Block.EVENTS.FLOW_CWU,
-      this._componentWillUnmount.bind(this) as EventCallback
+      this._componentWillUnmount.bind(this) as EventCallback,
     );
   }
 
@@ -127,7 +127,7 @@ export default abstract class Block {
 
   private _componentDidUpdate(
     oldProps: BlockProps,
-    newProps: BlockProps
+    newProps: BlockProps,
   ): void {
     const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
@@ -137,10 +137,8 @@ export default abstract class Block {
   }
 
   protected componentDidUpdate(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     oldProps: BlockProps,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    newProps: BlockProps
+    newProps: BlockProps,
   ): boolean {
     if (newProps != oldProps) {
       console.log(newProps, oldProps);
@@ -215,16 +213,16 @@ export default abstract class Block {
       ...Object.fromEntries(
         Object.entries(this.children).map(([key, child]) => {
           return [key, `<div data-id="${child._id}"></div>`];
-        })
+        }),
       ),
       ...Object.fromEntries(
         Object.entries(this.lists).map(([key]) => {
           return [key, `<div data-id="__l_${this._id}"></div>`];
-        })
+        }),
       ),
     };
 
-    const fragment = this._createDocumentElement("template");
+    const fragment = this._createDocumentElement('template');
     fragment.innerHTML = Handlebars.compile(this.render())(propsAndStubs);
     Object.values(this.children).forEach((child) => {
       const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
@@ -232,16 +230,16 @@ export default abstract class Block {
     });
 
     Object.entries(this.lists).forEach(([, items]) => {
-      const listCont = this._createDocumentElement("template");
+      const listCont = this._createDocumentElement('template');
       items.forEach((item) => {
         listCont.content.append(
           item instanceof Block
             ? item.getContent()
-            : document.createTextNode(String(item))
+            : document.createTextNode(String(item)),
         );
       });
       const stub = fragment.content.querySelector(
-        `[data-id="__l_${this._id}"]`
+        `[data-id="__l_${this._id}"]`,
       );
       stub?.replaceWith(listCont.content);
     });
@@ -256,27 +254,28 @@ export default abstract class Block {
   }
 
   public render(): string {
-    return "";
+    return '';
   }
 
   public addData() {}
 
   public getContent(): HTMLElement {
     if (!this._element) {
-      throw new Error("Element is not created");
+      throw new Error('Element is not created');
     }
     return this._element;
   }
 
   private _makePropsProxy(props: BlockProps): BlockProps {
-    const _ = this;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const blockThis = this;
     return new Proxy(props, {
       get(target: BlockProps, prop: string | symbol) {
-        if (typeof prop === "symbol") {
+        if (typeof prop === 'symbol') {
           return Reflect.get(target, prop);
         }
         const value = (target as Record<string, unknown>)[prop];
-        if (typeof value === "function") {
+        if (typeof value === 'function') {
           return value.bind(target);
         }
 
@@ -285,22 +284,22 @@ export default abstract class Block {
       set<K extends keyof BlockProps>(
         target: BlockProps,
         prop: K,
-        value: BlockProps[K]
+        value: BlockProps[K],
       ): boolean {
         const oldTarget = { ...target };
         target[prop] = value;
 
-        _.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
+        blockThis.eventBus().emit(Block.EVENTS.FLOW_CDU, oldTarget, target);
         return true;
       },
       deleteProperty(): boolean {
-        throw new Error("No access");
+        throw new Error('No access');
       },
     });
   }
 
   private _makePropsProxyForBlock(
-    props: Record<string, Block[]>
+    props: Record<string, Block[]>,
   ): Record<string, Block[]> {
     return new Proxy(props, {
       get(target: Record<string, Block[]>, prop: string): Block[] | undefined {
@@ -309,13 +308,13 @@ export default abstract class Block {
       set(
         target: Record<string, Block[]>,
         prop: string,
-        value: unknown
+        value: unknown,
       ): boolean {
         if (
           !Array.isArray(value) ||
           !value.every((item) => item instanceof Block)
         ) {
-          throw new Error("Это не массив");
+          throw new Error('Это не массив');
         }
         const oldTarget = { ...target };
         target[prop] = value;
@@ -323,7 +322,7 @@ export default abstract class Block {
         return true;
       },
       deleteProperty(): boolean {
-        throw new Error("No access");
+        throw new Error('No access');
       },
     });
   }

@@ -1,7 +1,6 @@
 import { InputWithLabel } from '../../components/InputWithLabel';
 import { Footer } from '../../components/Footer';
 import { Button } from '../../components/Button';
-import { LinkList } from '../../components/LinkList';
 import Block from '../../framework/Block';
 import PageRouter from '../../framework/PageRouter';
 import ValidateRegistrationPage from './validate';
@@ -59,7 +58,6 @@ export default class RegistrationPage extends Block {
     super({
       lists: inputWithLabelArray,
       children: {
-        LinkList: new LinkList(),
         CommonButton: new Button({
           text: 'Создать профиль',
           id: 'createProfile',
@@ -67,14 +65,17 @@ export default class RegistrationPage extends Block {
           type: 'button',
           currentPage: 'registrationPage',
           events: {
-            click: async () => {
+            click: () => {
               validatePage.initButton('createProfile');
               if (validatePage.validateInputs()) {
-                const createUser = await apiRequest.signUpRequest();
-
-                if (createUser) {
-                  router.go('commonPage');
-                }
+                apiRequest
+                  .signUpRequest()
+                  .then(() => {
+                    router.go('commonPage');
+                  })
+                  .catch((error) => {
+                    console.error('При регистрации возникли ошибки:', error);
+                  });
               }
             },
           },
@@ -91,8 +92,7 @@ export default class RegistrationPage extends Block {
                 {{{ lists }}}
                 </form>
                 {{{ CommonButton }}}   
-                {{{ FooterSignIn }}}                 
-                {{{ LinkList}}}
+                {{{ FooterSignIn }}} 
                 </main>`;
   }
 }

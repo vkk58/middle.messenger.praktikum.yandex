@@ -40,7 +40,14 @@ export class ListElement extends Block {
             this._element.classList.add('selectedCurrentChat');
             const commonPage = CommonPageController.getInstance();
             commonPage.chatId = Number(this._element.getAttribute('id'));
-            commonPage.initWebSocket(commonPage.chatId);
+            commonPage
+              .initWebSocket(commonPage.chatId)
+              .then(() => {
+                console.log('Соединение установлено');
+              })
+              .catch((error) => {
+                console.error('При соединении возникли ошибки:', error);
+              });
           }
         },
       },

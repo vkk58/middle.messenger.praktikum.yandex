@@ -1,4 +1,4 @@
-import Block, { BlockProps } from "../framework/Block";
+import Block, { BlockProps } from '../framework/Block';
 
 export interface UserPointProps extends BlockProps {
   value: string;
@@ -16,6 +16,6 @@ export class UserPoint extends Block {
   }
 
   override render(): string {
-    return "<option>";
+    return '<option>';
   }
 }

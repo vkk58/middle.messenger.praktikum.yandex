@@ -59,7 +59,17 @@ export default class PageRouter {
     });
   }
 
-  private async navigateToCurrentUrl() {
+  public navigateToCurrentUrl() {
+    this._navigateToCurrentUrl()
+      .then(() => {
+        console.log('GO');
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  private async _navigateToCurrentUrl() {
     const authApi = new AuthApi();
     const path = window.location.pathname;
 

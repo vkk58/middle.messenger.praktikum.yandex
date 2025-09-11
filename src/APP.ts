@@ -1,10 +1,10 @@
-import PageRouter from "./framework/PageRouter";
+import PageRouter from './framework/PageRouter';
 
 export default class App {
   private router: PageRouter;
 
   constructor() {
-    document.getElementById("app");
+    document.getElementById('app');
     this.router = PageRouter.getInstance();
   }
 

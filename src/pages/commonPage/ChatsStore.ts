@@ -1,4 +1,4 @@
-import { TextMessage } from "../../components/TextMessage";
+import { TextMessage } from '../../components/TextMessage';
 
 export class ChatsStore {
   private static instance: ChatsStore;
