@@ -17,7 +17,6 @@ export class DialogDeleteUser extends Block {
   private CurrentUserListComponent: UserList;
 
   constructor(props: DialogDeleteUserProps) {
-    debugger;
     const CurrentUserListComponent = new UserList({
       id: 'currentuser-list',
       userList: [],

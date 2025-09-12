@@ -155,7 +155,6 @@ export default class CommonPage extends Block {
           type: 'button',
           events: {
             click: () => {
-              debugger;
               CommonPageController.clearInputDeleteUserFromChat();
               CommonPageController.getInstance()
                 .getChatUsers()

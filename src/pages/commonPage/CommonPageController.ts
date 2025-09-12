@@ -209,7 +209,6 @@ export default class CommonPageController {
     const xhrResponse = await chatAPI.getChatUsers(
       CommonPageController.getInstance().chatId,
     );
-    debugger;
     const answer = xhrResponse as User[];
     const commonPage = PageRouter.getInstance().parmChangingPage();
     if (
