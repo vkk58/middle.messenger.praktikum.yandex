@@ -10,8 +10,5 @@
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "src/**/*.ts",
-    ".eslintrc.cjs"
-, "src/APP.ts" ]
+  "include": ["src/**/*.ts", ".eslintrc.cjs", "src/APP.ts"]
 }

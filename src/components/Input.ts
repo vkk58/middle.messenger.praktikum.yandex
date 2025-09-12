@@ -1,12 +1,13 @@
 import Block from '../framework/Block';
 
 interface InputProps {
-  id: string,
-  type: string,
-  name: string,
-  placeholder: string,
-  value: string,
-  class: string,
+  id: string;
+  type: string;
+  name: string;
+  placeholder: string;
+  value: string;
+  class: string;
+  list?: string;
   events?: Record<string, (e?: Event) => void>;
 }
 
@@ -15,6 +16,7 @@ export class Input extends Block {
     super({
       ...props,
       attr: {
+        list: props.list || '',
         id: props.id,
         type: props.type,
         name: props.name,

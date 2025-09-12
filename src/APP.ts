@@ -1,19 +1,14 @@
-import StartPage from './pages/startPage/startPage';
+import PageRouter from './framework/PageRouter';
 
 export default class App {
-  private appElement: HTMLElement | null;
+  private router: PageRouter;
 
   constructor() {
-    this.appElement = document.getElementById('app');
+    document.getElementById('app');
+    this.router = PageRouter.getInstance();
   }
 
-  render(): string {
-    const startPage = new StartPage();
-    console.log(startPage.getContent());
-    if (this.appElement) {
-      this.appElement.replaceWith(startPage.getContent());
-    }
-
-    return '';
+  public start(): void {
+    this.router.start();
   }
 }
