@@ -8,7 +8,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["jest", "node"],
+    "esModuleInterop": true
   },
-  "include": ["src/**/*.ts", ".eslintrc.cjs", "src/APP.ts"]
+  "include": ["src/**/*", ".eslintrc.cjs", "src/APP.ts", "src/**/*.spec.ts"]
 }
