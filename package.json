@@ -11,9 +11,10 @@
       "includeNodeModules": true
     }
   },
-  
   "scripts": {
+    "prepare": "husky || true",
     "dev": "vite",
+    "test": "jest",
     "build": "vite build",
     "start": "vite build && node server.cjs",
     "preview": "vite preview",
@@ -24,6 +25,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.7",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
@@ -32,14 +35,21 @@
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
+    "jsdom": "^26.0.0",
     "postcss": "^8.4.40",
     "postcss-preset-env": "^9.6.0",
     "stylelint": "^16.9.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-order": "^6.0.4",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.0",
-    "vite": "^4.3.9"
+    "vite": "^7.1.6"
   },
   "dependencies": {
     "eslint-config-airbnb": "^19.0.4",
